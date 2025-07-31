@@ -1,0 +1,46 @@
+parameters:
+  - name: dockerRegistryServiceConnection
+    default: "Newesis Srl Production"
+  - name: latestTag
+    default: latest
+  - name: canPush
+  - name: dockerFile
+  - name: buildContext
+    default: "$(build.SourcesDirectory)"
+  - name: jobId
+  - name: imageName
+  - name: ACR_ADDRESS
+    default: newesissrl.azurecr.io
+  - name: version
+    default: "0.0.1"
+
+steps:
+  - task: Docker@2.247.1
+    displayName: build ${{ parameters.imageName }}
+    inputs:
+      containerRegistry: "${{ parameters.dockerRegistryServiceConnection }}"
+      repository: "${{ parameters.imageName }}"
+      command: build
+      Dockerfile: "${{ parameters.dockerFile }}"
+      buildContext: "${{ parameters.buildContext }}"
+      arguments: "--ulimit=nofile=1048576:1048576"
+      tags: |
+        ${{ parameters.version }}
+        ${{ parameters.latestTag }}
+      addPipelineData: false
+      addBaseImageData: false
+
+  - ${{ if eq(parameters['canPush'], true) }}:
+      - task: Docker@2.240.2
+        displayName: push ${{ parameters.imageName }}
+        inputs:
+          containerRegistry: "${{ parameters.dockerRegistryServiceConnection }}"
+          repository: ${{ parameters.imageName }}
+          command: push
+          Dockerfile: "${{ parameters.dockerFile }}"
+          buildContext: "${{ parameters.buildContext }}"
+          tags: |
+            ${{ parameters.version }}
+            ${{ parameters.latestTag }}
+          addPipelineData: false
+          addBaseImageData: false

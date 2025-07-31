@@ -1,0 +1,17 @@
+# Order matters. The last matching pattern takes precedence.
+
+### Build Files ###
+/**/package.json @mzinga-team
+
+/tsconfig.json @mzinga-team
+/**/tsconfig*.json @mzinga-team
+
+/jest.config.js @mzinga-team
+/**/jest.config.js @mzinga-team
+
+### Root ###
+/package.json @mzinga-team
+/scripts/ @mzinga-team
+/.husky/ @mzinga-team
+/.vscode/ @mzinga-team
+/.github/ @mzinga-team

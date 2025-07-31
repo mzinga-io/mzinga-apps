@@ -1,0 +1,45 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - docker-compose.yml
+
+pool:
+  name: SelfHosted
+
+variables:
+  - name: DOCKER_BUILDKIT
+    value: 1
+  - group: integrationTest
+
+resources:
+  repositories:
+    - repository: common-templates
+      type: git
+      name: Common Modules/common-templates
+
+jobs:
+  - template: _build.yml
+    parameters:
+      canPush: true
+
+  - job: Push_Tag_To_Repo
+    variables:
+      version: $[ dependencies.Set_Version_And_Images_Names.outputs['setVersion.tag'] ]
+    dependsOn:
+      - Cleanup_And_Decide
+      - Set_Version_And_Images_Names
+    condition: succeeded()
+    steps:
+      - checkout: self
+        fetchDepth: 0
+        retryCountOnTaskFailure: 3
+        fetchTags: true
+        clean: true
+        persistCredentials: true
+      - script: |
+          git tag $(version)
+          git push --tags
+        displayName: add tag to repo

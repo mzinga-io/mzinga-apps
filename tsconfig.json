@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "strict": false,
+
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "jsx": "react",
+    "resolveJsonModule": true
+  },
+  "include": ["src", "jsoneditor-react.d.ts"],
+  "exclude": ["node_modules", "dist", "build", "coverage", "__tests__"],
+  "ts-node": {
+    "transpileOnly": true
+  }
+}

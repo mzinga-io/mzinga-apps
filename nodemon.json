@@ -1,0 +1,8 @@
+{
+  "ext": "ts,js,tsx",
+  "ignore": [
+    "env-config.js",
+    "__tests__"
+  ],
+  "exec": "node build-env.js && ts-node --require ./src/tracing.ts src/server.ts"
+}

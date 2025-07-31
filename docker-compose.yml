@@ -1,0 +1,135 @@
+services:
+  replica_key:
+    image: bash:4.4.23
+    entrypoint:
+      - bash
+      - -c
+      - |
+        apk update && apk add openssl
+        openssl rand -base64 756 > /data/custom.replica.key
+        chmod 400 /data/custom.replica.key
+        chown 999:999 /data/custom.replica.key
+        sleep 30
+    volumes:
+      - mongodb_data:/data
+    deploy:
+      restart_policy:
+        condition: no
+
+  mzinga:
+    image: newesissrl.azurecr.io/mzinga/payload/backoffice:1.6.11
+    ports:
+      - ${PORT:-3000}:${PORT:-3000}
+    volumes:
+      - mzinga_data:/app/${TENANT:-local}
+    depends_on:
+      - database
+      - messagebus
+      - cache
+    environment:
+      - MONGODB_URI=mongodb://${MONGO_ROOTUSER:-admin}:${MONGO_ROOTPASSWORD:-admin}@database:${MONGO_PORT:-27017}/app?authSource=admin
+      - PAYLOAD_SECRET=${PAYLOAD_SECRET:-secret_key}
+      - PORT=${PORT:-3000}
+      - DISABLE_TRACING=${DISABLE_TRACING:-1}
+      - PAYLOAD_PUBLIC_ENABLE_ZITADEL_PLUGIN=0
+      - RABBITMQ_URL=amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@messagebus:${RABBITMQ_PORT:-5672}/
+      - TENANT=${TENANT:-local}
+      - ENV=prod
+      - PAYLOAD_PUBLIC_SERVER_URL=${PAYLOAD_PUBLIC_SERVER_URL:-http://localhost:3000}
+      - PAYLOAD_PUBLIC_DISABLED_ENTITIES_SLUGS=$PAYLOAD_PUBLIC_DISABLED_ENTITIES_SLUGS
+    deploy:
+      replicas: ${MZINGA_DOCKER_COMPOSE_REPLICAS:-1}
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+  database:
+    image: percona/percona-server-mongodb:6.0.24-19
+    depends_on:
+      - replica_key
+    ports:
+      - ${MONGO_PORT:-27017}:27017
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOTUSER:-admin}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOTPASSWORD:-admin}
+    command:
+      [
+        "--replSet",
+        "rs0",
+        "--bind_ip_all",
+        "--storageEngine",
+        "wiredTiger",
+        "--keyFile",
+        "/data/db/custom.replica.key",
+      ]
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    healthcheck:
+      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'$MONGO_HOST:${MONGO_PORT:-27017}'}]}) }" | mongosh -u ${MONGO_ROOTUSER:-admin} -p ${MONGO_ROOTPASSWORD:-admin} --quiet
+      interval: 5s
+      timeout: 30s
+      start_period: 0s
+      start_interval: 1s
+      retries: 30
+  messagebus:
+    image: rabbitmq:4.1.2-management-alpine
+    hostname: rabbitmq
+    ports:
+      - ${RABBITMQ_PORT:-5672}:5672
+      - ${RABBITMQ_PORT_UI:-15672}:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-guest}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-guest}
+  cache:
+    image: redis:7.4.5-alpine
+    ports:
+      - ${REDIS_PORT:-6379}:6379
+    deploy:
+      replicas: ${REDIS_REPLICAS:-1}
+  ce-enabler:
+    image: bash:latest
+    volumes:
+      - ./compose-scripts:/scripts
+      - mzinga_data:/app/${TENANT:-local}
+    command: ["./compose-scripts/ce-enabler.sh"]
+    environment:
+      - TENANT=${TENANT:-local}
+    deploy:
+      replicas: ${MZINGA_DOCKER_COMPOSE_REPLICAS:-1}
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    hostname: jaeger
+    ports:
+      - "6831:6831/udp" # UDP port for Jaeger agent
+      - "16686:16686" # Web UI
+      - "14268:14268" # HTTP port for spans
+      - "4317:4317"
+      - "4318:4318"
+volumes:
+  mongodb_data:
+    driver: local
+    driver_opts:
+      type: ${DRIVER_OPTS_TYPE}
+      o: ${DRIVER_OPTS_OPTIONS}
+      device: ${DRIVER_OPTS_DEVICE}/database
+  mzinga_data:
+    driver: local
+    driver_opts:
+      type: ${DRIVER_OPTS_TYPE}
+      o: ${DRIVER_OPTS_OPTIONS}
+      device: ${DRIVER_OPTS_DEVICE}/mzinga
+  rabbitmq_data:
+    driver: local
+    driver_opts:
+      type: ${DRIVER_OPTS_TYPE}
+      o: ${DRIVER_OPTS_OPTIONS}
+      device: ${DRIVER_OPTS_DEVICE}/messagebus
