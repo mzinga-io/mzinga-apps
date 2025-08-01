@@ -95,6 +95,15 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Install Kubelogin
+        run: |
+          # Download the latest kubelogin release for Linux
+          curl -LO https://github.com/Azure/kubelogin/releases/download/v0.0.25/kubelogin-linux-amd64.zip # Check for the latest version on GitHub
+          unzip kubelogin-linux-amd64.zip
+          sudo mv bin/linux_amd64/kubelogin /usr/local/bin/
+          sudo chmod +x /usr/local/bin/kubelogin
+          kubelogin --version # Verify installation
+
       - name: Set Kubernetes context
         run: |
           az aks get-credentials --resource-group rg-aks-newesis-corporate-we --name aks-newesis-corporate-we --overwrite-existing --admin
