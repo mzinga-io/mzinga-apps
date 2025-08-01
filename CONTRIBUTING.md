@@ -9,9 +9,9 @@ We appreciate all contributions — code, documentation, feedback, and more.
 
 If you're new to open source or unsure where to begin:
 
-- Check out our [`good first issue`](https://github.com/Newesissrl/mongo-sync/labels/good%20first%20issue)
-- Look for [`help wanted`](https://github.com/Newesissrl/mongo-sync/labels/help%20wanted`)
-- Or [contact us](mailto:contact@newesis.com) — we’re happy to guide you!
+- Check out our [good first issues](https://github.com/mzinga-io/mzinga-apps/labels/good%20first%20issue) – perfect if you're just getting started!
+- Looking to help out? See our [help wanted issues](https://github.com/mzinga-io/mzinga-apps/labels/help%20wanted)
+- Or [contact us](mailto:contact@mzinga.io) — we’re happy to guide you!
 
 Once you find an issue to work on, comment with something like:
 > "I'd like to work on this"  
