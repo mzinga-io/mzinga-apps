@@ -9,7 +9,7 @@ We welcome responsible disclosures and are committed to resolving security issue
 
 If you believe you’ve found a security issue in this project, please contact us **privately** at:
 
-📧 [security@newesis.com](mailto:security@newesis.com)
+📧 [contact@mzinga.io](mailto:contact@mzinga.io)
 
 Please include:
 
