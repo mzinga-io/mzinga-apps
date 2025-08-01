@@ -7,6 +7,10 @@ on:
     paths-ignore:
       - docker-compose.yml
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   DOCKER_BUILDKIT: 1
   TEST_NAMESPACE: mzinga-app
