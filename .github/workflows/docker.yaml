@@ -1,0 +1,214 @@
+name: APP Backend and API Mzinga
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - docker-compose.yml
+
+env:
+  DOCKER_BUILDKIT: 1
+  TEST_NAMESPACE: mzinga-app
+  PAYLOAD_PUBLIC_SERVER_URL: https://admin-mzinga-app.mzinga.io
+  ACR_NAME: newesissrl
+
+jobs:
+  set-version:
+    name: Set Version and Image Names
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.gitversion.outputs.fullSemVer }}
+      api_image: mzinga/payload/api
+      bo_image: mzinga/payload/backoffice
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: gittools/actions/gitversion/setup@v1
+        with:
+          versionSpec: '5.x'
+
+      - id: gitversion
+        uses: gittools/actions/gitversion/execute@v1
+
+      - run: echo "${{ steps.gitversion.outputs.fullSemVer }}" > version.txt
+
+  build-api:
+    needs: set-version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - run: npm version --no-git-tag-version --new-version ${{ needs.set-version.outputs.version }}
+
+      - run: cat package.json
+
+      - name: Docker login
+        run: echo "${{ secrets.ACR_PASSWORD }}" | docker login $ACR_NAME.azurecr.io -u ${{ secrets.ACR_USERNAME }} --password-stdin
+
+      - name: Build & Push API Docker image
+        run: |
+          docker build -f api.Dockerfile -t $ACR_NAME.azurecr.io/${{ needs.set-version.outputs.api_image }}:${{ needs.set-version.outputs.version }} .
+          docker push $ACR_NAME.azurecr.io/${{ needs.set-version.outputs.api_image }}:${{ needs.set-version.outputs.version }}
+
+  build-backoffice:
+    needs: set-version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - run: npm version --no-git-tag-version --new-version ${{ needs.set-version.outputs.version }}
+
+      - run: cat package.json
+
+      - name: Docker login
+        run: echo "${{ secrets.ACR_PASSWORD }}" | docker login $ACR_NAME.azurecr.io -u ${{ secrets.ACR_USERNAME }} --password-stdin
+
+      - name: Build & Push Backoffice Docker image
+        run: |
+          docker build -f backoffice.Dockerfile -t $ACR_NAME.azurecr.io/${{ needs.set-version.outputs.bo_image }}:${{ needs.set-version.outputs.version }} .
+          docker push $ACR_NAME.azurecr.io/${{ needs.set-version.outputs.bo_image }}:${{ needs.set-version.outputs.version }}
+
+  deploy:
+    name: Deploy to AKS
+    needs: [build-api, build-backoffice, set-version]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Set Kubernetes context
+        run: |
+          az aks get-credentials --resource-group rg-aks-newesis-corporate-we --name aks-newesis-corporate-we --overwrite-existing --admin
+          kubelogin convert-kubeconfig -l azurecli
+          kubectl config rename-context aks-newesis-corporate-we-admin aks-newesis-corporate-we
+          kubectl config use-context aks-newesis-corporate-we
+
+      - name: Deploy API and Backoffice
+        run: |
+          kubectl set image deployment/mzinga-api api=$ACR_NAME.azurecr.io/${{ needs.set-version.outputs.api_image }}:${{ needs.set-version.outputs.version }} -n $TEST_NAMESPACE
+          kubectl rollout status deployment/mzinga-api -n $TEST_NAMESPACE
+
+          kubectl set image deployment/mzinga-bo backoffice=$ACR_NAME.azurecr.io/${{ needs.set-version.outputs.bo_image }}:${{ needs.set-version.outputs.version }} -n $TEST_NAMESPACE
+          kubectl rollout status deployment/mzinga-bo -n $TEST_NAMESPACE
+
+  run-tests:
+    name: Run Tests
+    needs: [set-version, deploy]
+    runs-on: ubuntu-latest
+    env:
+      API_KEY: ${{ secrets.USER_API_KEY }}
+      PAYLOAD_PUBLIC_SERVER_URL: ${{ env.PAYLOAD_PUBLIC_SERVER_URL }}
+      RABBITMQ_URL: ${{ secrets.RABBITMQ_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run coverage
+        run: npm run coverage
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-results
+          path: junit.xml
+
+      - name: Upload code coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage
+          path: coverage/cobertura-coverage.xml
+
+  cleanup-and-decide:
+    name: Cleanup and Decide
+    needs: [run-tests, set-version, deploy]
+    runs-on: ubuntu-latest
+    if: always()
+    env:
+      VERSION: ${{ needs.set-version.outputs.version }}
+      API_IMAGE: mzinga/payload/api
+      BO_IMAGE: mzinga/payload/backoffice
+    steps:
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Set Kubernetes context
+        run: |
+          az aks get-credentials --resource-group rg-aks-newesis-corporate-we --name aks-newesis-corporate-we --overwrite-existing --admin
+          kubelogin convert-kubeconfig -l azurecli
+          kubectl config rename-context aks-newesis-corporate-we-admin aks-newesis-corporate-we
+          kubectl config use-context aks-newesis-corporate-we
+
+      - name: Decide and potentially rollback
+        run: |
+          if [[ "${{ needs.run-tests.result }}" == "failure" ]]; then
+            echo "Tests failed. Rolling back..."
+
+            rollback_image() {
+              local repository=$1
+              local deployment=$2
+              local container=$3
+
+              previous_tag=$(az acr repository show-tags --name $ACR_NAME --repository $repository --orderby time_desc --top 2 | jq -r '.[1]')
+              if [ -z "$previous_tag" ]; then
+                echo "No previous tag for $repository"
+                return 1
+              fi
+
+              kubectl set image deployment/$deployment $container=$ACR_NAME.azurecr.io/$repository:$previous_tag -n $TEST_NAMESPACE
+              kubectl rollout status deployment/$deployment -n $TEST_NAMESPACE
+
+              az acr repository delete --name $ACR_NAME --image $repository:$VERSION --yes || true
+            }
+
+            az acr login --name $ACR_NAME
+
+            rollback_image "$API_IMAGE" "mzinga-api" "api"
+            rollback_image "$BO_IMAGE" "mzinga-bo" "backoffice"
+
+            exit 1
+          else
+            echo "Tests passed. No rollback needed."
+          fi
+
+  tag:
+    name: Push Git Tag
+    needs: [cleanup-and-decide, set-version]
+    runs-on: ubuntu-latest
+    if: ${{ needs.cleanup-and-decide.result == 'success' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Set up Git user
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Push Git tag
+        run: |
+          VERSION=${{ needs.set-version.outputs.version }}
+          git tag $VERSION
+          git push origin $VERSION
