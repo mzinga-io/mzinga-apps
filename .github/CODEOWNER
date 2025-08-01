@@ -1,17 +1,25 @@
 # Order matters. The last matching pattern takes precedence.
 
-### Build Files ###
-/**/package.json @mzinga-team
+# All source code and configuration files
+/src/           @mzinga-team
+/scripts/       @mzinga-team
+/.husky/        @mzinga-team
+/.vscode/       @mzinga-team
+/.github/       @mzinga-team
 
-/tsconfig.json @mzinga-team
-/**/tsconfig*.json @mzinga-team
+# Main configuration files
+/package.json           @mzinga-team
+/yarn.lock              @mzinga-team
+/tsconfig.json          @mzinga-team
+/tsconfig.*.json        @mzinga-team
+/jest.config.js         @mzinga-team
+/jest.config.*.js       @mzinga-team
+/docker-compose.yml     @mzinga-team
+/.env*                  @mzinga-team
 
-/jest.config.js @mzinga-team
-/**/jest.config.js @mzinga-team
+# Documentation
+/README.md              @mzinga-team
+/docs/                  @mzinga-team
 
-### Root ###
-/package.json @mzinga-team
-/scripts/ @mzinga-team
-/.husky/ @mzinga-team
-/.vscode/ @mzinga-team
-/.github/ @mzinga-team
+# Catch-all (fallback)
+/*                     @mzinga-team
