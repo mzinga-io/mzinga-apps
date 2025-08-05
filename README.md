@@ -1,4 +1,13 @@
-# MZinga
+![Node.js](https://img.shields.io/badge/Node.js-18.x-brightgreen?logo=node.js)
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+![Dockerized](https://img.shields.io/badge/Docker-Supported-blue?logo=docker)
+![MongoDB](https://img.shields.io/badge/Database-MongoDB-green?logo=mongodb)
+![Redis](https://img.shields.io/badge/Cache-Redis-red?logo=redis)
+![RabbitMQ](https://img.shields.io/badge/Messaging-RabbitMQ-orange?logo=rabbitmq)
+![Payload CMS](https://img.shields.io/badge/CMS-Payload-000000?logo=payloadcms&logoColor=white)
+![CI/CD](https://img.shields.io/badge/CI/CD-Ready-blueviolet?logo=githubactions)
+![Status](https://img.shields.io/badge/Status-Active-brightgreen)
+
 
 **MZinga** is a modern, modular **Content Management System (CMS)** built on top of [Payload CMS](https://payloadcms.com/), designed for high extensibility and seamless integration with **MongoDB**, **Redis**, and **RabbitMQ**. Tailored for SaaS and enterprise environments, MZinga provides a scalable, secure, and developer-friendly platform for managing complex applications and workflows.
 
