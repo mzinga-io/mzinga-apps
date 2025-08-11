@@ -1,5 +1,5 @@
-import { Connection } from "rabbitmq-client";
 import { config } from "dotenv";
+import { Connection } from "rabbitmq-client";
 import { v4 as uuidv4 } from "uuid";
 import { BusConfiguration } from "../../src/messageBusService";
 config();
@@ -256,7 +256,7 @@ describe("MessageBusService Integration Tests", () => {
         //   },
         // });
         resolve(true);
-      }, 5000);
+      }, 15000);
     });
   }, 30000);
 });
