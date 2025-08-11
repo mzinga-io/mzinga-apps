@@ -23,8 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.gitversion.outputs.fullSemVer }}
-      api_image: mzinga/payload/api
-      bo_image: mzinga/payload/backoffice
+      api_image: mzinga/payload/gh/api
+      bo_image: mzinga/payload/gh/backoffice
     steps:
       - uses: actions/checkout@v4
         with:
@@ -155,8 +155,8 @@ jobs:
     if: always()
     env:
       VERSION: ${{ needs.set-version.outputs.version }}
-      API_IMAGE: mzinga/payload/api
-      BO_IMAGE: mzinga/payload/backoffice
+      API_IMAGE: mzinga/payload/gh/api
+      BO_IMAGE: mzinga/payload/gh/backoffice
     steps:
       - name: Azure Login
         uses: azure/login@v1
