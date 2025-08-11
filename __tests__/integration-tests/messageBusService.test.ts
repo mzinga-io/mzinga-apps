@@ -168,7 +168,7 @@ describe("MessageBusService Integration Tests", () => {
       console.error("Cleanup failed:", error);
       throw error;
     }
-  }, 15000);
+  }, 30000);
 
   it("should successfully connect to RabbitMQ", async () => {
     expect(testConnection).toBeDefined();
@@ -258,5 +258,5 @@ describe("MessageBusService Integration Tests", () => {
         resolve(true);
       }, 5000);
     });
-  }, 15000);
+  }, 30000);
 });
