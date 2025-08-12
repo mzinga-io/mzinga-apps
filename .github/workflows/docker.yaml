@@ -218,6 +218,8 @@ jobs:
     needs: [cleanup-and-decide, set-version]
     runs-on: ubuntu-latest
     if: ${{ needs.cleanup-and-decide.result == 'success' }}
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
