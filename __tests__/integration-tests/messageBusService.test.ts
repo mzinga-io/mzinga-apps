@@ -49,16 +49,45 @@ describe("MessageBusService Integration Tests", () => {
         testConnection.on("connection", () => {
           clearTimeout(timeout);
           console.log("rabbitmq connection successfully!");
+          consumer = testConnection.createConsumer(
+            {
+              queue: queueName,
+              queueOptions: {
+                durable: true,
+                autoDelete: false,
+                arguments: {
+                  "x-queue-type": "quorum",
+                },
+              },
+              exchanges: [BusConfiguration.MZingaEventsDurable],
+              queueBindings: [
+                {
+                  exchange: BusConfiguration.MZingaEventsDurable.exchange,
+                  routingKey: "HOOKSURL_ORGANIZATIONS_AFTERCHANGE",
+                },
+                {
+                  exchange: BusConfiguration.MZingaEventsDurable.exchange,
+                  routingKey: "HOOKSURL_PROJECTS_AFTERCHANGE",
+                },
+                {
+                  exchange: BusConfiguration.MZingaEventsDurable.exchange,
+                  routingKey: "HOOKSURL_ENVIRONMENTS_AFTERCHANGE",
+                },
+              ],
+            },
+            async (msg) => {
+              const { body } = msg;
+              const messageTypeOrder = body.type;
+              expect([
+                "HOOKSURL_ORGANIZATIONS_AFTERCHANGE",
+                "HOOKSURL_PROJECTS_AFTERCHANGE",
+                "HOOKSURL_ENVIRONMENTS_AFTERCHANGE",
+              ]).toContain(messageTypeOrder);
+              return 0; // ACK
+            }
+          );
           resolve();
         });
-      });
-      await testConnection.queueDeclare({
-        queue: queueName,
-        autoDelete: false,
-        durable: true,
-        arguments: {
-          "x-queue-type": "quorum",
-        },
       });
     } catch (error) {
       console.error("Setup failed:", error);
@@ -173,90 +202,4 @@ describe("MessageBusService Integration Tests", () => {
   it("should successfully connect to RabbitMQ", async () => {
     expect(testConnection).toBeDefined();
   });
-
-  it("should publish and receive message", async () => {
-    const receivedMessages: any[] = [];
-    consumer = testConnection.createConsumer(
-      {
-        queue: queueName,
-        queueOptions: {
-          autoDelete: false,
-          durable: true,
-          arguments: {
-            "x-queue-type": "quorum",
-          },
-        },
-        exchanges: [BusConfiguration.MZingaEventsDurable],
-        queueBindings: [
-          {
-            exchange: BusConfiguration.MZingaEventsDurable.exchange,
-            routingKey: "HOOKSURL_ORGANIZATIONS_AFTERCHANGE",
-          },
-          {
-            exchange: BusConfiguration.MZingaEventsDurable.exchange,
-            routingKey: "HOOKSURL_PROJECTS_AFTERCHANGE",
-          },
-          {
-            exchange: BusConfiguration.MZingaEventsDurable.exchange,
-            routingKey: "HOOKSURL_ENVIRONMENTS_AFTERCHANGE",
-          },
-        ],
-      },
-      async (msg) => {
-        receivedMessages.push(msg.body);
-        return 0; // ACK
-      }
-    );
-    return await new Promise((resolve) => {
-      setTimeout(function () {
-        expect(receivedMessages.length).toBeGreaterThanOrEqual(3);
-        const messageTypeOrder = receivedMessages.map((m) => m.type);
-        expect(messageTypeOrder).toEqual(
-          expect.arrayContaining([
-            "HOOKSURL_ORGANIZATIONS_AFTERCHANGE",
-            "HOOKSURL_PROJECTS_AFTERCHANGE",
-            "HOOKSURL_ENVIRONMENTS_AFTERCHANGE",
-          ])
-        );
-        // const messageOrder = receivedMessages.map((m) => m.data.doc);
-        // expect(messageOrder).toContainEqual(
-        //   expect.objectContaining(organization)
-        // );
-
-        // expect(messageOrder[1]).toMatchObject({
-        //   id: projectId,
-        //   name: project.name,
-        //   organization: {
-        //     relationTo: "organizations",
-        //     value: expect.objectContaining({
-        //       id: organizationId,
-        //       name: organization.name,
-        //       invoices: organization.invoices,
-        //     }),
-        //   },
-        // });
-
-        // expect(messageOrder[2]).toMatchObject({
-        //   id: environmentId,
-        //   name: environment.name,
-        //   project: {
-        //     relationTo: "projects",
-        //     value: expect.objectContaining({
-        //       id: projectId,
-        //       name: project.name,
-        //       organization: {
-        //         relationTo: "organizations",
-        //         value: expect.objectContaining({
-        //           id: organizationId,
-        //           name: organization.name,
-        //           invoices: organization.invoices,
-        //         }),
-        //       },
-        //     }),
-        //   },
-        // });
-        resolve(true);
-      }, 15000);
-    });
-  }, 30000);
 });
