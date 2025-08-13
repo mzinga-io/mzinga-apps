@@ -58,7 +58,7 @@
     "@payloadcms/db-mongodb": "^1.0.2",
     "@payloadcms/db-postgres": "^0.8.4",
     "@payloadcms/plugin-form-builder": "^1.0.15",
-    "@payloadcms/plugin-seo": "^2.0.0",
+    "@payloadcms/plugin-seo": "^3.51.0",
     "@payloadcms/richtext-slate": "^1.0.1",
     "@sendgrid/mail": "^8.0.0",
     "assert": "^2.0.0",
