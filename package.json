@@ -79,7 +79,7 @@
     "payload-swagger": "^1.4.0",
     "rabbitmq-client": "^5.0.0",
     "react-jss": "^10.10.0",
-    "redis": "^5.0.0",
+    "redis": "^5.8.1",
     "sass": "^1.90.0",
     "stream-browserify": "^3.0.0",
     "tty-browserify": "^0.0.1",
