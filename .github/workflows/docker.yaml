@@ -1,6 +1,7 @@
 name: APP Backend and API Mzinga
 
 on:
+  pull_request:
   push:
     branches:
       - main
@@ -23,9 +24,17 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.gitversion.outputs.fullSemVer }}
-      api_image: mzinga/payload/gh/api
-      bo_image: mzinga/payload/gh/backoffice
+      api_image: mzinga/payload/gh/api${{ steps.setImageSuffix.outputs.image_suffix }}
+      bo_image: mzinga/payload/gh/backoffice${{ steps.setImageSuffix.outputs.image_suffix }}
     steps:
+      - name: set image suffix
+        id: setImageSuffix
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "image_suffix=/unstable" >> $GITHUB_OUTPUT
+          else
+            echo "image_suffix=" >> $GITHUB_OUTPUT
+          fi
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -217,7 +226,7 @@ jobs:
     name: Push Git Tag
     needs: [cleanup-and-decide, set-version]
     runs-on: ubuntu-latest
-    if: ${{ needs.cleanup-and-decide.result == 'success' }}
+    if: ${{ needs.cleanup-and-decide.result == 'success' && github.event_name != 'pull_request' }}
     permissions:
       contents: write
     steps:
