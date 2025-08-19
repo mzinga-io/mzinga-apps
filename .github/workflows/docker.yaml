@@ -21,7 +21,7 @@ env:
 jobs:
   set-version:
     name: Set Version and Image Names
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, aks]
     outputs:
       version: ${{ steps.gitversion.outputs.fullSemVer }}
       api_image: mzinga/payload/gh/api${{ steps.setImageSuffix.outputs.image_suffix }}
@@ -50,7 +50,7 @@ jobs:
 
   build-api:
     needs: set-version
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, aks]
     steps:
       - uses: actions/checkout@v4
 
@@ -72,7 +72,7 @@ jobs:
 
   build-backoffice:
     needs: set-version
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, aks]
     steps:
       - uses: actions/checkout@v4
 
@@ -95,7 +95,7 @@ jobs:
   deploy:
     name: Deploy to AKS
     needs: [build-api, build-backoffice, set-version]
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, aks]
     steps:
       - name: Azure Login
         uses: azure/login@v1.5.0
@@ -131,7 +131,7 @@ jobs:
   run-tests:
     name: Run Tests
     needs: [set-version, deploy]
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, aks]
     env:
       API_KEY: ${{ secrets.USER_API_KEY }}
       PAYLOAD_PUBLIC_SERVER_URL: https://admin-mzinga-app.mzinga.io
@@ -160,7 +160,7 @@ jobs:
   cleanup-and-decide:
     name: Cleanup and Decide
     needs: [run-tests, set-version, deploy]
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, aks]
     if: always()
     env:
       VERSION: ${{ needs.set-version.outputs.version }}
@@ -225,7 +225,7 @@ jobs:
   tag:
     name: Push Git Tag
     needs: [cleanup-and-decide, set-version]
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, aks]
     if: ${{ needs.cleanup-and-decide.result == 'success' && github.event_name != 'pull_request' }}
     permissions:
       contents: write
