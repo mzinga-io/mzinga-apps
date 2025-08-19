@@ -21,7 +21,7 @@ env:
 jobs:
   set-version:
     name: Set Version and Image Names
-    runs-on: [self-hosted, aks]
+    runs-on: [self-hosted]
     outputs:
       version: ${{ steps.gitversion.outputs.fullSemVer }}
       api_image: mzinga/payload/gh/api${{ steps.setImageSuffix.outputs.image_suffix }}
