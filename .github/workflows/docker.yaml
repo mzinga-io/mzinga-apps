@@ -94,7 +94,7 @@ jobs:
 
       - name: Build & Push Backoffice Docker image
         run: |
-          docker build -f backoffice.Dockerfile -t $ACR_NAME.azurecr.io/${{ needs.set-version.outputs.bo_image }}:${{ needs.set-version.outputs.version }} .
+          docker build --network host -f backoffice.Dockerfile -t $ACR_NAME.azurecr.io/${{ needs.set-version.outputs.bo_image }}:${{ needs.set-version.outputs.version }} .
           docker push $ACR_NAME.azurecr.io/${{ needs.set-version.outputs.bo_image }}:${{ needs.set-version.outputs.version }}
 
   deploy:
