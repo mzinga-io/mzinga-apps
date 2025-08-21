@@ -102,10 +102,13 @@ jobs:
     needs: [build-api, build-backoffice, set-version]
     runs-on: [self-hosted]
     steps:
-      - name: Setup Azure CLI
-        uses: azure/cli-action@v1
-        with:
-          azcliversion: latest
+      - name: Install Azure CLI
+        run: |
+          set -eux
+          apt-get update
+          apt-get install -y ca-certificates curl apt-transport-https lsb-release gnupg
+          curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+          az version
           
       - name: Azure Login
         uses: azure/login@v1.5.0
