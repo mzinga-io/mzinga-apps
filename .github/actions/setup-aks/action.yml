@@ -2,6 +2,7 @@ runs:
   using: "composite"
   steps:
     - name: Install Azure CLI
+      shell: bash
       run: |
         set -eux
         apt-get update
@@ -10,6 +11,7 @@ runs:
         az version
 
     - name: Install kubectl & kubelogin
+      shell: bash
       run: |
         KUBECTL_VER="$(curl -Ls https://dl.k8s.io/release/stable.txt)"
         curl -L "https://dl.k8s.io/release/${KUBECTL_VER}/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl
