@@ -194,7 +194,7 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Install Kubelogin
+      - name: Install Kubelogin & kubectl
         run: |
           # Download the latest kubelogin release for Linux
           curl -LO https://github.com/Azure/kubelogin/releases/download/v0.0.25/kubelogin-linux-amd64.zip # Check for the latest version on GitHub
@@ -202,6 +202,9 @@ jobs:
           sudo mv bin/linux_amd64/kubelogin /usr/local/bin/
           sudo chmod +x /usr/local/bin/kubelogin
           kubelogin --version # Verify installation
+          KUBECTL_VER="$(curl -Ls https://dl.k8s.io/release/stable.txt)"
+          curl -L "https://dl.k8s.io/release/${KUBECTL_VER}/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl
+          chmod +x /usr/local/bin/kubectl
 
       - name: Set Kubernetes context
         run: |
