@@ -133,7 +133,7 @@ jobs:
         run: |
           az aks get-credentials --resource-group rg-aks-newesis-corporate-we --name aks-newesis-corporate-we --overwrite-existing --admin
           kubelogin convert-kubeconfig -l azurecli
-          kubectl config use-context aks-newesis-corporate-we
+          kubectl config use-context aks-newesis-corporate-we-admin
 
       - name: Deploy API and Backoffice
         run: |
@@ -209,8 +209,7 @@ jobs:
         run: |
           az aks get-credentials --resource-group rg-aks-newesis-corporate-we --name aks-newesis-corporate-we --overwrite-existing --admin
           kubelogin convert-kubeconfig -l azurecli
-          kubectl config rename-context aks-newesis-corporate-we-admin aks-newesis-corporate-we
-          kubectl config use-context aks-newesis-corporate-we
+          kubectl config use-context aks-newesis-corporate-we-admin
 
       - name: Decide and potentially rollback
         run: |
