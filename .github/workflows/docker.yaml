@@ -102,6 +102,7 @@ jobs:
     needs: [build-api, build-backoffice, set-version]
     runs-on: [self-hosted]
     steps:
+    
       - uses: ./.github/actions/setup-aks.yaml
           
       - name: Azure Login
