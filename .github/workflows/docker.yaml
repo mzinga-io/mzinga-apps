@@ -102,7 +102,7 @@ jobs:
     needs: [build-api, build-backoffice, set-version]
     runs-on: [self-hosted]
     steps:
-    
+      - uses: actions/checkout@v4 
       - uses: ./.github/actions/setup-aks
           
       - name: Azure Login
