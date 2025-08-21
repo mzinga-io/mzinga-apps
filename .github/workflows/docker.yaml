@@ -72,7 +72,7 @@ jobs:
 
       - name: Build & Push API Docker image
         run: |
-          docker build -f api.Dockerfile -t $ACR_NAME.azurecr.io/${{ needs.set-version.outputs.api_image }}:${{ needs.set-version.outputs.version }} .
+          docker build --network host -f api.Dockerfile -t $ACR_NAME.azurecr.io/${{ needs.set-version.outputs.api_image }}:${{ needs.set-version.outputs.version }} .
           docker push $ACR_NAME.azurecr.io/${{ needs.set-version.outputs.api_image }}:${{ needs.set-version.outputs.version }}
 
   build-backoffice:
