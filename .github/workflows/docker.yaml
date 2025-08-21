@@ -102,13 +102,7 @@ jobs:
     needs: [build-api, build-backoffice, set-version]
     runs-on: [self-hosted]
     steps:
-      - name: Install Azure CLI
-        run: |
-          set -eux
-          apt-get update
-          apt-get install -y ca-certificates curl apt-transport-https lsb-release gnupg
-          curl -sL https://aka.ms/InstallAzureCLIDeb | bash
-          az version
+      - uses: ./.github/actions/setup-aks.yaml
           
       - name: Azure Login
         uses: azure/login@v1.5.0
@@ -116,18 +110,6 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Install Kubelogin & kubectl
-        run: |
-          # Download the latest kubelogin release for Linux
-          curl -LO https://github.com/Azure/kubelogin/releases/download/v0.0.25/kubelogin-linux-amd64.zip # Check for the latest version on GitHub
-          unzip kubelogin-linux-amd64.zip
-          sudo mv bin/linux_amd64/kubelogin /usr/local/bin/
-          sudo chmod +x /usr/local/bin/kubelogin
-          kubelogin --version # Verify installation
-          KUBECTL_VER="$(curl -Ls https://dl.k8s.io/release/stable.txt)"
-          curl -L "https://dl.k8s.io/release/${KUBECTL_VER}/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl
-          chmod +x /usr/local/bin/kubectl
 
       - name: Set Kubernetes context
         run: |
@@ -192,18 +174,6 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Install Kubelogin & kubectl
-        run: |
-          # Download the latest kubelogin release for Linux
-          curl -LO https://github.com/Azure/kubelogin/releases/download/v0.0.25/kubelogin-linux-amd64.zip # Check for the latest version on GitHub
-          unzip kubelogin-linux-amd64.zip
-          sudo mv bin/linux_amd64/kubelogin /usr/local/bin/
-          sudo chmod +x /usr/local/bin/kubelogin
-          kubelogin --version # Verify installation
-          KUBECTL_VER="$(curl -Ls https://dl.k8s.io/release/stable.txt)"
-          curl -L "https://dl.k8s.io/release/${KUBECTL_VER}/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl
-          chmod +x /usr/local/bin/kubectl
 
       - name: Set Kubernetes context
         run: |

@@ -8,7 +8,6 @@
 ![CI/CD](https://img.shields.io/badge/CI/CD-Ready-blueviolet?logo=githubactions)
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 
-
 **MZinga** is a modern, modular **Content Management System (CMS)** built on top of [Payload CMS](https://payloadcms.com/), designed for high extensibility and seamless integration with **MongoDB**, **Redis**, and **RabbitMQ**. Tailored for SaaS and enterprise environments, MZinga provides a scalable, secure, and developer-friendly platform for managing complex applications and workflows.
 
 ## 🚀 Key Features
