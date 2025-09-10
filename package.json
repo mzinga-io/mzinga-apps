@@ -56,7 +56,7 @@
     "@opentelemetry/semantic-conventions": "1.36.0",
     "@payloadcms/bundler-webpack": "1.0.7",
     "@payloadcms/db-mongodb": "^1.0.2",
-    "@payloadcms/db-postgres": "^0.8.4",
+    "@payloadcms/db-postgres": "^3.55.0",
     "@payloadcms/plugin-form-builder": "^1.0.15",
     "@payloadcms/plugin-seo": "^2.0.0",
     "@payloadcms/richtext-slate": "^1.0.1",
