@@ -1,18 +1,17 @@
-import { CollectionConfig } from "payload/types";
-import { Slugs } from "./Slugs";
-import { AccessUtils } from "../utils";
+import { CollectionConfig } from "mzinga/types";
+import { bySlugEndpoints } from "../endpoints";
 import { SlugField, TagsField } from "../fields";
-import { PublishDateField } from "../fields/PublishDateField";
-import { IsPrivateField } from "../fields/IsPrivateField";
-import path from "path";
 import { AuthorField } from "../fields/AuthorField";
 import { CopyrightField } from "../fields/CopyrightField";
-import { ThumbField } from "../fields/ThumbField";
-import { RelatedItemsField } from "../fields/RelatedItemsField";
-import { UploadUtils } from "../utils/UploadUtils";
-import { bySlugEndpoints } from "../endpoints";
+import { IsPrivateField } from "../fields/IsPrivateField";
 import { OwnerField } from "../fields/OwnerField";
+import { PublishDateField } from "../fields/PublishDateField";
+import { RelatedItemsField } from "../fields/RelatedItemsField";
+import { ThumbField } from "../fields/ThumbField";
+import { AccessUtils } from "../utils";
 import { CollectionUtils } from "../utils/CollectionUtils";
+import { UploadUtils } from "../utils/UploadUtils";
+import { Slugs } from "./Slugs";
 const access = new AccessUtils();
 const collectionUtils = new CollectionUtils(Slugs.Videos);
 const Videos: CollectionConfig = {

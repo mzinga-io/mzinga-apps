@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 // eslint-disable-next-line no-use-before-define
+import { ElementButton } from "@mzinga/richtext-slate";
 import React from "react";
-import { ElementButton } from "@payloadcms/richtext-slate";
 import Icon from "../Icon";
 
 const baseClass = "rich-text-large-body-button";

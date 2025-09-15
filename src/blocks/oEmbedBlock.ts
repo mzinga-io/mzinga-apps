@@ -1,4 +1,4 @@
-import type { Block } from "payload/types";
+import type { Block } from "mzinga/types";
 import { Slugs } from "../collections/Slugs";
 import oEmbedURLField from "../fields/oEmbedURLField";
 

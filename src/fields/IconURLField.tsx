@@ -1,5 +1,5 @@
+import { useFormFields } from "mzinga/components/forms";
 import React from "react";
-import { useFormFields } from "payload/components/forms";
 
 export default function IconURLField() {
   const iconURL = useFormFields(([fields]) => fields.iconURL);

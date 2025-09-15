@@ -1,6 +1,6 @@
-import { CollectionConfig } from "payload/types";
-import { Slugs } from "../Slugs";
+import { CollectionConfig } from "mzinga/types";
 import { AccessUtils } from "../../utils";
+import { Slugs } from "../Slugs";
 
 const access = new AccessUtils();
 const AdminOperations: CollectionConfig = {

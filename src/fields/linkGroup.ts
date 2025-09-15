@@ -1,5 +1,5 @@
-import { Field } from "payload/types";
-import { ArrayField } from "payload/dist/fields/config/types";
+import { ArrayField } from "mzinga/dist/fields/config/types";
+import { Field } from "mzinga/types";
 import deepMerge from "../utils/deepMerge";
 import link from "./link";
 

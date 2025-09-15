@@ -1,5 +1,5 @@
+import { useAuth } from "mzinga/components/utilities";
 import React from "react";
-import { useAuth } from "payload/components/utilities";
 
 const css = `
   .graphic-account .circle1 {

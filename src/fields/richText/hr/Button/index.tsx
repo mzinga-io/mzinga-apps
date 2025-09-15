@@ -1,7 +1,7 @@
-import React, { Fragment, useCallback } from "react";
+import { ElementButton } from "@mzinga/richtext-slate";
+import React, { useCallback } from "react";
 import { Transforms } from "slate";
-import { useSlate, ReactEditor } from "slate-react";
-import { ElementButton } from "@payloadcms/richtext-slate";
+import { ReactEditor, useSlate } from "slate-react";
 
 const baseClass = "rich-text-hr-button";
 

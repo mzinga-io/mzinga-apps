@@ -1,23 +1,23 @@
-import { CollectionConfig } from "payload/types";
+import { CollectionConfig } from "mzinga/types";
 import { SlugField, SummaryField, TagsField } from "../fields";
-import { Slugs } from "./Slugs";
 import { AccessUtils } from "../utils";
+import { Slugs } from "./Slugs";
 
+import ContentBlock from "../blocks/ContentBlock";
+import { FormBlock } from "../blocks/FormBlock";
+import { MediaBlock } from "../blocks/MediaBlock";
+import { oEmbedBlock } from "../blocks/oEmbedBlock";
+import { bySlugEndpoints, oEmbedEndpoints } from "../endpoints";
 import {
-  PublishDateField,
-  IsPrivateField,
   AuthorField,
   CopyrightField,
-  ThumbField,
+  IsPrivateField,
+  PublishDateField,
   RelatedItemsField,
+  ThumbField,
   TitleField,
 } from "../fields";
-import ContentBlock from "../blocks/ContentBlock";
-import { MediaBlock } from "../blocks/MediaBlock";
-import { FormBlock } from "../blocks/FormBlock";
-import { oEmbedBlock } from "../blocks/oEmbedBlock";
 import { ContentBlockHooks } from "../hooks/ContentBlockHooks";
-import { oEmbedEndpoints, bySlugEndpoints } from "../endpoints";
 import { CollectionUtils } from "../utils/CollectionUtils";
 const access = new AccessUtils();
 const collectionUtils = new CollectionUtils(Slugs.Stories);

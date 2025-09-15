@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useField } from "mzinga/components/forms";
+import { useConfig } from "mzinga/components/utilities";
+import { CodeEditor } from "mzinga/dist/admin/components/elements/CodeEditor";
+import Error from "mzinga/dist/admin/components/forms/Error";
+import SelectInput from "mzinga/dist/admin/components/forms/field-types/Select/Input";
+import Label from "mzinga/dist/admin/components/forms/Label";
+import { json } from "mzinga/dist/fields/validations";
+import React, { useCallback, useEffect, useState } from "react";
+import { Slugs } from "../../collections/Slugs";
 import {
-  SimpleEntity,
   AdvancedEntity,
   ExtensionEntity,
+  SimpleEntity,
 } from "../../statics/custom-entities";
-import { CodeEditor } from "payload/dist/admin/components/elements/CodeEditor";
-import { json } from "payload/dist/fields/validations";
-import SelectInput from "payload/dist/admin/components/forms/field-types/Select/Input";
-import Label from "payload/dist/admin/components/forms/Label";
-import Error from "payload/dist/admin/components/forms/Error";
-import { useField } from "payload/components/forms";
-import { Slugs } from "../../collections/Slugs";
-import { useConfig } from "payload/components/utilities";
 const baseClass = "json-field";
 const CustomEntitiesJsonEditorCell = function ({ cellData }) {
   return cellData ? (
@@ -216,4 +216,4 @@ const CustomEntitiesJsonEditorField = function (props) {
   );
 };
 
-export { CustomEntitiesJsonEditorField, CustomEntitiesJsonEditorCell };
+export { CustomEntitiesJsonEditorCell, CustomEntitiesJsonEditorField };

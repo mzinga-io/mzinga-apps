@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useFormFields } from "payload/components/forms";
+import { useFormFields } from "mzinga/components/forms";
+import React, { useEffect, useState } from "react";
 
 const externalScriptsRe = new RegExp(
   /<script.*src=\"([\S]*)\".*>.*<\/script>/gi

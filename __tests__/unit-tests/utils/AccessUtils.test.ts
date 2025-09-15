@@ -1,5 +1,5 @@
+import type { PayloadRequest } from "mzinga/types";
 import { AccessUtils } from "../../../src/utils/AccessUtils";
-import type { PayloadRequest } from "payload/types";
 
 describe("utils", () => {
   describe("AccessUtils", () => {

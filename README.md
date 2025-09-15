@@ -8,60 +8,61 @@
 ![CI/CD](https://img.shields.io/badge/CI/CD-Ready-blueviolet?logo=githubactions)
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 
-**MZinga** is a modern, modular **Content Management System (CMS)** built on top of [Payload CMS](https://payloadcms.com/), designed for high extensibility and seamless integration with **MongoDB**, **Redis**, and **RabbitMQ**. Tailored for SaaS and enterprise environments, MZinga provides a scalable, secure, and developer-friendly platform for managing complex applications and workflows.
+**MZinga** is a modern, modular **Content Management System (CMS)** built on top of [Payload CMS](https://mzinga.io/), designed for high extensibility and seamless integration with **MongoDB**, **Redis**, and **RabbitMQ**. Tailored for SaaS and enterprise environments, MZinga provides a scalable, secure, and developer-friendly platform for managing complex applications and workflows.
 
 ## 🚀 Key Features
 
-- **Payload-Powered Foundation**  
+- **Payload-Powered Foundation**
   Built on Payload CMS for flexible content and data management.
 
-- **Database & Messaging Integration**  
-  - **MongoDB** for NoSQL data storage  
-  - **Redis** for distributed caching and performance optimization  
+- **Database & Messaging Integration**
+
+  - **MongoDB** for NoSQL data storage
+  - **Redis** for distributed caching and performance optimization
   - **RabbitMQ** for asynchronous task orchestration and message-driven workflows
 
-- **Scheduled Tasks**  
+- **Scheduled Tasks**
   Native support for cron-style jobs to automate operations such as ETL pipelines, email dispatch, or data synchronization.
 
-- **Custom Entities**  
+- **Custom Entities**
   Define and manage dynamic, modular data models without touching core logic.
 
-- **Advanced Admin Operations**  
+- **Advanced Admin Operations**
   Extendable admin panel to manage users, roles, content, audit logs, batch operations, and data import/export.
 
-- **Security & Observability**  
-  - Role-based access control (RBAC)  
-  - JWT-based authentication  
-  - Detailed audit logs  
+- **Security & Observability**
+
+  - Role-based access control (RBAC)
+  - JWT-based authentication
+  - Detailed audit logs
   - Built-in system metrics, health checks, and structured logging
 
-- **High Availability & Scalability**  
+- **High Availability & Scalability**
   Multi-region, multi-zone deployment support with automated failover and elastic scaling.
 
-- **Automated Backups**  
+- **Automated Backups**
   Scheduled backups and recovery points to ensure data integrity and service continuity.
 
-- **Built-in Observability**  
+- **Built-in Observability**
   Telemetry and monitoring tools to track system health, performance, and usage in real time.
 
 ## 🧩 Ideal Use Cases
 
-- SaaS platforms with customizable content structures and automation workflows  
-- Enterprise applications that require orchestration of distributed services and asynchronous jobs  
+- SaaS platforms with customizable content structures and automation workflows
+- Enterprise applications that require orchestration of distributed services and asynchronous jobs
 - Cloud-native systems requiring high availability, security, and operational insight
 
 ## 📋 System Overview
 
-| Feature             | Description                                                    |
-|---------------------|----------------------------------------------------------------|
-| **Base Platform**   | Payload CMS                                                    |
-| **Databases**       | MongoDB, Redis, RabbitMQ                                       |
-| **Core Features**   | Scheduled tasks, custom entities, admin operations             |
-| **Security**        | RBAC, JWT authentication, audit logs                           |
-| **Deployment**      | Multi-zone, multi-region, cloud-native                         |
-| **Resilience**      | Automated backups and recovery workflows                       |
-| **Monitoring**      | Built-in observability and telemetry                           |
-
+| Feature           | Description                                        |
+| ----------------- | -------------------------------------------------- |
+| **Base Platform** | Payload CMS                                        |
+| **Databases**     | MongoDB, Redis, RabbitMQ                           |
+| **Core Features** | Scheduled tasks, custom entities, admin operations |
+| **Security**      | RBAC, JWT authentication, audit logs               |
+| **Deployment**    | Multi-zone, multi-region, cloud-native             |
+| **Resilience**    | Automated backups and recovery workflows           |
+| **Monitoring**    | Built-in observability and telemetry               |
 
 # SETUP
 
@@ -80,26 +81,25 @@ To run MZinga locally, you need to configure several environment variables. Thes
 
 ### Required Configuration Keys
 
-| Key                              | Description                                                                                  | Example Value                                  | Required |
-|-----------------------------------|----------------------------------------------------------------------------------------------|------------------------------------------------|----------|
-| `MONGODB_URI`                     | MongoDB connection string.                                                                   | mongodb://admin:admin@localhost:27017/app?authSource=admin&directConnection=true | Yes      |
-| `PAYLOAD_SECRET`                  | Secret key for Payload CMS session and JWT signing.                                          | 4jtCl9pogpqA0Axv                               | Yes      |
-| `PORT`                            | Port on which the MZinga app will run.                                                      | 3031                                           | No       |
-| `PAYLOAD_PUBLIC_SERVER_URL`       | Public URL for the Payload server (used for links, etc.).                                    | http://localhost:3031                          | No       |
-| `TENANT`                          | Tenant identifier (used for multi-tenancy or data separation).                               | local-tenant                                   | Yes       |
-| `ENV`                             | Environment (e.g., `prod`, `dev`).                                                           | prod                                           | Yes       |
-| `DISABLE_TRACING`                 | Set to `1` to disable OpenTelemetry tracing (recommended for local dev).                     | 1                                              | No       |
-| `REDIS_URI`                       | Redis connection string (required if using Redis cache plugin).                              | redis://localhost:6379                         | No*      |
-| `PAYLOAD_PUBLIC_ENABLE_CACHE_PLUGIN` | Enable Redis cache plugin (`true` or `false`).                                              | true                                           | No*      |
-| `DRIVER_OPTS_DEVICE`              | Docker volume driver device path (for local Docker volumes).                                 | /tmp                                           | Yes       |
-| `DRIVER_OPTS_TYPE`                | Docker volume driver type.                                                                   | none                                           | Yes       |
-| `DRIVER_OPTS_OPTIONS`             | Docker volume driver options.                                                                | bind                                           | Yes       |
-| `MZINGA_DOCKER_COMPOSE_REPLICAS`  | Number of replicas for Docker Compose services.                                              | 0                                              | No       |
-| `MONGO_HOST`**                    | Hostname or IP for MongoDB (used in some healthchecks).                                      | 192.168.1.233                                  | Yes       |
+| Key                                  | Description                                                              | Example Value                                                                    | Required |
+| ------------------------------------ | ------------------------------------------------------------------------ | -------------------------------------------------------------------------------- | -------- |
+| `MONGODB_URI`                        | MongoDB connection string.                                               | mongodb://admin:admin@localhost:27017/app?authSource=admin&directConnection=true | Yes      |
+| `PAYLOAD_SECRET`                     | Secret key for Payload CMS session and JWT signing.                      | 4jtCl9pogpqA0Axv                                                                 | Yes      |
+| `PORT`                               | Port on which the MZinga app will run.                                   | 3031                                                                             | No       |
+| `PAYLOAD_PUBLIC_SERVER_URL`          | Public URL for the Payload server (used for links, etc.).                | http://localhost:3031                                                            | No       |
+| `TENANT`                             | Tenant identifier (used for multi-tenancy or data separation).           | local-tenant                                                                     | Yes      |
+| `ENV`                                | Environment (e.g., `prod`, `dev`).                                       | prod                                                                             | Yes      |
+| `DISABLE_TRACING`                    | Set to `1` to disable OpenTelemetry tracing (recommended for local dev). | 1                                                                                | No       |
+| `REDIS_URI`                          | Redis connection string (required if using Redis cache plugin).          | redis://localhost:6379                                                           | No\*     |
+| `PAYLOAD_PUBLIC_ENABLE_CACHE_PLUGIN` | Enable Redis cache plugin (`true` or `false`).                           | true                                                                             | No\*     |
+| `DRIVER_OPTS_DEVICE`                 | Docker volume driver device path (for local Docker volumes).             | /tmp                                                                             | Yes      |
+| `DRIVER_OPTS_TYPE`                   | Docker volume driver type.                                               | none                                                                             | Yes      |
+| `DRIVER_OPTS_OPTIONS`                | Docker volume driver options.                                            | bind                                                                             | Yes      |
+| `MZINGA_DOCKER_COMPOSE_REPLICAS`     | Number of replicas for Docker Compose services.                          | 0                                                                                | No       |
+| `MONGO_HOST`\*\*                     | Hostname or IP for MongoDB (used in some healthchecks).                  | 192.168.1.233                                                                    | Yes      |
 
-
-*`REDIS_URI` and `PAYLOAD_PUBLIC_ENABLE_CACHE_PLUGIN` are only required if you want to enable Redis caching.
-**`MONGO_HOST`'s value changes everytime you connect to a new network. This is the IP address of your machine on the local network. To get its value, open a terminal and run `ifconfig | grep 192`, the IP after inet is your machine's IP.
+\*`REDIS_URI` and `PAYLOAD_PUBLIC_ENABLE_CACHE_PLUGIN` are only required if you want to enable Redis caching.
+\*\*`MONGO_HOST`'s value changes everytime you connect to a new network. This is the IP address of your machine on the local network. To get its value, open a terminal and run `ifconfig | grep 192`, the IP after inet is your machine's IP.
 
 > **Note:** If you use Docker Compose, these variables are automatically picked up from `.env`.
 
@@ -108,11 +108,13 @@ To run MZinga locally, you need to configure several environment variables. Thes
 ## Running Locally with npm
 
 1. **Install dependencies:**
+
    ```sh
    npm install
    ```
 
 2. **Start the application:**
+
    ```sh
    npm run dev
    ```
@@ -162,22 +164,26 @@ In the MZinga domain, the term **webhook notification** refers to both tradition
    ```
    HOOKSURL_<COLLECTION_SLUG>_FIELD_<FIELD_NAME>_<HOOK_TYPE>=<WEBHOOK_URL_OR_RABBITMQ>
    ```
+
    - `<COLLECTION_SLUG>`: The slug of your collection (e.g., `SCHEDULED-TASKS`).
    - `<FIELD_NAME>`: The name of the field (e.g., `LASTEXECUTION`).
    - `<HOOK_TYPE>`: The event type (e.g., `AFTERCHANGE`, `BEFORECHANGE`).
    - `<WEBHOOK_URL_OR_RABBITMQ>`: The HTTP endpoint to notify, or `RABBITMQ` to publish to RabbitMQ.
 
    **Example for RabbitMQ:**
+
    ```
    HOOKSURL_SCHEDULEDTASKS_FIELD_LASTEXECUTION_AFTERCHANGE=RABBITMQ
    ```
 
    **Example for HTTP webhook:**
+
    ```
    HOOKSURL_STORIES_FIELD_TITLE_AFTERCHANGE=https://your-webhook-endpoint.com/notify
    ```
 
 3. **If using RabbitMQ, ensure you have set the `RABBITMQ_URL` variable:**
+
    ```
    RABBITMQ_URL=amqp://guest:guest@localhost:5672/
    ```
@@ -195,6 +201,7 @@ In the MZinga domain, the term **webhook notification** refers to both tradition
 - `BEFOREOPERATION`, `BEFOREVALIDATE`, `BEFORECHANGE`, `AFTERCHANGE`, `BEFOREREAD`, `AFTERREAD`, `BEFOREDELETE`, `AFTERDELETE`, `AFTERERROR`, `BEFORELOGIN`, `AFTERLOGIN`, `AFTERLOGOUT`, `AFTERME`, `AFTERREFRESH`, `AFTERFORGOTPASSWORD` (collection-level)
 
 ---
+
 ## Best Practices
 
 - **[Naming conventions for Git Branches — a Cheatsheet](https://medium.com/@abhay.pixolo/naming-conventions-for-git-branches-a-cheatsheet-8549feca2534)**

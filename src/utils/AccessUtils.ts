@@ -1,11 +1,11 @@
+import type { FieldBase } from "mzinga/dist/fields/config/types";
 import type {
   Access,
   CollectionConfig,
   FieldAccess,
   Where,
-} from "payload/types";
+} from "mzinga/types";
 import { User } from "../collections/Users";
-import type { FieldBase } from "payload/dist/fields/config/types";
 
 export class AccessUtils {
   GetIsAdmin: Access<any, User> = ({ req: { user } }) => {
