@@ -114,7 +114,7 @@ const start = async () => {
     loggerOptions: MZingaLogger.LoggerOptions,
     onInit: () => {
       payload.logger.info(
-        `Payload@v${payloadPkg.version}(tenant=${process.env.TENANT}, env=${
+        `MZinga@v${payloadPkg.version}(tenant=${process.env.TENANT}, env=${
           process.env.ENV
         }) Admin URL: ${payload.getAdminURL()}`
       );
