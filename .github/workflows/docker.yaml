@@ -169,6 +169,7 @@ jobs:
       API_IMAGE: mzinga/payload/gh/api
       BO_IMAGE: mzinga/payload/gh/backoffice
     steps:
+      - uses: ./.github/actions/setup-aks
       - name: Azure Login
         uses: azure/login@v1.5.0
         with:
