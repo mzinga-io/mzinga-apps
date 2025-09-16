@@ -1,4 +1,4 @@
-FROM docker.io/node:22.17-alpine AS base
+FROM docker.io/node:24.8-alpine AS base
 WORKDIR /app
 
 RUN apk update && \
