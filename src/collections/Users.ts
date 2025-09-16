@@ -7,7 +7,7 @@ import { EnvUtils } from "../utils/EnvUtils";
 import { RolesUtils } from "../utils/RolesUtils";
 import { Media } from "./Media";
 import { Slugs } from "./Slugs";
-const Env = ConfigLoader.LoadEnv();
+const Env = ConfigLoader?.LoadEnv() || {};
 
 const access = new AccessUtils();
 const collectionUtils = new CollectionUtils(Slugs.Users);
