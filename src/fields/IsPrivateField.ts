@@ -1,4 +1,4 @@
-import { Field } from "payload/types";
+import { Field } from "mzinga/types";
 
 export const IsPrivateField = {
   Name: "isPrivate",

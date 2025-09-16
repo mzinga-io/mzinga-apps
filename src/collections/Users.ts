@@ -1,13 +1,13 @@
-import type { CollectionConfig } from "payload/types";
+import type { CollectionConfig } from "mzinga/types";
 
-import { Media } from "./Media";
-import { Slugs } from "./Slugs";
-import { AccessUtils } from "../utils";
 import { ConfigLoader } from "../configs/ConfigLoader";
-import { RolesUtils } from "../utils/RolesUtils";
+import { AccessUtils } from "../utils";
 import { CollectionUtils } from "../utils/CollectionUtils";
 import { EnvUtils } from "../utils/EnvUtils";
-const Env = ConfigLoader.LoadEnv();
+import { RolesUtils } from "../utils/RolesUtils";
+import { Media } from "./Media";
+import { Slugs } from "./Slugs";
+const Env = ConfigLoader?.LoadEnv() || {};
 
 const access = new AccessUtils();
 const collectionUtils = new CollectionUtils(Slugs.Users);

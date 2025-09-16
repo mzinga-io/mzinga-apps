@@ -1,4 +1,4 @@
-import { CollectionConfig } from "payload/types";
+import { CollectionConfig } from "mzinga/types";
 import { bySlugEndpoints } from "../endpoints";
 import { IsPrivateField } from "../fields/IsPrivateField";
 import { PublishDateField } from "../fields/PublishDateField";

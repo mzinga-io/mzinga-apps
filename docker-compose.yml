@@ -1,6 +1,6 @@
 services:
   replica_key:
-    image: bash:4.4.23
+    image: bash:5.3.3
     entrypoint:
       - bash
       - -c
@@ -17,7 +17,7 @@ services:
         condition: no
 
   mzinga:
-    image: newesissrl.azurecr.io/mzinga/payload/backoffice:1.6.11
+    image: newesissrl.azurecr.io/mzinga/payload/backoffice:1.9.18
     ports:
       - ${PORT:-3000}:${PORT:-3000}
     volumes:
@@ -45,7 +45,7 @@ services:
         max_attempts: 3
         window: 120s
   database:
-    image: percona/percona-server-mongodb:6.0.24-19
+    image: percona/percona-server-mongodb:8.0.12-4
     depends_on:
       - replica_key
     ports:
@@ -79,7 +79,7 @@ services:
       start_interval: 1s
       retries: 30
   messagebus:
-    image: rabbitmq:4.1.2-management-alpine
+    image: rabbitmq:4.1.4-management-alpine
     hostname: rabbitmq
     ports:
       - ${RABBITMQ_PORT:-5672}:5672
@@ -90,7 +90,7 @@ services:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-guest}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-guest}
   cache:
-    image: redis:7.4.5-alpine
+    image: redis:8.2.1-alpine
     ports:
       - ${REDIS_PORT:-6379}:6379
     deploy:

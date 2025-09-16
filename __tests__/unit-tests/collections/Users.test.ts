@@ -1,4 +1,3 @@
-import type { FieldBase } from "payload/types";
 import Users from "../../../src/collections/Users";
 
 describe("collections", () => {

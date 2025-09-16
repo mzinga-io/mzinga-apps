@@ -1,12 +1,12 @@
 import { loader } from "@monaco-editor/react";
-import { webpackBundler } from "@payloadcms/bundler-webpack";
-import { mongooseAdapter } from "@payloadcms/db-mongodb";
-import { postgresAdapter } from "@payloadcms/db-postgres";
-import { slateEditor } from "@payloadcms/richtext-slate";
+import { webpackBundler } from "@mzinga/bundler-webpack";
+import { mongooseAdapter } from "@mzinga/db-mongodb";
+import { postgresAdapter } from "@mzinga/db-postgres";
+import { slateEditor } from "@mzinga/richtext-slate";
+import payload from "mzinga";
+import { buildConfig, Config } from "mzinga/config";
+import type { SanitizedCollectionConfig } from "mzinga/types";
 import path from "path";
-import payload from "payload";
-import { buildConfig, Config } from "payload/config";
-import type { SanitizedCollectionConfig } from "payload/types";
 import { collections } from "./collections";
 import { Slugs } from "./collections/Slugs";
 import AdministerInstance from "./components/AdministerInstance";
@@ -157,7 +157,8 @@ const config = {
             ...config.resolve.alias,
             redis: false,
             "rabbitmq-client": false,
-            payload: path.resolve("./node_modules/payload"),
+            "node-fetch": false,
+            payload: path.resolve("./node_modules/mzinga"),
           },
         },
       };

@@ -1,4 +1,4 @@
-FROM docker.io/node:22.17-alpine AS base
+FROM docker.io/node:24.8-alpine AS base
 WORKDIR /app
 
 RUN apk update && \
@@ -43,7 +43,7 @@ RUN chmod +x /docker-entrypoint/docker-entrypoint.sh
 
 ENTRYPOINT ["/docker-entrypoint/docker-entrypoint.sh"]
 
-ENV PAYLOAD_CONFIG_PATH=dist/payload.config.js \
+ENV PAYLOAD_CONFIG_PATH=dist/mzinga.config.js \
     NODE_ENV=production 
 
 CMD ["node", "--require", "./dist/tracing.js", "dist/server.js"]

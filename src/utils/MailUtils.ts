@@ -1,4 +1,4 @@
-import { Payload } from "payload";
+import { Payload } from "mzinga";
 import { MZingaLogger } from "../utils/MZingaLogger";
 
 export class MailUtils {

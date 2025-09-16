@@ -1,4 +1,4 @@
-import { RichTextElement } from "@payloadcms/richtext-slate";
+import { RichTextElement } from "@mzinga/richtext-slate";
 import largeBody from "./largeBody";
 
 const elements: RichTextElement[] = [

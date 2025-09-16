@@ -1,14 +1,14 @@
-import { CollectionConfig } from "payload/types";
-import { Slugs } from "./Slugs";
-import { AccessUtils, ConfigUtils, SlugUtils } from "../utils";
-import { SlugField } from "../fields";
-import { bySlugEndpoints } from "../endpoints";
-import collectionSchema from "payload/dist/collections/config/schema";
+import collectionSchema from "mzinga/dist/collections/config/schema";
+import { CollectionConfig } from "mzinga/types";
 import {
-  CustomEntitiesJsonEditorField,
   CustomEntitiesJsonEditorCell,
+  CustomEntitiesJsonEditorField,
 } from "../components/fields/CustomEntitiesJsonEditor";
+import { bySlugEndpoints } from "../endpoints";
+import { SlugField } from "../fields";
+import { AccessUtils, ConfigUtils, SlugUtils } from "../utils";
 import { FSUtils } from "../utils/FSUtils";
+import { Slugs } from "./Slugs";
 
 const access = new AccessUtils();
 const CustomEntities: CollectionConfig = {

@@ -1,11 +1,11 @@
-import { CollectionConfig } from "payload/types";
-import { Slugs } from "./Slugs";
+import payload from "mzinga";
+import { CollectionConfig } from "mzinga/types";
 import { AccessUtils } from "../utils";
-import payload from "payload";
-import { TextUtils } from "../utils/TextUtils";
-import { MailUtils } from "../utils/MailUtils";
 import { CollectionUtils } from "../utils/CollectionUtils";
+import { MailUtils } from "../utils/MailUtils";
 import { MZingaLogger } from "../utils/MZingaLogger";
+import { TextUtils } from "../utils/TextUtils";
+import { Slugs } from "./Slugs";
 
 const access = new AccessUtils();
 const collectionUtils = new CollectionUtils(Slugs.Communications);
