@@ -45,7 +45,7 @@ services:
         max_attempts: 3
         window: 120s
   database:
-    image: percona/percona-server-mongodb:6.0.24-19
+    image: percona/percona-server-mongodb:8.0.12-4
     depends_on:
       - replica_key
     ports:
