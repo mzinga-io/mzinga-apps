@@ -137,11 +137,23 @@ To run MZinga locally, you need to configure several environment variables. Thes
 ## Running with Docker Compose
 
 1. **Ensure your `.env` file is configured.**
-2. **Start all services:**
+1. **Create needed volume folder (and/or clean them up if needed)**
+
+   ```sh
+   echo "Cleanup"
+   rm -rf /tmp/database /tmp/mzinga /tmp/messagebus
+   ```
+
+   ```sh
+   echo "Create"
+   mkdir -p /tmp/database /tmp/mzinga /tmp/messagebus
+   ```
+
+1. **Start all services:**
    ```sh
    docker compose up
    ```
-3. **Access the app:**
+1. **Access the app:**
    Open [http://localhost:3031](http://localhost:3000) (or the port you set in `PORT`).
 
 ---
@@ -150,7 +162,7 @@ To run MZinga locally, you need to configure several environment variables. Thes
 
 - For development, you can use the default values provided in the `.env` example.
 - If you change ports or credentials, update your `.env` and `docker-compose.yml` accordingly.
-- For advanced configuration, see the comments in `docker-compose.yml` and `src/payload.config.ts`.
+- For advanced configuration, see the comments in `docker-compose.yml` and `src/mzinga.config.ts`.
 
 ## Webhook Notifications in MZinga
 
