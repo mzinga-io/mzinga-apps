@@ -1,6 +1,6 @@
 services:
   replica_key:
-    image: bash:4.4.23
+    image: bash:5.3.3
     entrypoint:
       - bash
       - -c
