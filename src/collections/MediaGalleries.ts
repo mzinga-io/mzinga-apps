@@ -1,19 +1,19 @@
-import { CollectionConfig } from "payload/types";
-import { Slugs } from "./Slugs";
-import { AccessUtils } from "../utils";
+import { CollectionConfig } from "mzinga/types";
+import { bySlugEndpoints } from "../endpoints";
 import {
-  TitleField,
-  ThumbField,
-  TagsField,
-  SummaryField,
-  SlugField,
-  IsPrivateField,
-  PublishDateField,
   AuthorField,
   CopyrightField,
+  IsPrivateField,
+  PublishDateField,
+  SlugField,
+  SummaryField,
+  TagsField,
+  ThumbField,
+  TitleField,
 } from "../fields";
-import { bySlugEndpoints } from "../endpoints";
+import { AccessUtils } from "../utils";
 import { CollectionUtils } from "../utils/CollectionUtils";
+import { Slugs } from "./Slugs";
 const access = new AccessUtils();
 const collectionUtils = new CollectionUtils(Slugs.MediaGalleries);
 const MediaGalleries: CollectionConfig = {

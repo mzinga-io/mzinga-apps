@@ -1,6 +1,6 @@
 import fs from "fs";
+import { CollectionConfig } from "mzinga/types";
 import path from "path";
-import { CollectionConfig } from "payload/types";
 import { LoadResult, SafeAccess } from "../types";
 import { FSUtils } from "../utils/FSUtils";
 

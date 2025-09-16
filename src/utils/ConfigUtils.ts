@@ -1,27 +1,27 @@
 import { cachePlugin } from "@aengz/payload-redis-cache";
+import formBuilder from "@mzinga/plugin-form-builder";
+import seo from "@mzinga/plugin-seo";
 import { exportCollectionsPlugin } from "@newesissrl/payload-exportcollections-plugin";
 import LoginButton from "@newesissrl/payload-zitadel-plugin/dist/components/LoginButton";
 import { ZitadelStrategyPlugin } from "@newesissrl/payload-zitadel-plugin/dist/plugins/ZitadelStrategyPlugin";
-import formBuilder from "@payloadcms/plugin-form-builder";
-import seo from "@payloadcms/plugin-seo";
-import payload from "payload";
-import { swagger } from "payload-swagger";
-import type { Config, SanitizedConfig } from "payload/config";
-import sanitizeCollection from "payload/dist/collections/config/sanitize";
-import collectionSchema from "payload/dist/collections/config/schema";
-import { Plugin } from "payload/dist/config/types";
+import payload from "mzinga";
+import type { Config, SanitizedConfig } from "mzinga/config";
+import sanitizeCollection from "mzinga/dist/collections/config/sanitize";
+import collectionSchema from "mzinga/dist/collections/config/schema";
+import { Plugin } from "mzinga/dist/config/types";
 import type {
   ArrayField,
   FieldBase,
   GroupField,
   RelationshipField,
   UploadField,
-} from "payload/dist/fields/config/types";
+} from "mzinga/dist/fields/config/types";
 import type {
   CollectionConfig,
   Field,
   SanitizedCollectionConfig,
-} from "payload/types";
+} from "mzinga/types";
+// import { swagger } from "payload-swagger";
 import { Slugs } from "../collections/Slugs";
 import { ConfigLoader } from "../configs";
 import { bySlugEndpoints } from "../endpoints";
@@ -563,17 +563,18 @@ export class ConfigUtils {
       ],
     });
     const plugins = [] as any[];
-    plugins.push(
-      swagger({
-        exclude: {
-          authPaths: true,
-          authCollection: true,
-        },
-        routes: {
-          swagger: "/swagger",
-        },
-      })
-    );
+    //TODO: migrate payload-swagger to 'mzinga'
+    // plugins.push(
+    //   swagger({
+    //     exclude: {
+    //       authPaths: true,
+    //       authCollection: true,
+    //     },
+    //     routes: {
+    //       swagger: "/swagger",
+    //     },
+    //   })
+    // );
     plugins.push(
       formBuilder({
         beforeEmail:

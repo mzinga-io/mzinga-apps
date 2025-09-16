@@ -1,4 +1,4 @@
-import type { FieldBase } from "payload/types";
+import type { FieldBase } from "mzinga/types";
 import * as fields from "../../../src/fields";
 
 describe("fields", () => {

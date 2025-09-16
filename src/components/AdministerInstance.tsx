@@ -1,7 +1,7 @@
+import { Button } from "mzinga/components/elements";
+import { useConfig } from "mzinga/components/utilities";
 import React, { useEffect, useState } from "react";
-import { Button } from "payload/components/elements";
 import { createUseStyles } from "react-jss";
-import { useConfig } from "payload/components/utilities";
 import { ToastContainer, toast } from "react-toastify";
 const useStyles = createUseStyles({
   buttons: {

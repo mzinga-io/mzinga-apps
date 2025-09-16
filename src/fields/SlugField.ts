@@ -1,4 +1,4 @@
-import { Field, FieldHook } from "payload/types";
+import { Field, FieldHook } from "mzinga/types";
 import { SlugUtils } from "../utils/SlugUtils";
 
 const slugifyHook: FieldHook = ({ data, value, originalDoc }) => {

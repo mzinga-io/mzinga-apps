@@ -1,5 +1,5 @@
-import { FieldBase } from "payload/dist/fields/config/types";
-import { CollectionConfig, Field } from "payload/types";
+import { FieldBase } from "mzinga/dist/fields/config/types";
+import { CollectionConfig, Field } from "mzinga/types";
 import { messageBusService } from "../messageBusService";
 import { EnvConfig } from "../types";
 import { MZingaLogger } from "../utils/MZingaLogger";

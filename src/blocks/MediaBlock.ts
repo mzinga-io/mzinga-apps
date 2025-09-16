@@ -1,4 +1,4 @@
-import { Block } from "payload/types";
+import { Block } from "mzinga/types";
 import { Slugs } from "../collections/Slugs";
 
 export const MediaBlock: Block = {

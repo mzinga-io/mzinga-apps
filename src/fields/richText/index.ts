@@ -1,13 +1,13 @@
-import { RichTextField } from "payload/dist/fields/config/types";
+import {
+  RichTextElement,
+  RichTextLeaf,
+  slateEditor,
+} from "@mzinga/richtext-slate";
+import { RichTextField } from "mzinga/dist/fields/config/types";
 import deepMerge from "../../utils/deepMerge";
+import link from "../link";
 import elements from "./elements";
 import leaves from "./leaves";
-import link from "../link";
-import {
-  slateEditor,
-  RichTextLeaf,
-  RichTextElement,
-} from "@payloadcms/richtext-slate";
 
 type RichText = (
   overrides?: Partial<RichTextField>,

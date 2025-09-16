@@ -1,7 +1,7 @@
-import { CollectionConfig } from "payload/types";
-import { Slugs } from "./Slugs";
-import { AccessUtils } from "../utils";
+import { CollectionConfig } from "mzinga/types";
 import IconURLField from "../fields/IconURLField";
+import { AccessUtils } from "../utils";
+import { Slugs } from "./Slugs";
 const access = new AccessUtils();
 const AlertTypes: CollectionConfig = {
   slug: Slugs.AlertTypes,

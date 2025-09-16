@@ -1,4 +1,4 @@
-import { Field } from "payload/types";
+import { Field } from "mzinga/types";
 
 export const NameReadOnlyField = {
   Name: "name",
@@ -15,7 +15,7 @@ export const NameReadOnlyField = {
       hooks: {
         beforeChange: [
           ({ operation, originalDoc, data }) => {
-            if (operation === 'create') {
+            if (operation === "create") {
               return data.name;
             }
             return originalDoc.name;

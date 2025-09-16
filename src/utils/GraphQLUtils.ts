@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import { printSchema } from "graphql";
-import type { Payload } from "payload";
+import type { Payload } from "mzinga";
 
 export const GraphQLUtils = {
   generateSchema: async (payload: Payload) => {

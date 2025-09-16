@@ -1,29 +1,29 @@
-import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
-import { traceProviderConfig } from "./utils/TraceProviderConfig";
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import {
   defaultResource,
-  resourceFromAttributes,
   detectResources,
   envDetector,
-  osDetector,
   hostDetector,
+  osDetector,
   processDetector,
+  resourceFromAttributes,
 } from "@opentelemetry/resources";
-const ATTR_SERVICE_NAMESPACE = "service.namespace";
-import {
-  ATTR_SERVICE_NAME,
-  ATTR_SERVICE_VERSION,
-} from "@opentelemetry/semantic-conventions";
-import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
+import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
 import {
   NodeTracerProvider,
   SimpleSpanProcessor,
 } from "@opentelemetry/sdk-trace-node";
+import {
+  ATTR_SERVICE_NAME,
+  ATTR_SERVICE_VERSION,
+} from "@opentelemetry/semantic-conventions";
+import { traceProviderConfig } from "./utils/TraceProviderConfig";
+const ATTR_SERVICE_NAMESPACE = "service.namespace";
 
+import { diag, DiagConsoleLogger, DiagLogLevel } from "@opentelemetry/api";
 import { registerInstrumentations } from "@opentelemetry/instrumentation";
 import { containerDetector } from "@opentelemetry/resource-detector-container";
-import { diag, DiagConsoleLogger, DiagLogLevel } from "@opentelemetry/api";
 import { LokiExporter } from "./lokiExporter";
 require("dotenv").config();
 const DISABLE_TRACING = (process.env.DISABLE_TRACING || "0") == "1";
@@ -35,7 +35,7 @@ function main() {
     return;
   }
   const pkg = require("../package.json");
-  const payloadPkg = require("payload/package.json");
+  const mzingaPkg = require("mzinga/package.json");
   const IDENTIFIER = [
     process.env.TENANT || (Math.random() + 1).toString(36).substring(7),
     process.env.ENV,
@@ -61,7 +61,7 @@ function main() {
     resourceFromAttributes({
       [ATTR_SERVICE_NAME]: serviceName,
       [ATTR_SERVICE_VERSION]: pkg.version,
-      payload_version: payloadPkg.version,
+      payload_version: mzingaPkg.version,
       [ATTR_SERVICE_NAMESPACE]: IDENTIFIER,
       env: process.env.ENV,
       tenant: process.env.TENANT,

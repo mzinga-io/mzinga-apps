@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { fieldTypes } from "payload/dist/admin/components/forms/field-types";
-import FileDetails from "payload/dist/admin/components/elements/FileDetails";
-import { useConfig } from "payload/components/utilities";
-import { useField } from "payload/components/forms";
+import { useField } from "mzinga/components/forms";
+import { useConfig } from "mzinga/components/utilities";
+import FileDetails from "mzinga/dist/admin/components/elements/FileDetails";
+import { fieldTypes } from "mzinga/dist/admin/components/forms/field-types";
+import React, { useEffect, useState } from "react";
 
 const UnauthorizedUploadField: React.FC = (props: any) => {
   const {

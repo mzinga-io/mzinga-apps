@@ -4,12 +4,12 @@ import { ZitadelRoutes } from "@newesissrl/payload-zitadel-plugin/dist/routes";
 import assert from "assert";
 import express from "express";
 import fs from "fs/promises";
+import payload from "mzinga";
+import type { Collection } from "mzinga/dist/collections/config/types";
+import payloadPkg from "mzinga/package.json";
+import { PayloadRequest } from "mzinga/types";
 import net from "net";
 import path from "path";
-import payload from "payload";
-import type { Collection } from "payload/dist/collections/config/types";
-import payloadPkg from "payload/package.json";
-import { PayloadRequest } from "payload/types";
 import vm from "vm";
 import { CustomEntities } from "./customizations/CustomEntities";
 import { messageBusService } from "./messageBusService";
@@ -114,7 +114,7 @@ const start = async () => {
     loggerOptions: MZingaLogger.LoggerOptions,
     onInit: () => {
       payload.logger.info(
-        `Payload@v${payloadPkg.version}(tenant=${process.env.TENANT}, env=${
+        `MZinga@v${payloadPkg.version}(tenant=${process.env.TENANT}, env=${
           process.env.ENV
         }) Admin URL: ${payload.getAdminURL()}`
       );

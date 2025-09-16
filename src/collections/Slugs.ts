@@ -1,5 +1,5 @@
 import { ConfigLoader } from "../configs/ConfigLoader";
-const Env = ConfigLoader.LoadEnv();
+const Env = ConfigLoader?.LoadEnv() || {};
 
 const Slugs = {
   Users: "users",

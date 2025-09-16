@@ -1,4 +1,4 @@
-import { CollectionConfig } from "payload/types";
+import { CollectionConfig } from "mzinga/types";
 import { AuthorField, NameField } from "../../fields";
 import { AccessUtils } from "../../utils";
 import { DBUtils } from "../../utils/DBUtils";

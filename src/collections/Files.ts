@@ -1,4 +1,4 @@
-import { CollectionConfig } from "payload/types";
+import { CollectionConfig } from "mzinga/types";
 import { bySlugEndpoints } from "../endpoints";
 import { SlugField, TagsField } from "../fields";
 import { AuthorField } from "../fields/AuthorField";

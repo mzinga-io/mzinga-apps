@@ -1,8 +1,8 @@
-import { CollectionConfig } from "payload/types";
-import { Slugs } from "../Slugs";
-import { AccessUtils } from "../../utils";
+import { CollectionConfig } from "mzinga/types";
 import { ByField, NameField } from "../../fields";
+import { AccessUtils } from "../../utils";
 import { MZingaLogger } from "../../utils/MZingaLogger";
+import { Slugs } from "../Slugs";
 const access = new AccessUtils();
 const Projects: CollectionConfig = {
   slug: Slugs.Projects,

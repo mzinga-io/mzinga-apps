@@ -1,5 +1,5 @@
-import { CollectionAdminOptions } from "payload/dist/collections/config/types";
-import { CollectionConfig, Field } from "payload/types";
+import { CollectionAdminOptions } from "mzinga/dist/collections/config/types";
+import { CollectionConfig, Field } from "mzinga/types";
 
 export type SendGridTransportOptions = {
   apiKey: string;

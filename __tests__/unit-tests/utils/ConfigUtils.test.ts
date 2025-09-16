@@ -1,18 +1,13 @@
-import Stories from "../../../src/collections/Stories";
-import Users from "../../../src/collections/Users";
-import Tags from "../../../src/collections/Tags";
-import Media from "../../../src/collections/Media";
-import { ConfigUtils } from "../../../src/utils";
-import { Slugs } from "../../../src/collections/Slugs";
-import type {
-  FieldBase,
-  CollectionConfig,
-  RowField,
-  FieldHookArgs,
-} from "payload/types";
+import type { Config } from "mzinga/config";
+import type { CollectionConfig, FieldBase, RowField } from "mzinga/types";
 import dataMock from "../../../__mocks__/dataMock";
+import Media from "../../../src/collections/Media";
+import { Slugs } from "../../../src/collections/Slugs";
+import Stories from "../../../src/collections/Stories";
+import Tags from "../../../src/collections/Tags";
+import Users from "../../../src/collections/Users";
 import type { CollectionConfigWithExtends } from "../../../src/types";
-import type { Config } from "payload/config";
+import { ConfigUtils } from "../../../src/utils";
 const collections = [Users, Stories, Tags, Media];
 
 describe("utils", () => {

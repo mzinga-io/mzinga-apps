@@ -1,9 +1,9 @@
-import { CollectionConfig, PayloadRequest } from "payload/types";
-import { Slugs } from "../Slugs";
-import { AccessUtils } from "../../utils";
-import { ByField, NameField } from "../../fields";
-import { MZingaLogger } from "../../utils/MZingaLogger";
+import { CollectionConfig } from "mzinga/types";
+import { ByField } from "../../fields";
 import { NameReadOnlyField } from "../../fields/NameReadOnlyField";
+import { AccessUtils } from "../../utils";
+import { MZingaLogger } from "../../utils/MZingaLogger";
+import { Slugs } from "../Slugs";
 const access = new AccessUtils();
 const Organizations: CollectionConfig = {
   slug: Slugs.Organizations,
@@ -11,8 +11,8 @@ const Organizations: CollectionConfig = {
   admin: {
     group: "Owners",
     useAsTitle: NameReadOnlyField.Name,
-    defaultColumns: [NameReadOnlyField.Name, 'commonName', ByField.Name],
-    listSearchableFields: [NameReadOnlyField.Name, 'commonName', ByField.Name],
+    defaultColumns: [NameReadOnlyField.Name, "commonName", ByField.Name],
+    listSearchableFields: [NameReadOnlyField.Name, "commonName", ByField.Name],
   },
   hooks: {
     beforeDelete: [
@@ -57,8 +57,8 @@ const Organizations: CollectionConfig = {
   fields: [
     NameReadOnlyField.Get(),
     {
-      name:`commonName`,
-      type:"text",
+      name: `commonName`,
+      type: "text",
     },
     {
       name: "invoices",
