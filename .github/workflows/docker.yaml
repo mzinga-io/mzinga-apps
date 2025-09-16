@@ -120,10 +120,10 @@ jobs:
 
       - name: Deploy API and Backoffice
         run: |
-          kubectl set image deployment/mzinga-api api=$ACR_NAME.azurecr.io/${{ needs.set-version.outputs.api_image }}:${{ needs.set-version.outputs.version }} -n $TEST_NAMESPACE
+          kubectl set image deployment/mzinga-api api=$ACR_NAME.azurecr.io/${{ needs.set-version.outputs.api_image }}:${{ needs.set-version.outputs.version }} -n $TEST_NAMESPACE --request-timeout "3m"
           kubectl rollout status deployment/mzinga-api -n $TEST_NAMESPACE
 
-          kubectl set image deployment/mzinga-bo backoffice=$ACR_NAME.azurecr.io/${{ needs.set-version.outputs.bo_image }}:${{ needs.set-version.outputs.version }} -n $TEST_NAMESPACE
+          kubectl set image deployment/mzinga-bo backoffice=$ACR_NAME.azurecr.io/${{ needs.set-version.outputs.bo_image }}:${{ needs.set-version.outputs.version }} -n $TEST_NAMESPACE --request-timeout "3m"
           kubectl rollout status deployment/mzinga-bo -n $TEST_NAMESPACE
 
   run-tests:
@@ -199,7 +199,7 @@ jobs:
                 return 1
               fi
 
-              kubectl set image deployment/$deployment $container=$ACR_NAME.azurecr.io/$repository:$previous_tag -n $TEST_NAMESPACE
+              kubectl set image deployment/$deployment $container=$ACR_NAME.azurecr.io/$repository:$previous_tag -n $TEST_NAMESPACE --request-timeout "3m"
               kubectl rollout status deployment/$deployment -n $TEST_NAMESPACE
 
               az acr repository delete --name $ACR_NAME --image $repository:$VERSION --yes || true
