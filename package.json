@@ -45,7 +45,7 @@
     "@mzinga/plugin-seo": "0.0.6",
     "@mzinga/richtext-slate": "0.0.6",
     "@newesissrl/nodemailer-sendgrid": "^1.0.0",
-    "@newesissrl/payload-exportcollections-plugin": "1.0.0",
+    "@newesissrl/payload-exportcollections-plugin": "1.0.1",
     "@newesissrl/payload-zitadel-plugin": "1.0.0",
     "@opentelemetry/api": "1.9.0",
     "@opentelemetry/auto-instrumentations-node": "^0.64.1",
