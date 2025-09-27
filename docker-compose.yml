@@ -17,7 +17,7 @@ services:
         condition: no
 
   mzinga:
-    image: newesissrl.azurecr.io/mzinga/payload/backoffice:1.9.21
+    image: newesissrl.azurecr.io/mzinga/payload/gh/backoffice:0.2.54
     ports:
       - ${PORT:-3000}:${PORT:-3000}
     volumes:
