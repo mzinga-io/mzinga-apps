@@ -83,7 +83,7 @@
     "sass": "^1.90.0",
     "stream-browserify": "^3.0.0",
     "tty-browserify": "^0.0.1",
-    "typescript": "5.9.2",
+    "typescript": "5.9.3",
     "util": "^0.12.5",
     "uuid": "^11.0.0"
   },
