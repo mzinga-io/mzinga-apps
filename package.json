@@ -59,7 +59,7 @@
     "@opentelemetry/sdk-node": "^0.205.0",
     "@opentelemetry/sdk-trace-base": "2.0.1",
     "@opentelemetry/sdk-trace-node": "2.1.0",
-    "@opentelemetry/semantic-conventions": "1.36.0",
+    "@opentelemetry/semantic-conventions": "1.37.0",
     "@sendgrid/mail": "^8.0.0",
     "assert": "^2.0.0",
     "axios": "^1.12.2",
