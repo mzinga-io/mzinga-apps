@@ -90,7 +90,7 @@ services:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-guest}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-guest}
   cache:
-    image: redis:8.2.1-alpine
+    image: redis:8.2.2-alpine
     ports:
       - ${REDIS_PORT:-6379}:6379
     deploy:
