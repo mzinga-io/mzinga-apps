@@ -72,6 +72,7 @@ Before you begin, ensure you have the following tools installed on your system:
 2. **npm:** Node.js package manager. Comes bundled with Node.js.
 3. **Docker:** Required for containerizing the application. [Download Docker.](https://docs.docker.com/desktop/install/)
 4. **Git:** Version control system. [Download Git.](https://git-scm.com/downloads)
+5. **Azure CLI:** Required for authenticating with the private Docker registry. [Download Azure CLI.](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 
 ## Basic Configuration
 
@@ -142,8 +143,18 @@ To run MZinga locally, you need to configure several environment variables. Thes
    DRIVER_OPTS_OPTIONS="bind"
    DRIVER_OPTS_DEVICE=/tmp
    ```
+2. **Authenticate with Azure:** The application image is stored in a private Azure Container Registry. You must log in before you can pull the image.
+   ```sh
+   # List your available Azure subscriptions
+   az account list --output table
 
-1. **Create needed volume folder (and/or clean them up if needed)**
+   # Set the subscription that has access to the 'newesissrl' container registry
+   az account set --subscription [newesis_subscription_id]
+
+   # Log in to the Azure Container Registry
+   az acr login --name newesissrl
+   ```
+3. **Create needed volume folder (and/or clean them up if needed)**
 
    ```sh
    echo "Cleanup"
@@ -155,12 +166,12 @@ To run MZinga locally, you need to configure several environment variables. Thes
    mkdir -p /tmp/database /tmp/mzinga /tmp/messagebus
    ```
 
-1. **Start all services:**
+4. **Start all services:**
    ```sh
    docker compose up
    ```
 1. **Access the app:**
-   Open [http://localhost:3031](http://localhost:3000) (or the port you set in `PORT`).
+   Open [http://localhost:3000](http://localhost:3000) (or the port you set in `PORT`).
 
 ---
 
