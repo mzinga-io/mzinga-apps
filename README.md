@@ -16,7 +16,6 @@
   Built on Payload CMS for flexible content and data management.
 
 - **Database & Messaging Integration**
-
   - **MongoDB** for NoSQL data storage
   - **Redis** for distributed caching and performance optimization
   - **RabbitMQ** for asynchronous task orchestration and message-driven workflows
@@ -31,7 +30,6 @@
   Extendable admin panel to manage users, roles, content, audit logs, batch operations, and data import/export.
 
 - **Security & Observability**
-
   - Role-based access control (RBAC)
   - JWT-based authentication
   - Detailed audit logs
@@ -136,7 +134,15 @@ To run MZinga locally, you need to configure several environment variables. Thes
 
 ## Running with Docker Compose
 
-1. **Ensure your `.env` file is configured.**
+1. **Ensure your `.env` file is configured as follow:**
+
+   ```sh
+   MONGO_HOST=[your_192_ip_address]
+   DRIVER_OPTS_TYPE="none"
+   DRIVER_OPTS_OPTIONS="bind"
+   DRIVER_OPTS_DEVICE=/tmp
+   ```
+
 1. **Create needed volume folder (and/or clean them up if needed)**
 
    ```sh
