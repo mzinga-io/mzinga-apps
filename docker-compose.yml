@@ -6,10 +6,12 @@ services:
       - -c
       - |
         apk update && apk add openssl
+        echo "Generating replica key..."
         openssl rand -base64 756 > /data/custom.replica.key
         chmod 400 /data/custom.replica.key
         chown 999:999 /data/custom.replica.key
         sleep 30
+        echo "Replica key generated"
     volumes:
       - mongodb_data:/data
     deploy:
@@ -27,7 +29,7 @@ services:
       - messagebus
       - cache
     environment:
-      - MONGODB_URI=mongodb://${MONGO_ROOTUSER:-admin}:${MONGO_ROOTPASSWORD:-admin}@database:${MONGO_PORT:-27017}/app?authSource=admin
+      - MONGODB_URI=mongodb://${MONGO_ROOTUSER:-admin}:${MONGO_ROOTPASSWORD:-admin}@database:${MONGO_PORT:-27017}/app?authSource=admin&directConnection=true
       - PAYLOAD_SECRET=${PAYLOAD_SECRET:-secret_key}
       - PORT=${PORT:-3000}
       - DISABLE_TRACING=${DISABLE_TRACING:-1}
