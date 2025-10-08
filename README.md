@@ -8,7 +8,7 @@
 ![CI/CD](https://img.shields.io/badge/CI/CD-Ready-blueviolet?logo=githubactions)
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 
-**MZinga** is a modern, modular **Content Management System (CMS)** built on top of [Payload CMS](https://payloadcms.com/) version 2, forked by Newesis srl as [Mzinga Core] (https://github.com/mzinga-io/mzinga-core), designed for high extensibility and seamless integration with **MongoDB**, **Redis**, and **RabbitMQ**. Tailored for SaaS and enterprise environments, MZinga provides a scalable, secure, and developer-friendly platform for managing complex applications and workflows.
+**MZinga** is a modern, modular **Content Management System (CMS)** built on top of [Payload CMS](https://payloadcms.com/) version 2, forked by Newesis srl as [Mzinga Core](https://github.com/mzinga-io/mzinga-core), designed for high extensibility and seamless integration with **MongoDB**, **Redis**, and **RabbitMQ**. Tailored for SaaS and enterprise environments, MZinga provides a scalable, secure, and developer-friendly platform for managing complex applications and workflows.
 
 ## 🚀 Key Features
 
@@ -123,10 +123,13 @@ To run MZinga locally, you need to configure several environment variables. Thes
 
 4. **Required services:**
    - **MongoDB:** You can run a local MongoDB instance with:
+
      ```sh
      docker run --rm -it -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=admin mongo:latest
      ```
+
    - **Redis (optional, for cache):**
+
      ```sh
      docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:latest
      ```
@@ -143,18 +146,8 @@ To run MZinga locally, you need to configure several environment variables. Thes
    DRIVER_OPTS_OPTIONS="bind"
    DRIVER_OPTS_DEVICE=/tmp
    ```
-2. **Authenticate with Azure:** The application image is stored in a private Azure Container Registry. You must log in before you can pull the image.
-   ```sh
-   # List your available Azure subscriptions
-   az account list --output table
 
-   # Set the subscription that has access to the 'newesissrl' container registry
-   az account set --subscription [newesis_subscription_id]
-
-   # Log in to the Azure Container Registry
-   az acr login --name newesissrl
-   ```
-3. **Create needed volume folder (and/or clean them up if needed)**
+2. **Create needed volume folder (and/or clean them up if needed)**
 
    ```sh
    echo "Cleanup"
@@ -166,11 +159,13 @@ To run MZinga locally, you need to configure several environment variables. Thes
    mkdir -p /tmp/database /tmp/mzinga /tmp/messagebus
    ```
 
-4. **Start all services:**
+3. **Start all services:**
+
    ```sh
    docker compose up
    ```
-1. **Access the app:**
+
+4. **Access the app:**
    Open [http://localhost:3000](http://localhost:3000) (or the port you set in `PORT`).
 
 ---
@@ -190,7 +185,7 @@ In the MZinga domain, the term **webhook notification** refers to both tradition
 1. **Choose the collection and field you want to monitor.**
 2. **Set an environment variable in your `.env` file using the following format:**
 
-   ```
+   ```bash
    HOOKSURL_<COLLECTION_SLUG>_FIELD_<FIELD_NAME>_<HOOK_TYPE>=<WEBHOOK_URL_OR_RABBITMQ>
    ```
 
@@ -201,19 +196,19 @@ In the MZinga domain, the term **webhook notification** refers to both tradition
 
    **Example for RabbitMQ:**
 
-   ```
+   ```bash
    HOOKSURL_SCHEDULEDTASKS_FIELD_LASTEXECUTION_AFTERCHANGE=RABBITMQ
    ```
 
    **Example for HTTP webhook:**
 
-   ```
+   ```bash
    HOOKSURL_STORIES_FIELD_TITLE_AFTERCHANGE=https://your-webhook-endpoint.com/notify
    ```
 
 3. **If using RabbitMQ, ensure you have set the `RABBITMQ_URL` variable:**
 
-   ```
+   ```bash
    RABBITMQ_URL=amqp://guest:guest@localhost:5672/
    ```
 
