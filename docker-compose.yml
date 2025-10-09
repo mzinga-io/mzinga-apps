@@ -108,7 +108,7 @@ services:
     volumes:
       - ./compose-scripts:/scripts
       - mzinga_data:/app/${TENANT:-local}
-    command: ["./compose-scripts/ce-enabler.sh"]
+    command: ["/scripts/ce-enabler.sh"]
     environment:
       - TENANT=${TENANT:-local}
     deploy:

@@ -119,7 +119,7 @@ To run MZinga locally, you need to configure several environment variables. Thes
    ```
 
 3. **Access the app:**
-   Open [http://localhost:3031](http://localhost:3000) (or the port you set in `PORT`).
+   Open [http://localhost:3000](http://localhost:3000) (or the port you set in `PORT`).
 
 4. **Required services:**
    - **MongoDB:** You can run a local MongoDB instance with:
