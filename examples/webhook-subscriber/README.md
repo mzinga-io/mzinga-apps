@@ -24,10 +24,15 @@ The server will start and listen on `http://localhost:4000`.
 
 ## Configure the Main App
 
-To make the main application send webhooks to this subscriber, you must set an environment variable in the `.env` file or your `docker-compose.yml` for the `mzinga` service.
+To make the main application send webhooks to this subscriber, you must manually edit your `docker-compose.yml` file and add an environment variable to the `mzinga` service.
 
-To receive a notification every time a **player is edited** (which triggers an `afterChange` event on the collection), add the following variable:
+For example, to receive a notification every time a **player is edited**, add the following variable under the `environment:` section of the `mzinga` service:
 
-    HOOKSURL_PLAYER_AFTERCHANGE=http://localhost:4000/webhook
+    services:
+      mzinga:
+        # ... other settings
+        environment:
+          # ... other variables
+          - HOOKSURL_PLAYER_AFTERCHANGE=http://webhook-subscriber:4000/webhook
 
-Now, whenever you create or update a document in the `player` collection, the main app will send a `POST` request with the change details to this subscriber application, and you will see the data logged in the terminal where you ran `npm start`.
+After adding the variable, restart your services with `docker-compose up -d` for the changes to take effect.
