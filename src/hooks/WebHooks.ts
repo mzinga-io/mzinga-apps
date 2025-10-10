@@ -3,7 +3,6 @@ import { CollectionConfig, Field } from "mzinga/types";
 import { messageBusService } from "../messageBusService";
 import { EnvConfig } from "../types";
 import { MZingaLogger } from "../utils/MZingaLogger";
-import { url } from "inspector";
 const FIELD_LEVEL_HOOKS = [
   "beforeValidate",
   "beforeChange",
@@ -103,6 +102,9 @@ export class WebHooks {
                 operation: args.operation,
               };
               try {
+                MZingaLogger.Instance?.debug(
+                  `[RABBITMQHOOK] ${envUrlsKey}: ${JSON.stringify(eventData)}`
+                );
                 await messageBusService.publishEvent({
                   type: envUrlsKey,
                   data: eventData,
