@@ -3,6 +3,7 @@ import { CollectionConfig, Field } from "mzinga/types";
 import { messageBusService } from "../messageBusService";
 import { EnvConfig } from "../types";
 import { MZingaLogger } from "../utils/MZingaLogger";
+import { url } from "inspector";
 const FIELD_LEVEL_HOOKS = [
   "beforeValidate",
   "beforeChange",
@@ -74,7 +75,11 @@ export class WebHooks {
           if (!url) {
             return undefined;
           }
-          if (this.env.RABBITMQ_URL && !this.env.IS_BUILD_PROCESS) {
+          if (
+            url === "rabbitmq" &&
+            this.env.RABBITMQ_URL &&
+            !this.env.IS_BUILD_PROCESS
+          ) {
             if (!messageBusService.isConnected()) {
               MZingaLogger.Instance?.info(
                 "RabbitMQ connection is not established. Skipping publishing event."
