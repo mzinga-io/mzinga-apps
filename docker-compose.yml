@@ -19,7 +19,7 @@ services:
         condition: no
 
   mzinga:
-    image: newesissrl.azurecr.io/mzinga/payload/gh/backoffice:0.2.78
+    image: newesissrl.azurecr.io/mzinga/payload/gh/backoffice:0.2.81
     ports:
       - ${PORT:-3000}:${PORT:-3000}
     volumes:
@@ -45,6 +45,8 @@ services:
       - OTEL_CONSOLE_EXPORTER=1
       - JSON_LIMITS_SIZE=${JSON_LIMITS_SIZE:-20mb}
       - REDIS_URI=${REDIS_URI:-redis://cache:6379}
+      - HOOKSURL_TEAMS_FIELD_DESCRIPTION_AFTERCHANGE=http://webhook-subscriber:4000/webhook
+      - HOOKSURL_PLAYERS_AFTERCHANGE=rabbitmq
     deploy:
       replicas: ${MZINGA_DOCKER_COMPOSE_REPLICAS:-1}
       restart_policy:
@@ -92,6 +94,12 @@ services:
     ports:
       - ${RABBITMQ_PORT:-5672}:5672
       - ${RABBITMQ_PORT_UI:-15672}:15672
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 30s
+      retries: 5
+      start_period: 5s
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     environment:
@@ -113,6 +121,28 @@ services:
       - TENANT=${TENANT:-local}
     deploy:
       replicas: ${MZINGA_DOCKER_COMPOSE_REPLICAS:-1}
+  webhook-subscriber:
+    build:
+      context: ./examples/webhook-subscriber
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./examples/webhook-subscriber:/app
+      - /app/node_modules
+  servicebus-subscriber:
+    build:
+      context: ./examples/servicebus-subscriber
+    depends_on:
+      messagebus:
+        condition: service_healthy
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@messagebus:5672/
+      - ROUTING_KEY=HOOKSURL_PLAYERS_AFTERCHANGE
+      - EXCHANGE_NAME=mzinga_events
+
+    volumes:
+      - ./examples/servicebus-subscriber:/app
+      - /app/node_modules
   jaeger:
     image: jaegertracing/all-in-one:latest
     hostname: jaeger

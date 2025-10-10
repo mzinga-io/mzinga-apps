@@ -85,7 +85,7 @@ To run MZinga locally, you need to configure several environment variables. Thes
 | `MONGODB_URI`                        | MongoDB connection string.                                               | mongodb://admin:admin@localhost:27017/app?authSource=admin&directConnection=true | Yes      |
 | `PAYLOAD_SECRET`                     | Secret key for Payload CMS session and JWT signing.                      | 4jtCl9pogpqA0Axv                                                                 | Yes      |
 | `PORT`                               | Port on which the MZinga app will run.                                   | 3031                                                                             | No       |
-| `PAYLOAD_PUBLIC_SERVER_URL`          | Public URL for the Payload server (used for links, etc.).                | http://localhost:3031                                                            | No       |
+| `PAYLOAD_PUBLIC_SERVER_URL`          | Public URL for the Payload server (used for links, etc.).                | [http://localhost:3031](http://localhost:3031)                                   | No       |
 | `TENANT`                             | Tenant identifier (used for multi-tenancy or data separation).           | local-tenant                                                                     | Yes      |
 | `ENV`                                | Environment (e.g., `prod`, `dev`).                                       | prod                                                                             | Yes      |
 | `DISABLE_TRACING`                    | Set to `1` to disable OpenTelemetry tracing (recommended for local dev). | 1                                                                                | No       |
