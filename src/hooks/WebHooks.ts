@@ -74,7 +74,11 @@ export class WebHooks {
           if (!url) {
             return undefined;
           }
-          if (this.env.RABBITMQ_URL && !this.env.IS_BUILD_PROCESS) {
+          if (
+            url === "rabbitmq" &&
+            this.env.RABBITMQ_URL &&
+            !this.env.IS_BUILD_PROCESS
+          ) {
             if (!messageBusService.isConnected()) {
               MZingaLogger.Instance?.info(
                 "RabbitMQ connection is not established. Skipping publishing event."
@@ -98,6 +102,9 @@ export class WebHooks {
                 operation: args.operation,
               };
               try {
+                MZingaLogger.Instance?.debug(
+                  `[RABBITMQHOOK] ${envUrlsKey}: ${JSON.stringify(eventData)}`
+                );
                 await messageBusService.publishEvent({
                   type: envUrlsKey,
                   data: eventData,
