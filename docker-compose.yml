@@ -45,6 +45,8 @@ services:
       - OTEL_CONSOLE_EXPORTER=1
       - JSON_LIMITS_SIZE=${JSON_LIMITS_SIZE:-20mb}
       - REDIS_URI=${REDIS_URI:-redis://cache:6379}
+      - HOOKSURL_PLAYER_AFTERCHANGE=http://webhook-subscriber:4000/webhook
+      - HOOKSURL_STORIES_FIELD_TITLE_AFTERCHANGE=http://webhook-subscriber:4000/webhook
     deploy:
       replicas: ${MZINGA_DOCKER_COMPOSE_REPLICAS:-1}
       restart_policy:
@@ -113,6 +115,14 @@ services:
       - TENANT=${TENANT:-local}
     deploy:
       replicas: ${MZINGA_DOCKER_COMPOSE_REPLICAS:-1}
+  webhook-subscriber:
+    build:
+      context: ./examples/webhook-subscriber
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./examples/webhook-subscriber:/app
+      - /app/node_modules
   jaeger:
     image: jaegertracing/all-in-one:latest
     hostname: jaeger
