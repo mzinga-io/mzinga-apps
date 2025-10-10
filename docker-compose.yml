@@ -45,6 +45,8 @@ services:
       - OTEL_CONSOLE_EXPORTER=1
       - JSON_LIMITS_SIZE=${JSON_LIMITS_SIZE:-20mb}
       - REDIS_URI=${REDIS_URI:-redis://cache:6379}
+      - HOOKSURL_TEAMS_FIELD_DESCRIPTION_AFTERCHANGE=http://webhook-subscriber:4000/webhook
+      - HOOKSURL_PLAYERS_AFTERCHANGE=rabbitmq
     deploy:
       replicas: ${MZINGA_DOCKER_COMPOSE_REPLICAS:-1}
       restart_policy:
