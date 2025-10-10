@@ -35,7 +35,9 @@ class MessageBusService {
       });
 
       this.connection.on("connection", () => {
-        MZingaLogger.Instance?.debug("Connection successfully established");
+        MZingaLogger.Instance?.debug(
+          "RabbitMQ connection successfully established"
+        );
       });
       this.connection.exchangeDeclare(BusConfiguration.MZingaEvents);
       this.connection.exchangeDeclare(BusConfiguration.MZingaEventsDurable);
@@ -102,4 +104,4 @@ class MessageBusService {
 }
 const messageBusService = new MessageBusService();
 
-export { messageBusService, BusConfiguration };
+export { BusConfiguration, messageBusService };

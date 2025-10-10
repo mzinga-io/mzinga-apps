@@ -50,7 +50,7 @@ const debugHooks = (req, res) => {
   const { collection, field, hook } = req.params;
   const { body } = req;
   MZingaLogger.Instance?.debug(
-    `[HOOKS] ${collection}${field ? `.${field}` : ""}.${hook}: ${JSON.stringify(
+    `[WEBHOOKS] ${collection}${field ? `.${field}` : ""}.${hook}: ${JSON.stringify(
       body
     )}`
   );
