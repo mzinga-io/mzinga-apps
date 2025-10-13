@@ -103,6 +103,40 @@ To run MZinga locally, you need to configure several environment variables. Thes
 
 ---
 
+## Running with Docker Compose
+
+1. **Ensure your `.env` file is configured as follow:**
+
+   ```sh
+   MONGO_HOST=[your_192_ip_address]
+   DRIVER_OPTS_TYPE="none"
+   DRIVER_OPTS_OPTIONS="bind"
+   DRIVER_OPTS_DEVICE=/tmp
+   ```
+
+2. **Create needed volume folder (and/or clean them up if needed)**
+
+   ```sh
+   echo "Cleanup"
+   rm -rf /tmp/database /tmp/mzinga /tmp/messagebus
+   ```
+
+   ```sh
+   echo "Create"
+   mkdir -p /tmp/database /tmp/mzinga /tmp/messagebus
+   ```
+
+3. **Start all services:**
+
+   ```sh
+   docker compose up
+   ```
+
+4. **Access the app:**
+   Open [http://localhost:3000](http://localhost:3000) (or the port you set in `PORT` or the ).
+
+---
+
 ## Running Locally with npm
 
 1. **Install dependencies:**
@@ -135,43 +169,9 @@ To run MZinga locally, you need to configure several environment variables. Thes
 
 ---
 
-## Running with Docker Compose
-
-1. **Ensure your `.env` file is configured as follow:**
-
-   ```sh
-   MONGO_HOST=[your_192_ip_address]
-   DRIVER_OPTS_TYPE="none"
-   DRIVER_OPTS_OPTIONS="bind"
-   DRIVER_OPTS_DEVICE=/tmp
-   ```
-
-2. **Create needed volume folder (and/or clean them up if needed)**
-
-   ```sh
-   echo "Cleanup"
-   rm -rf /tmp/database /tmp/mzinga /tmp/messagebus
-   ```
-
-   ```sh
-   echo "Create"
-   mkdir -p /tmp/database /tmp/mzinga /tmp/messagebus
-   ```
-
-3. **Start all services:**
-
-   ```sh
-   docker compose up
-   ```
-
-4. **Access the app:**
-   Open [http://localhost:3000](http://localhost:3000) (or the port you set in `PORT`).
-
----
-
 ## Additional Notes
 
-- For development, you can use the default values provided in the `.env` example.
+- For development, you can use the default values provided in the `.env` example. You can use the `.env.template` file as a starting point and edit it accordingly.
 - If you change ports or credentials, update your `.env` and `docker-compose.yml` accordingly.
 - For advanced configuration, see the comments in `docker-compose.yml` and `src/mzinga.config.ts`.
 
