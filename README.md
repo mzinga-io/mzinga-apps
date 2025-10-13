@@ -133,7 +133,7 @@ To run MZinga locally, you need to configure several environment variables. Thes
    ```
 
 4. **Access the app:**
-   Open [http://localhost:3000](http://localhost:3000) (or the port you set in `PORT` or the ).
+   Open [http://localhost:3000](http://localhost:3000) (or the port you set in `PORT`).
 
 ---
 
