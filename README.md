@@ -72,7 +72,6 @@ Before you begin, ensure you have the following tools installed on your system:
 2. **npm:** Node.js package manager. Comes bundled with Node.js.
 3. **Docker:** Required for containerizing the application. [Download Docker.](https://docs.docker.com/desktop/install/)
 4. **Git:** Version control system. [Download Git.](https://git-scm.com/downloads)
-5. **Azure CLI:** Required for authenticating with the private Docker registry. [Download Azure CLI.](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 
 ## Basic Configuration
 
