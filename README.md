@@ -72,7 +72,6 @@ Before you begin, ensure you have the following tools installed on your system:
 2. **npm:** Node.js package manager. Comes bundled with Node.js.
 3. **Docker:** Required for containerizing the application. [Download Docker.](https://docs.docker.com/desktop/install/)
 4. **Git:** Version control system. [Download Git.](https://git-scm.com/downloads)
-5. **Azure CLI:** Required for authenticating with the private Docker registry. [Download Azure CLI.](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 
 ## Basic Configuration
 
@@ -101,38 +100,6 @@ To run MZinga locally, you need to configure several environment variables. Thes
 \*\*`MONGO_HOST`'s value changes everytime you connect to a new network. This is the IP address of your machine on the local network. To get its value, open a terminal and run `ifconfig | grep 192`, the IP after inet is your machine's IP.
 
 > **Note:** If you use Docker Compose, these variables are automatically picked up from `.env`.
-
----
-
-## Running Locally with npm
-
-1. **Install dependencies:**
-
-   ```sh
-   npm install
-   ```
-
-2. **Start the application:**
-
-   ```sh
-   npm run dev
-   ```
-
-3. **Access the app:**
-   Open [http://localhost:3000](http://localhost:3000) (or the port you set in `PORT`).
-
-4. **Required services:**
-   - **MongoDB:** You can run a local MongoDB instance with:
-
-     ```sh
-     docker run --rm -it -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=admin mongo:latest
-     ```
-
-   - **Redis (optional, for cache):**
-
-     ```sh
-     docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:latest
-     ```
 
 ---
 
@@ -170,9 +137,41 @@ To run MZinga locally, you need to configure several environment variables. Thes
 
 ---
 
+## Running Locally with npm
+
+1. **Install dependencies:**
+
+   ```sh
+   npm install
+   ```
+
+2. **Start the application:**
+
+   ```sh
+   npm run dev
+   ```
+
+3. **Access the app:**
+   Open [http://localhost:3000](http://localhost:3000) (or the port you set in `PORT`).
+
+4. **Required services:**
+   - **MongoDB:** You can run a local MongoDB instance with:
+
+     ```sh
+     docker run --rm -it -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=admin mongo:latest
+     ```
+
+   - **Redis (optional, for cache):**
+
+     ```sh
+     docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:latest
+     ```
+
+---
+
 ## Additional Notes
 
-- For development, you can use the default values provided in the `.env` example.
+- For development, you can use the default values provided in the `.env` example. You can use the `.env.template` file as a starting point and edit it accordingly.
 - If you change ports or credentials, update your `.env` and `docker-compose.yml` accordingly.
 - For advanced configuration, see the comments in `docker-compose.yml` and `src/mzinga.config.ts`.
 
