@@ -94,7 +94,7 @@
     "@types/node": "^24.5.1",
     "@types/webpack": "^5.28.5",
     "@typescript-eslint/eslint-plugin": "^8.46.0",
-    "@typescript-eslint/parser": "^8.0.0",
+    "@typescript-eslint/parser": "^8.46.1",
     "assert": "^2.1.0",
     "buffer": "^6.0.3",
     "eslint": "^9.37.0",
