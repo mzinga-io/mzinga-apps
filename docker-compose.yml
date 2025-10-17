@@ -6,10 +6,12 @@ services:
       - -c
       - |
         apk update && apk add openssl
+        echo "Generating replica key..."
         openssl rand -base64 756 > /data/custom.replica.key
         chmod 400 /data/custom.replica.key
         chown 999:999 /data/custom.replica.key
         sleep 30
+        echo "Replica key generated"
     volumes:
       - mongodb_data:/data
     deploy:
@@ -17,7 +19,7 @@ services:
         condition: no
 
   mzinga:
-    image: newesissrl.azurecr.io/mzinga/payload/backoffice:1.9.21
+    image: newesissrl.azurecr.io/mzinga/payload/gh/backoffice:0.3.5
     ports:
       - ${PORT:-3000}:${PORT:-3000}
     volumes:
@@ -27,16 +29,24 @@ services:
       - messagebus
       - cache
     environment:
-      - MONGODB_URI=mongodb://${MONGO_ROOTUSER:-admin}:${MONGO_ROOTPASSWORD:-admin}@database:${MONGO_PORT:-27017}/app?authSource=admin
+      - MONGODB_URI=mongodb://${MONGO_ROOTUSER:-admin}:${MONGO_ROOTPASSWORD:-admin}@database:${MONGO_PORT:-27017}/app?authSource=admin&directConnection=true
       - PAYLOAD_SECRET=${PAYLOAD_SECRET:-secret_key}
       - PORT=${PORT:-3000}
-      - DISABLE_TRACING=${DISABLE_TRACING:-1}
+      - DISABLE_TRACING=${DISABLE_TRACING:-0}
       - PAYLOAD_PUBLIC_ENABLE_ZITADEL_PLUGIN=0
       - RABBITMQ_URL=amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@messagebus:${RABBITMQ_PORT:-5672}/
       - TENANT=${TENANT:-local}
       - ENV=prod
       - PAYLOAD_PUBLIC_SERVER_URL=${PAYLOAD_PUBLIC_SERVER_URL:-http://localhost:3000}
+      - PAYLOAD_PUBLIC_CONFIG_SERVER_URL=${PAYLOAD_PUBLIC_SERVER_URL:-http://localhost:3000}
       - PAYLOAD_PUBLIC_DISABLED_ENTITIES_SLUGS=$PAYLOAD_PUBLIC_DISABLED_ENTITIES_SLUGS
+      - OTEL_TRACERS_EXPORTER=${OTEL_TRACERS_EXPORTER:-http://jaeger:6831}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://jaeger:4318}
+      - OTEL_CONSOLE_EXPORTER=1
+      - JSON_LIMITS_SIZE=${JSON_LIMITS_SIZE:-20mb}
+      - REDIS_URI=${REDIS_URI:-redis://cache:6379}
+      - HOOKSURL_TEAMS_FIELD_DESCRIPTION_AFTERCHANGE=http://webhook-subscriber:4000/webhook
+      - HOOKSURL_PLAYERS_AFTERCHANGE=rabbitmq
     deploy:
       replicas: ${MZINGA_DOCKER_COMPOSE_REPLICAS:-1}
       restart_policy:
@@ -84,13 +94,19 @@ services:
     ports:
       - ${RABBITMQ_PORT:-5672}:5672
       - ${RABBITMQ_PORT_UI:-15672}:15672
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 30s
+      retries: 5
+      start_period: 5s
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-guest}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-guest}
   cache:
-    image: redis:8.2.1-alpine
+    image: redis:8.2.2-alpine
     ports:
       - ${REDIS_PORT:-6379}:6379
     deploy:
@@ -100,11 +116,33 @@ services:
     volumes:
       - ./compose-scripts:/scripts
       - mzinga_data:/app/${TENANT:-local}
-    command: ["./compose-scripts/ce-enabler.sh"]
+    command: ["/scripts/ce-enabler.sh"]
     environment:
       - TENANT=${TENANT:-local}
     deploy:
       replicas: ${MZINGA_DOCKER_COMPOSE_REPLICAS:-1}
+  webhook-subscriber:
+    build:
+      context: ./examples/webhook-subscriber
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./examples/webhook-subscriber:/app
+      - /app/node_modules
+  servicebus-subscriber:
+    build:
+      context: ./examples/servicebus-subscriber
+    depends_on:
+      messagebus:
+        condition: service_healthy
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@messagebus:5672/
+      - ROUTING_KEY=HOOKSURL_PLAYERS_AFTERCHANGE
+      - EXCHANGE_NAME=mzinga_events
+
+    volumes:
+      - ./examples/servicebus-subscriber:/app
+      - /app/node_modules
   jaeger:
     image: jaegertracing/all-in-one:latest
     hostname: jaeger

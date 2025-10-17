@@ -8,7 +8,7 @@
 ![CI/CD](https://img.shields.io/badge/CI/CD-Ready-blueviolet?logo=githubactions)
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 
-**MZinga** is a modern, modular **Content Management System (CMS)** built on top of [Payload CMS](https://mzinga.io/), designed for high extensibility and seamless integration with **MongoDB**, **Redis**, and **RabbitMQ**. Tailored for SaaS and enterprise environments, MZinga provides a scalable, secure, and developer-friendly platform for managing complex applications and workflows.
+**MZinga** is a modern, modular **Content Management System (CMS)** built on top of [Payload CMS](https://payloadcms.com/) version 2, forked by Newesis srl as [Mzinga Core](https://github.com/mzinga-io/mzinga-core), designed for high extensibility and seamless integration with **MongoDB**, **Redis**, and **RabbitMQ**. Tailored for SaaS and enterprise environments, MZinga provides a scalable, secure, and developer-friendly platform for managing complex applications and workflows.
 
 ## 🚀 Key Features
 
@@ -16,7 +16,6 @@
   Built on Payload CMS for flexible content and data management.
 
 - **Database & Messaging Integration**
-
   - **MongoDB** for NoSQL data storage
   - **Redis** for distributed caching and performance optimization
   - **RabbitMQ** for asynchronous task orchestration and message-driven workflows
@@ -31,7 +30,6 @@
   Extendable admin panel to manage users, roles, content, audit logs, batch operations, and data import/export.
 
 - **Security & Observability**
-
   - Role-based access control (RBAC)
   - JWT-based authentication
   - Detailed audit logs
@@ -86,7 +84,7 @@ To run MZinga locally, you need to configure several environment variables. Thes
 | `MONGODB_URI`                        | MongoDB connection string.                                               | mongodb://admin:admin@localhost:27017/app?authSource=admin&directConnection=true | Yes      |
 | `PAYLOAD_SECRET`                     | Secret key for Payload CMS session and JWT signing.                      | 4jtCl9pogpqA0Axv                                                                 | Yes      |
 | `PORT`                               | Port on which the MZinga app will run.                                   | 3031                                                                             | No       |
-| `PAYLOAD_PUBLIC_SERVER_URL`          | Public URL for the Payload server (used for links, etc.).                | http://localhost:3031                                                            | No       |
+| `PAYLOAD_PUBLIC_SERVER_URL`          | Public URL for the Payload server (used for links, etc.).                | [http://localhost:3031](http://localhost:3031)                                   | No       |
 | `TENANT`                             | Tenant identifier (used for multi-tenancy or data separation).           | local-tenant                                                                     | Yes      |
 | `ENV`                                | Environment (e.g., `prod`, `dev`).                                       | prod                                                                             | Yes      |
 | `DISABLE_TRACING`                    | Set to `1` to disable OpenTelemetry tracing (recommended for local dev). | 1                                                                                | No       |
@@ -105,6 +103,40 @@ To run MZinga locally, you need to configure several environment variables. Thes
 
 ---
 
+## Running with Docker Compose
+
+1. **Ensure your `.env` file is configured as follow:**
+
+   ```sh
+   MONGO_HOST=[your_192_ip_address]
+   DRIVER_OPTS_TYPE="none"
+   DRIVER_OPTS_OPTIONS="bind"
+   DRIVER_OPTS_DEVICE=/tmp
+   ```
+
+2. **Create needed volume folder (and/or clean them up if needed)**
+
+   ```sh
+   echo "Cleanup"
+   rm -rf /tmp/database /tmp/mzinga /tmp/messagebus
+   ```
+
+   ```sh
+   echo "Create"
+   mkdir -p /tmp/database /tmp/mzinga /tmp/messagebus
+   ```
+
+3. **Start all services:**
+
+   ```sh
+   docker compose up
+   ```
+
+4. **Access the app:**
+   Open [http://localhost:3000](http://localhost:3000) (or the port you set in `PORT`).
+
+---
+
 ## Running Locally with npm
 
 1. **Install dependencies:**
@@ -120,47 +152,26 @@ To run MZinga locally, you need to configure several environment variables. Thes
    ```
 
 3. **Access the app:**
-   Open [http://localhost:3031](http://localhost:3000) (or the port you set in `PORT`).
+   Open [http://localhost:3000](http://localhost:3000) (or the port you set in `PORT`).
 
 4. **Required services:**
    - **MongoDB:** You can run a local MongoDB instance with:
+
      ```sh
      docker run --rm -it -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=admin mongo:latest
      ```
+
    - **Redis (optional, for cache):**
+
      ```sh
      docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:latest
      ```
 
 ---
 
-## Running with Docker Compose
-
-1. **Ensure your `.env` file is configured.**
-1. **Create needed volume folder (and/or clean them up if needed)**
-
-   ```sh
-   echo "Cleanup"
-   rm -rf /tmp/database /tmp/mzinga /tmp/messagebus
-   ```
-
-   ```sh
-   echo "Create"
-   mkdir -p /tmp/database /tmp/mzinga /tmp/messagebus
-   ```
-
-1. **Start all services:**
-   ```sh
-   docker compose up
-   ```
-1. **Access the app:**
-   Open [http://localhost:3031](http://localhost:3000) (or the port you set in `PORT`).
-
----
-
 ## Additional Notes
 
-- For development, you can use the default values provided in the `.env` example.
+- For development, you can use the default values provided in the `.env` example. You can use the `.env.template` file as a starting point and edit it accordingly.
 - If you change ports or credentials, update your `.env` and `docker-compose.yml` accordingly.
 - For advanced configuration, see the comments in `docker-compose.yml` and `src/mzinga.config.ts`.
 
@@ -173,7 +184,7 @@ In the MZinga domain, the term **webhook notification** refers to both tradition
 1. **Choose the collection and field you want to monitor.**
 2. **Set an environment variable in your `.env` file using the following format:**
 
-   ```
+   ```bash
    HOOKSURL_<COLLECTION_SLUG>_FIELD_<FIELD_NAME>_<HOOK_TYPE>=<WEBHOOK_URL_OR_RABBITMQ>
    ```
 
@@ -184,19 +195,19 @@ In the MZinga domain, the term **webhook notification** refers to both tradition
 
    **Example for RabbitMQ:**
 
-   ```
+   ```bash
    HOOKSURL_SCHEDULEDTASKS_FIELD_LASTEXECUTION_AFTERCHANGE=RABBITMQ
    ```
 
    **Example for HTTP webhook:**
 
-   ```
+   ```bash
    HOOKSURL_STORIES_FIELD_TITLE_AFTERCHANGE=https://your-webhook-endpoint.com/notify
    ```
 
 3. **If using RabbitMQ, ensure you have set the `RABBITMQ_URL` variable:**
 
-   ```
+   ```bash
    RABBITMQ_URL=amqp://guest:guest@localhost:5672/
    ```
 

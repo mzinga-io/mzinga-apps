@@ -1,0 +1,12 @@
+{
+  "name": "servicebus-subscriber-example",
+  "version": "1.0.0",
+  "description": "An example Node.js app to subscribe to Mzinga events via RabbitMQ.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.3"
+  }
+}
