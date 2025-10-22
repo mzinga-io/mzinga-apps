@@ -1,6 +1,6 @@
-require("dotenv").config();
-const { v4: uuidv4 } = require("uuid");
-
+import { config } from "dotenv";
+const crypto = require("node:crypto");
+config();
 const { PAYLOAD_PUBLIC_SERVER_URL, API_KEY } = process.env;
 describe("collections", () => {
   describe("Organizations", () => {
@@ -9,7 +9,7 @@ describe("collections", () => {
       let projectId;
       let environmentId;
       const organization = {
-        name: `org-tests-${uuidv4().substring(0, 25)}`,
+        name: `org-tests-${crypto.randomUUID().substring(0, 25)}`,
         invoices: {
           vat: "1234567890",
           address: "Street number 1",
@@ -17,11 +17,11 @@ describe("collections", () => {
         },
       };
       const project = {
-        name: `prj-tests-${uuidv4()}`,
+        name: `prj-tests-${crypto.randomUUID()}`,
         organization: { relationTo: "organizations", value: undefined },
       };
       const environment = {
-        name: `env-tests-${uuidv4()}`,
+        name: `env-tests-${crypto.randomUUID()}`,
         project: { relationTo: "projects", value: undefined },
       };
       beforeAll(async () => {

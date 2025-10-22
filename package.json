@@ -85,8 +85,7 @@
     "stream-browserify": "^3.0.0",
     "tty-browserify": "^0.0.1",
     "typescript": "5.2.2",
-    "util": "^0.12.5",
-    "uuid": "^13.0.0"
+    "util": "^0.12.5"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
@@ -110,6 +109,7 @@
   "resolutions": {
     "@types/mime": "2.0.3",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "uuid": "13.0.0"
   }
 }

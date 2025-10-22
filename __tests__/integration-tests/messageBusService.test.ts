@@ -1,13 +1,12 @@
 import { config } from "dotenv";
 import { Connection } from "rabbitmq-client";
 import { BusConfiguration } from "../../src/messageBusService";
-const { v4: uuidv4 } = require("uuid");
 config();
 
 jest.setTimeout(30000);
 const { PAYLOAD_PUBLIC_SERVER_URL, API_KEY, RABBITMQ_URL } = process.env;
 
-const queueGuid = uuidv4();
+const queueGuid = crypto.randomUUID();
 const queueName = `test_queue-${queueGuid}`;
 describe("MessageBusService Integration Tests", () => {
   let testConnection: Connection;
@@ -16,7 +15,7 @@ describe("MessageBusService Integration Tests", () => {
   let projectId;
   let environmentId;
   const organization = {
-    name: `org-tests-${uuidv4().substring(0, 25)}`,
+    name: `org-tests-${crypto.randomUUID().substring(0, 25)}`,
     invoices: {
       vat: "1234567890",
       address: "Street number 1",
@@ -24,11 +23,11 @@ describe("MessageBusService Integration Tests", () => {
     },
   };
   const project = {
-    name: `prj-tests-${uuidv4()}`,
+    name: `prj-tests-${crypto.randomUUID()}`,
     organization: { relationTo: "organizations", value: undefined },
   };
   const environment = {
-    name: `env-tests-${uuidv4()}`,
+    name: `env-tests-${crypto.randomUUID()}`,
     project: { relationTo: "projects", value: undefined },
   };
 
