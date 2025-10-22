@@ -50,7 +50,7 @@
     "@opentelemetry/api": "1.9.0",
     "@opentelemetry/auto-instrumentations-node": "^0.64.1",
     "@opentelemetry/core": "2.1.0",
-    "@opentelemetry/exporter-prometheus": "^0.205.0",
+    "@opentelemetry/exporter-prometheus": "^0.207.0",
     "@opentelemetry/exporter-trace-otlp-http": "^0.206.0",
     "@opentelemetry/exporter-trace-otlp-proto": "^0.206.0",
     "@opentelemetry/instrumentation": "^0.206.0",
