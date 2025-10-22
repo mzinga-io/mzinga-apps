@@ -4,7 +4,8 @@
     "baseUrl": "./",
     "outDir": "../build",
     "noEmit": true,
-    "rootDir": ".."
+    "rootDir": "..",
+    "isolatedModules": true
   },
   "include": ["."],
   "exclude": ["node_modules", "dist", "build", "coverage", "src"]
