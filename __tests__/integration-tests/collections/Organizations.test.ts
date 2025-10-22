@@ -1,5 +1,5 @@
 require("dotenv").config();
-import { v4 as uuidv4 } from "uuid";
+const { v4: uuidv4 } = require("uuid");
 
 const { PAYLOAD_PUBLIC_SERVER_URL, API_KEY } = process.env;
 describe("collections", () => {
@@ -37,7 +37,9 @@ describe("collections", () => {
           }
         );
         if (organizationResponse.status >= 299) {
-          throw `There was an error: ${organizationResponse.status}. ${await organizationResponse.text()}`;
+          throw `There was an error: ${
+            organizationResponse.status
+          }. ${await organizationResponse.text()}`;
         }
         organizationId = (await organizationResponse.json()).doc.id;
         project.organization.value = organizationId;
@@ -53,7 +55,9 @@ describe("collections", () => {
           }
         );
         if (projectResponse.status >= 299) {
-          throw `There was an error: ${projectResponse.status}. ${await projectResponse.text()}`;
+          throw `There was an error: ${
+            projectResponse.status
+          }. ${await projectResponse.text()}`;
         }
         projectId = (await projectResponse.json()).doc.id;
         environment.project.value = projectId;
@@ -69,7 +73,9 @@ describe("collections", () => {
           }
         );
         if (envResponse.status >= 299) {
-          throw `There was an error: ${envResponse.status}. ${await envResponse.text()}`;
+          throw `There was an error: ${
+            envResponse.status
+          }. ${await envResponse.text()}`;
         }
         environmentId = (await envResponse.json()).doc.id;
       });
@@ -84,7 +90,9 @@ describe("collections", () => {
           }
         );
         console.log(
-          `Delete for '${PAYLOAD_PUBLIC_SERVER_URL}/api/organizations/${organizationId}' returned ${orgResponse.status}: ${await orgResponse.text()}`
+          `Delete for '${PAYLOAD_PUBLIC_SERVER_URL}/api/organizations/${organizationId}' returned ${
+            orgResponse.status
+          }: ${await orgResponse.text()}`
         );
         const prjResponse = await fetch(
           `${PAYLOAD_PUBLIC_SERVER_URL}/api/projects/${projectId}`,
@@ -96,7 +104,9 @@ describe("collections", () => {
           }
         );
         console.log(
-          `Delete for '${PAYLOAD_PUBLIC_SERVER_URL}/api/projects/${projectId}' returned ${prjResponse.status}: ${await prjResponse.text()}`
+          `Delete for '${PAYLOAD_PUBLIC_SERVER_URL}/api/projects/${projectId}' returned ${
+            prjResponse.status
+          }: ${await prjResponse.text()}`
         );
         const envResponse = await fetch(
           `${PAYLOAD_PUBLIC_SERVER_URL}/api/environments/${environmentId}`,
@@ -108,7 +118,9 @@ describe("collections", () => {
           }
         );
         console.log(
-          `Delete for '${PAYLOAD_PUBLIC_SERVER_URL}/api/environments/${environmentId}' returned ${envResponse.status}: ${await envResponse.text()}`
+          `Delete for '${PAYLOAD_PUBLIC_SERVER_URL}/api/environments/${environmentId}' returned ${
+            envResponse.status
+          }: ${await envResponse.text()}`
         );
       });
       it("Should delete related projects, environments for the specific organization", async () => {
