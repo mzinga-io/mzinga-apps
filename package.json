@@ -31,7 +31,7 @@
     "mzinga:base": "cross-env PAYLOAD_CONFIG_PATH=src/mzinga.config.ts cross-env IS_BUILD_PROCESS=1 mzinga"
   },
   "engines": {
-    "node": ">=14",
+    "node": ">=18",
     "yarn": ">=1.22 <2"
   },
   "dependencies": {
@@ -70,6 +70,7 @@
     "dotenv": "^17.2.2",
     "escape-html": "^1.0.3",
     "express": "^4.21.1",
+    "glob": "11.0.3",
     "helmet": "^8.0.0",
     "jsoneditor-react": "^3.1.2",
     "monaco-editor": "^0.52.0",
@@ -83,15 +84,14 @@
     "sass": "^1.90.0",
     "stream-browserify": "^3.0.0",
     "tty-browserify": "^0.0.1",
-    "typescript": "5.9.3",
-    "util": "^0.12.5",
-    "uuid": "^11.0.0"
+    "typescript": "5.2.2",
+    "util": "^0.12.5"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
     "@types/mocha": "^10.0.1",
-    "@types/node": "^24.8.0",
+    "@types/node": "^24.9.1",
     "@types/webpack": "^5.28.5",
     "@typescript-eslint/eslint-plugin": "^8.46.0",
     "@typescript-eslint/parser": "^8.46.1",
@@ -109,6 +109,7 @@
   "resolutions": {
     "@types/mime": "2.0.3",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "uuid": "13.0.0"
   }
 }

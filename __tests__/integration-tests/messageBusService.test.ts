@@ -1,13 +1,12 @@
 import { config } from "dotenv";
 import { Connection } from "rabbitmq-client";
-import { v4 as uuidv4 } from "uuid";
 import { BusConfiguration } from "../../src/messageBusService";
 config();
 
 jest.setTimeout(30000);
 const { PAYLOAD_PUBLIC_SERVER_URL, API_KEY, RABBITMQ_URL } = process.env;
 
-const queueGuid = uuidv4();
+const queueGuid = crypto.randomUUID();
 const queueName = `test_queue-${queueGuid}`;
 describe("MessageBusService Integration Tests", () => {
   let testConnection: Connection;
@@ -16,7 +15,7 @@ describe("MessageBusService Integration Tests", () => {
   let projectId;
   let environmentId;
   const organization = {
-    name: `org-tests-${uuidv4().substring(0, 25)}`,
+    name: `org-tests-${crypto.randomUUID().substring(0, 25)}`,
     invoices: {
       vat: "1234567890",
       address: "Street number 1",
@@ -24,11 +23,11 @@ describe("MessageBusService Integration Tests", () => {
     },
   };
   const project = {
-    name: `prj-tests-${uuidv4()}`,
+    name: `prj-tests-${crypto.randomUUID()}`,
     organization: { relationTo: "organizations", value: undefined },
   };
   const environment = {
-    name: `env-tests-${uuidv4()}`,
+    name: `env-tests-${crypto.randomUUID()}`,
     project: { relationTo: "projects", value: undefined },
   };
 
@@ -105,7 +104,9 @@ describe("MessageBusService Integration Tests", () => {
       }
     );
     if (organizationResponse.status >= 299) {
-      throw `There was an error: ${organizationResponse.status}. ${await organizationResponse.text()}`;
+      throw `There was an error: ${
+        organizationResponse.status
+      }. ${await organizationResponse.text()}`;
     }
     organizationId = (await organizationResponse.json()).doc.id;
     project.organization.value = organizationId;
@@ -121,7 +122,9 @@ describe("MessageBusService Integration Tests", () => {
       }
     );
     if (projectResponse.status >= 299) {
-      throw `There was an error: ${projectResponse.status}. ${await projectResponse.text()}`;
+      throw `There was an error: ${
+        projectResponse.status
+      }. ${await projectResponse.text()}`;
     }
     projectId = (await projectResponse.json()).doc.id;
     environment.project.value = projectId;
@@ -137,7 +140,9 @@ describe("MessageBusService Integration Tests", () => {
       }
     );
     if (envResponse.status >= 299) {
-      throw `There was an error: ${envResponse.status}. ${await envResponse.text()}`;
+      throw `There was an error: ${
+        envResponse.status
+      }. ${await envResponse.text()}`;
     }
     environmentId = (await envResponse.json()).doc.id;
   }, 30000);
@@ -153,7 +158,9 @@ describe("MessageBusService Integration Tests", () => {
       }
     );
     console.log(
-      `Delete for '${PAYLOAD_PUBLIC_SERVER_URL}/api/organizations/${organizationId}' returned ${orgResponse.status}: ${await orgResponse.text()}`
+      `Delete for '${PAYLOAD_PUBLIC_SERVER_URL}/api/organizations/${organizationId}' returned ${
+        orgResponse.status
+      }: ${await orgResponse.text()}`
     );
     const prjResponse = await fetch(
       `${PAYLOAD_PUBLIC_SERVER_URL}/api/projects/${projectId}`,
@@ -165,7 +172,9 @@ describe("MessageBusService Integration Tests", () => {
       }
     );
     console.log(
-      `Delete for '${PAYLOAD_PUBLIC_SERVER_URL}/api/projects/${projectId}' returned ${prjResponse.status}: ${await prjResponse.text()}`
+      `Delete for '${PAYLOAD_PUBLIC_SERVER_URL}/api/projects/${projectId}' returned ${
+        prjResponse.status
+      }: ${await prjResponse.text()}`
     );
     const envResponse = await fetch(
       `${PAYLOAD_PUBLIC_SERVER_URL}/api/environments/${environmentId}`,
@@ -177,7 +186,9 @@ describe("MessageBusService Integration Tests", () => {
       }
     );
     console.log(
-      `Delete for '${PAYLOAD_PUBLIC_SERVER_URL}/api/environments/${environmentId}' returned ${envResponse.status}: ${await envResponse.text()}`
+      `Delete for '${PAYLOAD_PUBLIC_SERVER_URL}/api/environments/${environmentId}' returned ${
+        envResponse.status
+      }: ${await envResponse.text()}`
     );
     try {
       if (consumer) {
