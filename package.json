@@ -31,7 +31,7 @@
     "mzinga:base": "cross-env PAYLOAD_CONFIG_PATH=src/mzinga.config.ts cross-env IS_BUILD_PROCESS=1 mzinga"
   },
   "engines": {
-    "node": ">=14",
+    "node": ">=18",
     "yarn": ">=1.22 <2"
   },
   "dependencies": {
