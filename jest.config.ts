@@ -92,6 +92,7 @@ export default {
   moduleNameMapper: {
     "\\.(scss|css|less)$": "<rootDir>/__mocks__/styleMock.js",
     "^mzinga(.*)$": "<rootDir>/node_modules/mzinga$1",
+    uuid: require.resolve("uuid"),
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
