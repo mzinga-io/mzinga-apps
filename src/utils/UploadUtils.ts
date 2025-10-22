@@ -1,4 +1,4 @@
-import path from "path";
+const path = require("path");
 export const UploadUtils = {
   GetStaticDir(outPath: string = "media"): string {
     return path.resolve(
