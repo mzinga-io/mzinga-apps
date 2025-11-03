@@ -104,7 +104,7 @@
     "jest-junit": "^16.0.0",
     "nodemon": "^3.0.0",
     "querystring-es3": "^0.2.1",
-    "ts-jest": "29.4.4",
+    "ts-jest": "29.4.5",
     "ts-node": "^10.0.0"
   },
   "resolutions": {
