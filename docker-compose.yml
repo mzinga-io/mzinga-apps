@@ -19,7 +19,7 @@ services:
         condition: no
 
   mzinga:
-    image: newesissrl.azurecr.io/mzinga/payload/gh/backoffice:0.3.20
+    image: newesissrl.azurecr.io/mzinga/payload/gh/backoffice:0.3.27
     ports:
       - ${PORT:-3000}:${PORT:-3000}
     volumes:
@@ -89,7 +89,7 @@ services:
       start_interval: 1s
       retries: 30
   messagebus:
-    image: rabbitmq:4.1.4-management-alpine
+    image: rabbitmq:4.2.0-management-alpine
     hostname: rabbitmq
     ports:
       - ${RABBITMQ_PORT:-5672}:5672
