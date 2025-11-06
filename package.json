@@ -57,7 +57,7 @@
     "@opentelemetry/resource-detector-container": "^0.7.0",
     "@opentelemetry/resources": "2.2.0",
     "@opentelemetry/sdk-node": "^0.207.0",
-    "@opentelemetry/sdk-trace-base": "2.1.0",
+    "@opentelemetry/sdk-trace-base": "2.2.0",
     "@opentelemetry/sdk-trace-node": "2.2.0",
     "@opentelemetry/semantic-conventions": "1.37.0",
     "@sendgrid/mail": "^8.0.0",
