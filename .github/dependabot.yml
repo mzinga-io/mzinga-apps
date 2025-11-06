@@ -9,15 +9,47 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    groups:
+      minors:
+        update-types:
+          - "minor"
+          - "patch"
+      major:
+        update-types:
+          - "major"
   - package-ecosystem: "github-actions"
     directory: "/.github"
     schedule:
       interval: "daily"
+    groups:
+      minors:
+        update-types:
+          - "minor"
+          - "patch"
+      major:
+        update-types:
+          - "major"
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "daily"
+    groups:
+      minors:
+        update-types:
+          - "minor"
+          - "patch"
+      major:
+        update-types:
+          - "major"
   - package-ecosystem: "docker-compose"
     directory: "/"
     schedule:
       interval: "daily"
+    groups:
+      minors:
+        update-types:
+          - "minor"
+          - "patch"
+      major:
+        update-types:
+          - "major"
