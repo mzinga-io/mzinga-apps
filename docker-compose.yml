@@ -89,7 +89,7 @@ services:
       start_interval: 1s
       retries: 30
   messagebus:
-    image: rabbitmq:4.2.0-management-alpine
+    image: rabbitmq:4.2.1-management-alpine
     hostname: rabbitmq
     ports:
       - ${RABBITMQ_PORT:-5672}:5672
