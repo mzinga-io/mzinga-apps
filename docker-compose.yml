@@ -89,7 +89,7 @@ services:
       start_interval: 1s
       retries: 30
   messagebus:
-    image: rabbitmq:4.2.0-management-alpine
+    image: rabbitmq:4.2.1-management-alpine
     hostname: rabbitmq
     ports:
       - ${RABBITMQ_PORT:-5672}:5672
@@ -106,7 +106,7 @@ services:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-guest}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-guest}
   cache:
-    image: redis:8.2.3-alpine
+    image: redis:8.4.0-alpine
     ports:
       - ${REDIS_PORT:-6379}:6379
     deploy:
