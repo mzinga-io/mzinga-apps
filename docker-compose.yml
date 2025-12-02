@@ -1,6 +1,6 @@
 services:
   replica_key:
-    image: bash:5.3.3
+    image: bash:5.3.8
     entrypoint:
       - bash
       - -c
@@ -19,7 +19,7 @@ services:
         condition: no
 
   mzinga:
-    image: newesissrl.azurecr.io/mzinga/payload/gh/backoffice:0.3.52
+    image: newesissrl.azurecr.io/mzinga/payload/gh/backoffice:0.3.54
     ports:
       - ${PORT:-3000}:${PORT:-3000}
     volumes:
@@ -55,7 +55,7 @@ services:
         max_attempts: 3
         window: 120s
   database:
-    image: percona/percona-server-mongodb:8.0.12-4
+    image: percona/percona-server-mongodb:8.0.16-5
     depends_on:
       - replica_key
     ports:
