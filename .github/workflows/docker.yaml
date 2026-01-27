@@ -14,7 +14,7 @@ permissions:
 
 env:
   DOCKER_BUILDKIT: 1
-  TEST_NAMESPACE: mzinga-e2e
+  TEST_NAMESPACE: mzinga-e2e-tests
   PAYLOAD_PUBLIC_SERVER_URL: https://admin-mzinga-e2e.mzinga.io
   ACR_NAME: newesissrl
 
