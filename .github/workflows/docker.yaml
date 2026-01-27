@@ -14,8 +14,8 @@ permissions:
 
 env:
   DOCKER_BUILDKIT: 1
-  TEST_NAMESPACE: mzinga-app
-  PAYLOAD_PUBLIC_SERVER_URL: https://admin-mzinga-app.mzinga.io
+  TEST_NAMESPACE: mzinga-e2e-tests
+  PAYLOAD_PUBLIC_SERVER_URL: https://admin-mzinga-e2e.mzinga.io
   ACR_NAME: newesissrl
 
 jobs:
@@ -132,7 +132,7 @@ jobs:
     runs-on: [self-hosted]
     env:
       API_KEY: ${{ secrets.USER_API_KEY }}
-      PAYLOAD_PUBLIC_SERVER_URL: https://admin-mzinga-app.mzinga.io
+      PAYLOAD_PUBLIC_SERVER_URL: https://admin-mzinga-e2e.mzinga.io
       RABBITMQ_URL: ${{ secrets.RABBITMQ_URL }}
     steps:
       - uses: actions/checkout@v4
