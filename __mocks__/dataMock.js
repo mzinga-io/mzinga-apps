@@ -126,6 +126,54 @@ module.exports = {
         createdAt: "2023-02-27T11:15:34.395Z",
         updatedAt: "2023-02-27T15:30:50.815Z",
         confirmationMessage: [{ children: [{ text: "sample_text" }] }],
+        emails: [
+          {
+            message: [
+              {
+                children: [
+                  {
+                    text: "Title text",
+                  },
+                ],
+                type: "h2",
+              },
+              {
+                children: [
+                  {
+                    text: "\Dear  {{name}} {{surname}}, ",
+                  },
+                ],
+              },
+              {
+                children: [
+                  {
+                    text: "we're happy to confirm your registration",
+                  },
+                ],
+              },
+              {
+                children: [
+                  {
+                    text: "You'll soon receive more info about the event schedule and the speakers. In the meantime, we suggest you ",
+                  },
+                  {
+                    children: [
+                      {
+                        text: "insert the event among your favorites ",
+                      },
+                    ],
+                    linkType: "custom",
+                    type: "link",
+                    url: "https://www.mzinga.io/",
+                  },
+                  {
+                    text: " to not miss any updates.",
+                  },
+                ],
+              },
+            ],
+          },
+        ],
         redirect: {},
       },
     },

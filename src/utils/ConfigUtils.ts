@@ -67,7 +67,7 @@ export class ConfigUtils {
   constructor(
     collections: CollectionConfig[],
     additionalConfig?: InstanceConfig,
-    customComponents?: CustomComponents
+    customComponents?: CustomComponents,
   ) {
     this.config = new ConfigLoader(additionalConfig).Load();
     this.webHooks = new WebHooks(this.config.Env);
@@ -110,7 +110,7 @@ export class ConfigUtils {
       (field as FieldBase).hooks = {
         ...(field as FieldBase).hooks,
         beforeChange: ((field as FieldBase).hooks?.beforeChange || []).concat(
-          safeHooksBeforeChange.map(evaluateSafeFn)
+          safeHooksBeforeChange.map(evaluateSafeFn),
         ),
       };
       delete (field as FieldWithSafeAccess).safeHooksBeforeChange;
@@ -156,7 +156,7 @@ export class ConfigUtils {
               : undefined,
           },
           fields: (tab as any).fields.map((field) =>
-            this.TransformToField(field)
+            this.TransformToField(field),
           ),
         };
         delete result.safeAdminCondition;
@@ -173,7 +173,7 @@ export class ConfigUtils {
               : undefined,
           },
           fields: (group as any).fields.map((field) =>
-            this.TransformToField(field)
+            this.TransformToField(field),
           ),
         };
         delete result.safeAdminCondition;
@@ -218,7 +218,7 @@ export class ConfigUtils {
     return result;
   }
   FilterInvalidRelationships(
-    collections: CollectionConfig[] | SanitizedCollectionConfig[]
+    collections: CollectionConfig[] | SanitizedCollectionConfig[],
   ) {
     const check = (fields: Field[]) => {
       fields.forEach((field, idx, array) => {
@@ -232,7 +232,7 @@ export class ConfigUtils {
             : relationTo;
           relationToAsArray.forEach((r) => {
             const hasCollectionWithRelationToSlug = collections.find(
-              (c) => c.slug === r
+              (c) => c.slug === r,
             );
             if (!hasCollectionWithRelationToSlug) {
               array.splice(idx, 1);
@@ -257,26 +257,26 @@ export class ConfigUtils {
   }
   TransformCollection(
     config: Config | SanitizedConfig,
-    collection: CollectionConfigWithExtends
+    collection: CollectionConfigWithExtends,
   ) {
     const result = Object.assign({}, collection);
     const { extends: _extends } = result;
     if (_extends) {
       const extendFromCollectionKey = _extends.collection;
       const extendBaseCollection = config.collections.find(
-        (c) => c.slug === extendFromCollectionKey
+        (c) => c.slug === extendFromCollectionKey,
       );
       if (extendBaseCollection) {
         if (_extends.access) {
           extendBaseCollection.access = this.TransformToAccess(
             _extends.access,
-            extendBaseCollection.access
+            extendBaseCollection.access,
           );
         }
         if (_extends.accessByRoles) {
           extendBaseCollection.access = this.TransformToAccess(
             this.TransformFromRolesToAccess(_extends.accessByRoles),
-            extendBaseCollection.access
+            extendBaseCollection.access,
           );
         }
 
@@ -288,13 +288,13 @@ export class ConfigUtils {
         };
         if (_extends.safeAdminHidden) {
           extendBaseCollection.admin.hidden = evaluateSafeFn(
-            _extends.safeAdminHidden
+            _extends.safeAdminHidden,
           );
           delete _extends.safeAdminHidden;
         }
         extendBaseCollection.fields = this.ToggleHiddenFields(
           extendBaseCollection.fields,
-          _extends.hiddenFields
+          _extends.hiddenFields,
         ).concat(_extends.fields || []);
       }
       return extendBaseCollection;
@@ -303,7 +303,7 @@ export class ConfigUtils {
     if (result.accessByRoles) {
       result.access = this.TransformToAccess(
         this.TransformFromRolesToAccess(result.accessByRoles),
-        result.access
+        result.access,
       );
       delete result.accessByRoles;
     }
@@ -313,11 +313,11 @@ export class ConfigUtils {
   }
   FilterValidCollections(
     config: Config | SanitizedConfig,
-    incomingCollections: CollectionConfigWithExtends[]
+    incomingCollections: CollectionConfigWithExtends[],
   ) {
     const sortedCollections = this.SortCollectionsByRelations(
       config,
-      incomingCollections
+      incomingCollections,
     );
     for (const collection of sortedCollections) {
       const { extends: _extends } = collection;
@@ -333,13 +333,13 @@ export class ConfigUtils {
           abortEarly: false,
           allowUnknown: false,
           stripUnknown: false,
-        }
+        },
       );
       if (result?.error) {
         MZingaLogger.Instance?.error(
           `There was a problem with collection '${
             collection.slug
-          }'.\nerror: ${result.error}.\nPlease check your input\n${JSON.stringify(collection)}`
+          }'.\nerror: ${result.error}.\nPlease check your input\n${JSON.stringify(collection)}`,
         );
         continue;
       }
@@ -357,7 +357,7 @@ export class ConfigUtils {
         (f as ArrayField).fields
           .filter((f) => f.type === "relationship" || f.type === "upload")
           .map((f) => (f as RelationshipField).relationTo)
-          .flat()
+          .flat(),
       )
       .flat();
     const mapGroupFields = collection.fields
@@ -366,7 +366,7 @@ export class ConfigUtils {
         (f as GroupField).fields
           .filter((f) => f.type === "relationship" || f.type === "upload")
           .map((f) => (f as RelationshipField).relationTo)
-          .flat()
+          .flat(),
       )
       .flat();
     return [...mapRelationFields, ...mapArrayFields, ...mapGroupFields].flat();
@@ -374,7 +374,7 @@ export class ConfigUtils {
   traverse(
     configSlugs: string[],
     incomingCollections: CollectionConfigWithExtends[],
-    graph: CollectionGraph
+    graph: CollectionGraph,
   ) {
     const customEntityRelatedCollections = Object.values(graph).flat();
     const relatedSlugs = customEntityRelatedCollections.map((c) => c.slug);
@@ -403,7 +403,7 @@ export class ConfigUtils {
       }
       if (
         relationForCollection.every((r) =>
-          [configSlugs, relatedSlugs].flat().includes(r)
+          [configSlugs, relatedSlugs].flat().includes(r),
         )
       ) {
         graph[CollectionGraphKeys.CustomEntity].push(c);
@@ -415,7 +415,7 @@ export class ConfigUtils {
   }
   SortCollectionsByRelations(
     config: Config | SanitizedConfig,
-    incomingCollections: CollectionConfigWithExtends[]
+    incomingCollections: CollectionConfigWithExtends[],
   ) {
     const graph = {
       [CollectionGraphKeys.NoRelation]: [],
@@ -425,7 +425,7 @@ export class ConfigUtils {
     this.traverse(
       config.collections.map((c) => c.slug),
       [].concat(incomingCollections),
-      graph
+      graph,
     );
     const result = Object.values(graph).flat();
     return result;
@@ -438,7 +438,7 @@ export class ConfigUtils {
   }
   IsEnabledBySlug(slug: string) {
     const collection = this.GetEnabledCollections().find(
-      (c) => c.slug === slug
+      (c) => c.slug === slug,
     );
     if (!collection) {
       return false;
@@ -459,7 +459,7 @@ export class ConfigUtils {
     return this.GetEnabledCollections().map((c) => {
       const filteredFields = this.FilterFields(
         c.slug,
-        this.FilterRelationships(c.fields)
+        this.FilterRelationships(c.fields),
       );
       return {
         ...c,
@@ -513,32 +513,32 @@ export class ConfigUtils {
     if (collectionWithExtends.extends.accessByRoles) {
       access = this.TransformToAccess(
         this.TransformFromRolesToAccess(
-          collectionWithExtends.extends.accessByRoles
+          collectionWithExtends.extends.accessByRoles,
         ),
-        {}
+        {},
       );
     }
     return access;
   }
   async GetEnabledPlugins(
-    incomingCollections: CollectionConfigWithExtends[]
+    incomingCollections: CollectionConfigWithExtends[],
   ): Promise<Plugin[]> {
     const extendsForPlugins = incomingCollections.filter(
       (c) =>
         Boolean(c.extends) &&
         (Boolean(c.extends.access) || Boolean(c.extends.accessByRoles)) &&
         (c.extends.collection === Slugs.Plugins.Forms ||
-          c.extends.collection === Slugs.Plugins.FormSubmissions)
+          c.extends.collection === Slugs.Plugins.FormSubmissions),
     );
     const extendsForms = extendsForPlugins.find(
-      (c) => c.extends.collection === Slugs.Plugins.Forms
+      (c) => c.extends.collection === Slugs.Plugins.Forms,
     );
     const extendsFormSubmissions = extendsForPlugins.find(
-      (c) => c.extends.collection === Slugs.Plugins.FormSubmissions
+      (c) => c.extends.collection === Slugs.Plugins.FormSubmissions,
     );
     const accessForms = this.GetAccessForPlugins(extendsForms);
     const accessFormSubmissions = this.GetAccessForPlugins(
-      extendsFormSubmissions
+      extendsFormSubmissions,
     );
     const zitadelPlugin = ZitadelStrategyPlugin({
       ui: {
@@ -591,13 +591,13 @@ export class ConfigUtils {
                     } catch (err) {
                       if (err?.response?.body?.errors) {
                         err.response.body.errors.forEach((error) =>
-                          console.log("%s: %s", error.field, error.message)
+                          console.log("%s: %s", error.field, error.message),
                         );
                       } else {
                         console.log(err);
                       }
                     }
-                  })
+                  }),
                 );
                 return formattedEmails;
               },
@@ -613,7 +613,7 @@ export class ConfigUtils {
             group: "Data",
             hidden: () => {
               return EnvUtils.GetAsBoolean(
-                this.config.Env.PAYLOAD_PUBLIC_DISABLE_FORM_PLUGIN
+                this.config.Env.PAYLOAD_PUBLIC_DISABLE_FORM_PLUGIN,
               );
             },
           },
@@ -635,7 +635,8 @@ export class ConfigUtils {
           endpoints: [].concat(bySlugEndpoints),
           hooks: {
             beforeChange: [].concat(
-              new RichTextHooks("confirmationMessage", "children").beforeChange
+              new RichTextHooks("confirmationMessage", "children").beforeChange,
+              new RichTextHooks("emails", "message").beforeChange,
             ),
           },
         },
@@ -648,17 +649,17 @@ export class ConfigUtils {
             group: "Data",
             hidden: () => {
               return EnvUtils.GetAsBoolean(
-                this.config.Env.PAYLOAD_PUBLIC_DISABLE_FORM_PLUGIN
+                this.config.Env.PAYLOAD_PUBLIC_DISABLE_FORM_PLUGIN,
               );
             },
           },
         },
-      })
+      }),
     );
     plugins.push(
       exportCollectionsPlugin({
         rootDir: this.config.Env?.TENANT,
-      })
+      }),
     );
     const collectionsSlugs = [
       Slugs.Stories,
@@ -687,25 +688,25 @@ export class ConfigUtils {
             return summary || excerpt;
           },
           generateImage: ({ doc }) => (doc as any)?.thumb?.value,
-        })
+        }),
       );
       if (
         this.config.Env?.REDIS_URI &&
         EnvUtils.GetAsBoolean(
-          this.config.Env?.PAYLOAD_PUBLIC_ENABLE_CACHE_PLUGIN
+          this.config.Env?.PAYLOAD_PUBLIC_ENABLE_CACHE_PLUGIN,
         )
       ) {
         plugins.push(
           cachePlugin({
             excludedCollections: [Slugs.Users, Slugs.Alerts],
-          })
+          }),
         );
       }
     }
     if (
       this.config.Env?.PAYLOAD_PUBLIC_ZITADEL_CLIENT_ID &&
       EnvUtils.GetAsBoolean(
-        this.config.Env?.PAYLOAD_PUBLIC_ENABLE_ZITADEL_PLUGIN
+        this.config.Env?.PAYLOAD_PUBLIC_ENABLE_ZITADEL_PLUGIN,
       )
     ) {
       plugins.push(zitadelPlugin);

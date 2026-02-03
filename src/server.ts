@@ -27,7 +27,7 @@ const app = express();
 app.use(
   express.json({
     limit: process.env.JSON_LIMITS_SIZE || "20mb",
-  })
+  }),
 );
 app.use(cookieParser());
 const sendGridAPIKey = process.env.SENDGRID_API_KEY;
@@ -38,7 +38,7 @@ app.get("/", (_, res) => {
 
 app.use(
   "/monaco-editor",
-  express.static(path.resolve(__dirname, "../node_modules/monaco-editor"))
+  express.static(path.resolve(__dirname, "../node_modules/monaco-editor")),
 );
 app.use("/assets", express.static(path.resolve(__dirname, "../assets")));
 
@@ -51,8 +51,8 @@ const debugHooks = (req, res) => {
   const { body } = req;
   MZingaLogger.Instance?.debug(
     `[WEBHOOKS] ${collection}${field ? `.${field}` : ""}.${hook}: ${JSON.stringify(
-      body
-    )}`
+      body,
+    )}`,
   );
   res.send("OK");
 };
@@ -104,8 +104,8 @@ const start = async () => {
             transportOptions: nodemailerSendgrid({
               apiKey: sendGridAPIKey,
             }),
-            fromAddress: "admin@mzinga.io",
-            fromName: "Mzinga.io",
+            fromAddress: process.env.EMAIL_FROM_ADDRESS || "admin@mzinga.io",
+            fromName: process.env.EMAIL_FROM_NAME || "Mzinga.io",
           },
         }
       : {}),
@@ -116,7 +116,7 @@ const start = async () => {
       payload.logger.info(
         `MZinga@v${payloadPkg.version}(tenant=${process.env.TENANT}, env=${
           process.env.ENV
-        }) Admin URL: ${payload.getAdminURL()}`
+        }) Admin URL: ${payload.getAdminURL()}`,
       );
     },
   });
@@ -143,7 +143,7 @@ const start = async () => {
       assert.equal(
         ctx.window._env_ != null,
         true,
-        `The file "${envConfigFileName}" doesn't contain the mandatory "_env_" property`
+        `The file "${envConfigFileName}" doesn't contain the mandatory "_env_" property`,
       );
     } catch (e) {
       res.status(500).send({ msg: e.message, content: envConfigContent });
@@ -153,7 +153,7 @@ const start = async () => {
   });
   app.get("/probes/api/health", async (req: PayloadRequest, res) => {
     const collectionWithAuth = Object.values(req.payload.collections).find(
-      (c: Collection) => Boolean(c.config.auth)
+      (c: Collection) => Boolean(c.config.auth),
     );
     if (!collectionWithAuth) {
       res.status(404).send(`No collection with "auth" property found`);
@@ -183,7 +183,7 @@ const start = async () => {
       res
         .status(500)
         .send(
-          `mongoURL provided not fitting the regex ${mongoURLRegex.source}`
+          `mongoURL provided not fitting the regex ${mongoURLRegex.source}`,
         );
       return;
     }
