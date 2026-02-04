@@ -39,6 +39,10 @@ const Files: CollectionConfig = {
     staticDir: UploadUtils.GetStaticDir("files"),
     mimeTypes: [
       "text/plain",
+      "text/calendar",
+      "text/x-vcalendar",
+      "text/vcard",
+      "text/x-vcard",
       "application/pdf",
       "application/msword",
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
