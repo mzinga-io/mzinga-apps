@@ -47,6 +47,7 @@ services:
       - REDIS_URI=${REDIS_URI:-redis://cache:6379}
       - HOOKSURL_TEAMS_FIELD_DESCRIPTION_AFTERCHANGE=http://webhook-subscriber:4000/webhook
       - HOOKSURL_PLAYERS_AFTERCHANGE=rabbitmq
+      - CORS_CONFIGS=*
     deploy:
       replicas: ${MZINGA_DOCKER_COMPOSE_REPLICAS:-1}
       restart_policy:

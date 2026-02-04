@@ -45,6 +45,7 @@ import type {
 import { EnvUtils } from "./EnvUtils";
 import { MZingaLogger } from "./MZingaLogger";
 import { SlugUtils } from "./SlugUtils";
+import { TextUtils } from "./TextUtils";
 
 declare type CollectionGraph = {
   [key: string]: CollectionConfigWithExtends[];
@@ -577,30 +578,32 @@ export class ConfigUtils {
     // );
     plugins.push(
       formBuilder({
-        beforeEmail:
-          process.env.DEBUG_EMAIL_SEND !== "1"
-            ? null
-            : async (formattedEmails) => {
-                await Promise.all(
-                  formattedEmails.map(async (email) => {
-                    const { to } = email;
-                    try {
-                      const emailPromise = await payload.sendEmail(email);
-                      console.log(`Email sent to ${to}`);
-                      return emailPromise;
-                    } catch (err) {
-                      if (err?.response?.body?.errors) {
-                        err.response.body.errors.forEach((error) =>
-                          console.log("%s: %s", error.field, error.message),
-                        );
-                      } else {
-                        console.log(err);
-                      }
-                    }
-                  }),
-                );
-                return formattedEmails;
-              },
+        beforeEmail: async (formattedEmails) => {
+          for (let formatted of formattedEmails) {
+            formatted = TextUtils.FormatEmailHTML(formatted);
+          }
+          if (process.env.DEBUG_EMAIL_SEND === "1") {
+            await Promise.all(
+              formattedEmails.map(async (email) => {
+                const { to } = email;
+                try {
+                  const emailPromise = await payload.sendEmail(email);
+                  console.log(`Email sent to ${to}`);
+                  return emailPromise;
+                } catch (err) {
+                  if (err?.response?.body?.errors) {
+                    err.response.body.errors.forEach((error) =>
+                      console.log("%s: %s", error.field, error.message),
+                    );
+                  } else {
+                    console.log(err);
+                  }
+                }
+              }),
+            );
+          }
+          return formattedEmails;
+        },
         formOverrides: {
           slug: Slugs.Plugins.Forms,
           versions: {
