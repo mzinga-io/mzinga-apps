@@ -364,6 +364,28 @@ module.exports = {
         ],
       },
     ],
+    formattedEmail: {
+      bcc: "",
+      cc: "",
+      from: "admin@mzinga.io",
+      html:
+        "<div>\n" +
+        "        <h2>\n" +
+        "          <span>Sample title!</span>\n" +
+        "        </h2>\n" +
+        "      \n" +
+        "        <p>\n" +
+        "          <a href={https://www.mzinga.io}>\n" +
+        "          <span>sample link</span>\n" +
+        "        </a>\n" +
+        "      <span> more text later</span>\n" +
+        "        </p>\n" +
+        "      \n" +
+        "      </div>",
+      replyTo: "admin@mzinga.io",
+      subject: "You've received a new message.",
+      to: "admin@mzinga.io",
+    },
   },
   ConfigUtils: {
     incomingCollections: [

@@ -1,3 +1,4 @@
+import type { FormattedEmail } from "@mzinga/plugin-form-builder/dist/types";
 import escapeHTML from "escape-html";
 import { Text } from "slate";
 
@@ -24,7 +25,7 @@ export const TextUtils = {
           }
           let text = `<span>${escapeHTML(nodeText).replace(
             /\n/gm,
-            "<br/>"
+            "<br/>",
           )}</span>`;
 
           if (node.bold) {
@@ -112,5 +113,20 @@ export const TextUtils = {
       .filter(Boolean)
       .flat()
       .filter((c) => c);
+  },
+  FormatEmailHTML(email: FormattedEmail): FormattedEmail {
+    const regex = new RegExp(/<a href=\{(.*)\}/gim);
+    let m;
+    while ((m = regex.exec(email.html))) {
+      regex.lastIndex = 0;
+      const fullMatch = m[0];
+      const link = m[1];
+      email.html = email.html.replace(fullMatch, `<a href="${link}"`);
+    }
+    email.html = email.html
+      .replace(/\\n/gm, "")
+      .replace(/\s+/gm, " ")
+      .replace(/(?<=>)\s+(?=<)/gm, ""); // remove spaces between tags
+    return email;
   },
 };
