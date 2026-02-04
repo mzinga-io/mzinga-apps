@@ -53,11 +53,14 @@ const Communications: CollectionConfig = {
             collection: tos[0].relationTo,
             where: {
               id: {
-                in: tos.map((to) => to.value.id).join(","),
+                in: tos.map((to) => to.value.id || to.value).join(","),
               },
             },
           });
           const usersEmails = users.docs.map((u) => u.email);
+          if (!usersEmails.length) {
+            throw new Error("No valid email addresses found for 'tos' users.");
+          }
           let cc;
           if (ccs) {
             const copiedusers = await payload.find({
@@ -96,7 +99,7 @@ const Communications: CollectionConfig = {
               MailUtils.sendMail(payload, message).catch((e) => {
                 MZingaLogger.Instance?.error(`[Communications:err] ${e}`);
                 return null;
-              })
+              }),
             );
           }
           await Promise.all(promises.filter((p) => Boolean(p)));
@@ -107,8 +110,8 @@ const Communications: CollectionConfig = {
               MZingaLogger.Instance?.error(
                 `[Communications:err]
                 ${error.field}
-                ${error.message}`
-              )
+                ${error.message}`,
+              ),
             );
           } else {
             MZingaLogger.Instance?.error(`[Communications:err] ${err}`);

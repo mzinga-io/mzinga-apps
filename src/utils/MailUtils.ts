@@ -6,7 +6,7 @@ export class MailUtils {
     if (process.env.DEBUG_EMAIL_SEND === "1") {
       MZingaLogger.Instance?.info(
         "[MailUtils:message] %s",
-        JSON.stringify(message, null, 2)
+        JSON.stringify(message, null, 2),
       );
     }
     const email = await payload.email;
@@ -14,7 +14,7 @@ export class MailUtils {
     if (process.env.DEBUG_EMAIL_SEND === "1") {
       MZingaLogger.Instance?.info(
         "[MailUtils:result] %s",
-        JSON.stringify(result, null, 2)
+        JSON.stringify(result, null, 2),
       );
     }
     return result;
