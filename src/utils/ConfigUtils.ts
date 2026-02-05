@@ -656,6 +656,10 @@ export class ConfigUtils {
               );
             },
           },
+          hooks: this.webHooks.EnrichCollection({
+            slug: Slugs.Plugins.FormSubmissions,
+            hooks: {},
+          } as CollectionConfig),
         },
       }),
     );

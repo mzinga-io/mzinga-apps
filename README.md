@@ -90,7 +90,7 @@ To run MZinga locally, you need to configure several environment variables. Thes
 | `DISABLE_TRACING`                    | Set to `1` to disable OpenTelemetry tracing (recommended for local dev). | 1                                                                                | No       |
 | `REDIS_URI`                          | Redis connection string (required if using Redis cache plugin).          | redis://localhost:6379                                                           | No\*     |
 | `PAYLOAD_PUBLIC_ENABLE_CACHE_PLUGIN` | Enable Redis cache plugin (`true` or `false`).                           | true                                                                             | No\*     |
-| `DRIVER_OPTS_DEVICE`                 | Docker volume driver device path (for local Docker volumes).             | /tmp                                                                             | Yes      |
+| `DRIVER_OPTS_DEVICE`                 | Path for Docker volume data. **Warning:** Defaults to `/tmp` for temporary development. Change to a persistent path (e.g., `~/mzinga-data`) to prevent data loss on restart. | /tmp | Yes      |
 | `DRIVER_OPTS_TYPE`                   | Docker volume driver type.                                               | none                                                                             | Yes      |
 | `DRIVER_OPTS_OPTIONS`                | Docker volume driver options.                                            | bind                                                                             | Yes      |
 | `MZINGA_DOCKER_COMPOSE_REPLICAS`     | Number of replicas for Docker Compose services.                          | 0                                                                                | No       |
@@ -105,35 +105,77 @@ To run MZinga locally, you need to configure several environment variables. Thes
 
 ## Running with Docker Compose
 
-1. **Ensure your `.env` file is configured as follow:**
+You can run the stack using Docker Compose in two modes.
 
-   ```sh
-   MONGO_HOST=[your_192_ip_address]
-   DRIVER_OPTS_TYPE="none"
-   DRIVER_OPTS_OPTIONS="bind"
-   DRIVER_OPTS_DEVICE=/tmp
-   ```
+### For a Persistent Environment (Recommended)
 
-2. **Create needed volume folder (and/or clean them up if needed)**
+Use this method to ensure your data (database, uploads, etc.) is saved permanently and survives Docker restarts.
 
-   ```sh
-   echo "Cleanup"
-   rm -rf /tmp/database /tmp/mzinga /tmp/messagebus
-   ```
+1.  **Create a persistent directory on your machine:**
+    Choose a permanent location to store your data, for example, in your home directory.
 
-   ```sh
-   echo "Create"
-   mkdir -p /tmp/database /tmp/mzinga /tmp/messagebus
-   ```
+    ```sh
+    mkdir -p ~/mzinga-data
+    ```
 
-3. **Start all services:**
+2.  **Configure your `.env` file:**
+    Set `DRIVER_OPTS_DEVICE` to the **absolute path** of the directory you just created.
 
-   ```sh
-   docker compose up
-   ```
+    ```sh
+    # Example for macOS:
+    # DRIVER_OPTS_DEVICE=/Users/your-user/mzinga-data
+    #
+    # Example for Linux:
+    # DRIVER_OPTS_DEVICE=/home/your-user/mzinga-data
 
-4. **Access the app:**
-   Open [http://localhost:3000](http://localhost:3000) (or the port you set in `PORT`).
+    DRIVER_OPTS_DEVICE= # <-- SET YOUR ABSOLUTE PATH HERE
+    ```
+    Also ensure the other required variables are set:
+    ```sh
+    MONGO_HOST=[your_192_ip_address]
+    DRIVER_OPTS_TYPE="none"
+    DRIVER_OPTS_OPTIONS="bind"
+    ```
+
+3.  **Start all services:**
+    ```sh
+    docker compose up
+    ```
+
+### For a Temporary, Disposable Environment
+
+Use this method for quick tests where you do not need to keep your data.
+
+> **Warning:** Using `/tmp` means all your data will be deleted when you shut down or restart Docker.
+
+1.  **Ensure your `.env` file is configured as follows:**
+
+    ```sh
+    MONGO_HOST=[your_192_ip_address]
+    DRIVER_OPTS_TYPE="none"
+    DRIVER_OPTS_OPTIONS="bind"
+    DRIVER_OPTS_DEVICE=/tmp
+    ```
+
+2.  **Create needed volume folders (and/or clean them up if needed):**
+    This command is useful to ensure you start with a clean slate.
+
+    ```sh
+    echo "Cleanup"
+    rm -rf /tmp/database /tmp/mzinga /tmp/messagebus
+    
+    echo "Create"
+    mkdir -p /tmp/database /tmp/mzinga /tmp/messagebus
+    ```
+
+3.  **Start all services:**
+
+    ```sh
+    docker compose up
+    ```
+
+4.  **Access the app:**
+    Open [http://localhost:3000](http://localhost:3000) (or the port you set in `PORT`).
 
 ---
 
