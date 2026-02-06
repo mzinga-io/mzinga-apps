@@ -220,15 +220,19 @@ const buildConfigAsync = async () => {
     MZingaLogger.Instance?.error(e);
   }
   config.plugins = await utils.GetEnabledPlugins(additionalCollections);
-  // Enrich collections with WebHooks
-  config.collections = utils
-    .FilterInvalidRelationships([].concat(config.collections))
+  
+  const builtConfig = await buildConfig(config);
+  
+  // Enrich builtin and plugin collections with WebHooks
+  builtConfig.collections = utils
+    .FilterInvalidRelationships(builtConfig.collections)
     .filter(Boolean)
     .map((collection) => ({
       ...collection,
       hooks: webHooks.EnrichCollection(collection),
       fields: webHooks.EnrichFields(collection.slug, collection.fields),
     })) as SanitizedCollectionConfig[];
-  return buildConfig(config);
+  
+  return builtConfig;
 };
 export default buildConfigAsync();
