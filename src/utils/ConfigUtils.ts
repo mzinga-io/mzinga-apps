@@ -327,13 +327,6 @@ export class ConfigUtils {
       delete result.accessByRoles;
     }
     delete result.safeAccess;
-    result.fields.push({
-      type: "json",
-      name: "descriptionSerialized",
-      admin: {
-        hidden: true,
-      },
-    });
     result.fields = result.fields.map((field) => this.TransformToField(field));
     return result;
   }
