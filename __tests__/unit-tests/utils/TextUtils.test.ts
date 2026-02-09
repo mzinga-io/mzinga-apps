@@ -78,6 +78,12 @@ describe("utils", () => {
         expect(result[0].value.id).toBe("63fc6a65d3ba75978a04509e");
       }
     });
+    it("should serialize content and keep white-spaces", () => {
+      const result = TextUtils.Serialize(dataMock.TextUtils.richText as any);
+      expect(result).toContain(
+        'Write to</span></strong>&nbsp;<a href="mailto:',
+      );
+    });
     it("Should return data-doc-id attribute for cross-reference", () => {
       const result = TextUtils.Serialize(dataMock.TextUtils.richText as any);
       expect(result).toContain('<a data-doc-id="63fc6a65d3ba75978a04509e">');
