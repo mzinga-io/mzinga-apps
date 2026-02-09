@@ -363,6 +363,30 @@ module.exports = {
           },
         ],
       },
+      {
+        children: [
+          {
+            text: "Write to",
+            bold: true,
+          },
+          {
+            text: " ",
+          },
+          {
+            newTab: true,
+            type: "link",
+            url: "mailto:admin@mzinga.io",
+            children: [
+              {
+                text: "admin@mzinga.io",
+              },
+            ],
+          },
+          {
+            text: " telling us other info",
+          },
+        ],
+      },
     ],
     formattedEmail: {
       bcc: "",

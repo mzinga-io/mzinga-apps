@@ -20,6 +20,9 @@ export const TextUtils = {
       ?.map((node: Node) => {
         if (Text.isText(node)) {
           const nodeText = node.text || "";
+          if (nodeText !== nodeText.trim()) {
+            return "&nbsp;";
+          }
           if (!nodeText.trim()) {
             return null;
           }
