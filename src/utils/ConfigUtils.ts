@@ -105,6 +105,25 @@ export class ConfigUtils {
       };
       delete (field as FieldWithSafeAccess).safeAdminCondition;
     }
+    if (field.type === "richText") {
+      (field as FieldBase).hooks = {
+        ...(field as FieldBase).hooks,
+        beforeChange: ((field as FieldBase).hooks?.beforeChange || []).concat([
+          ({ data, field, value }) => {
+            const currentData = [].concat(data[field.name]);
+            const result = [];
+            for (let node of currentData) {
+              result.push({
+                html: TextUtils.Serialize(node.children),
+                internalLinks: TextUtils.GetInternalLinks(node.children),
+              });
+            }
+            data[`${field.name}Serialized`] = result;
+            return value;
+          },
+        ]),
+      };
+    }
     const safeHooksBeforeChange = (field as FieldWithSafeAccess)
       .safeHooksBeforeChange;
     if (safeHooksBeforeChange) {
@@ -181,7 +200,6 @@ export class ConfigUtils {
         return result;
       });
     }
-
     return field;
   }
   TransformFromRolesToAccess(accessRoles: AccessByRoles): SafeAccess {
@@ -309,6 +327,13 @@ export class ConfigUtils {
       delete result.accessByRoles;
     }
     delete result.safeAccess;
+    result.fields.push({
+      type: "json",
+      name: "descriptionSerialized",
+      admin: {
+        hidden: true,
+      },
+    });
     result.fields = result.fields.map((field) => this.TransformToField(field));
     return result;
   }
