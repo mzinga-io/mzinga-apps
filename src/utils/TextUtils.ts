@@ -20,16 +20,12 @@ export const TextUtils = {
       ?.map((node: Node) => {
         if (Text.isText(node)) {
           const nodeText = node.text || "";
-          if (nodeText !== nodeText.trim()) {
-            return "&nbsp;";
-          }
-          if (!nodeText.trim()) {
+          if (!nodeText) {
             return null;
           }
-          let text = `<span>${escapeHTML(nodeText).replace(
-            /\n/gm,
-            "<br/>",
-          )}</span>`;
+          let text = `<span>${escapeHTML(nodeText)
+            .replace(/\n/gm, "<br/>")
+            .replace(/\s{2}/gm, " ")}</span>`;
 
           if (node.bold) {
             text = `<strong>${text}</strong>`;
