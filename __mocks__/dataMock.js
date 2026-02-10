@@ -410,6 +410,54 @@ module.exports = {
       subject: "You've received a new message.",
       to: "admin@mzinga.io",
     },
+    communication: {
+      body: [
+        {
+          type: "paragraph",
+          children: [
+            {
+              text: "Dear user,",
+            },
+          ],
+        },
+        {
+          type: "paragraph",
+          children: [
+            {
+              text: "",
+            },
+          ],
+        },
+        {
+          type: "paragraph",
+          children: [
+            {
+              text: "below you will find your information ",
+            },
+          ],
+        },
+        {
+          type: "paragraph",
+          children: [
+            {
+              text: "",
+            },
+          ],
+        },
+        {
+          type: "paragraph",
+          children: [
+            {
+              text: "Link: ",
+              bold: true,
+            },
+            {
+              text: "https://www.mzinga.io/",
+            },
+          ],
+        },
+      ],
+    },
   },
   ConfigUtils: {
     incomingCollections: [

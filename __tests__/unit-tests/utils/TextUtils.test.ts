@@ -31,7 +31,7 @@ describe("utils", () => {
       });
       it("Should return <br/> tag instead of \\n char (even with multiline)", () => {
         expect(formattingsResult).toContain(
-          `<span>sample_with<br/><br/>        _multiple<br/><br/><br/>        _breaking<br/>_line</span>`,
+          `<span>sample_with<br/><br/>    _multiple<br/><br/><br/>    _breaking<br/>_line</span>`,
         );
       });
       it("Should return 'blockquote' tags", () => {
@@ -81,7 +81,7 @@ describe("utils", () => {
     it("should serialize content and keep white-spaces", () => {
       const result = TextUtils.Serialize(dataMock.TextUtils.richText as any);
       expect(result).toContain(
-        'Write to</span></strong>&nbsp;<a href="mailto:',
+        '<span>Write to</span></strong><span> </span><a href="mailto:',
       );
     });
     it("Should return data-doc-id attribute for cross-reference", () => {
@@ -95,11 +95,18 @@ describe("utils", () => {
       );
     });
     it("Should format email content to html", () => {
-      console.log(dataMock.TextUtils.formattedEmail);
       const result = TextUtils.FormatEmailHTML(
         dataMock.TextUtils.formattedEmail as any,
       );
       expect(result.html).toContain('<a href="https://www.mzinga.io"><span');
+    });
+    it("Should format communication body html and keep additional whitespaces", () => {
+      const result = TextUtils.Serialize(
+        dataMock.TextUtils.communication.body as any,
+      );
+
+      expect(result).toContain("Dear user,</span>");
+      expect(result).toContain("Link: </span>");
     });
   });
 });
