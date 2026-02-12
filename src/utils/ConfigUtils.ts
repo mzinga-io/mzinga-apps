@@ -327,6 +327,25 @@ export class ConfigUtils {
       delete result.accessByRoles;
     }
     delete result.safeAccess;
+    result.fields
+      .filter((f) => f.type === "richText")
+      .map((f) => {
+        if (
+          result.fields.find(
+            (r) =>
+              (r as FieldBase).name === `${(f as FieldBase).name}Serialized`,
+          )
+        ) {
+          return;
+        }
+        result.fields.push({
+          type: "json",
+          name: `${(f as FieldBase).name}Serialized`,
+          admin: {
+            hidden: true,
+          },
+        });
+      });
     result.fields = result.fields.map((field) => this.TransformToField(field));
     return result;
   }
