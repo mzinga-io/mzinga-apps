@@ -97,6 +97,7 @@
     "@typescript-eslint/eslint-plugin": "^8.46.3",
     "@typescript-eslint/parser": "^8.46.3",
     "assert": "^2.1.0",
+    "baseline-browser-mapping": "^2.9.19",
     "buffer": "^6.0.3",
     "eslint": "^9.39.1",
     "husky": "^9.0.0",
