@@ -63,7 +63,7 @@
     "@opentelemetry/semantic-conventions": "1.38.0",
     "@sendgrid/mail": "^8.0.0",
     "assert": "^2.0.0",
-    "axios": "^1.13.2",
+    "axios": "^1.13.5",
     "body-parser": "^2.2.1",
     "cookie-parser": "^1.4.6",
     "copyfiles": "^2.4.1",
