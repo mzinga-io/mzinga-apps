@@ -1,5 +1,6 @@
 import payload from "mzinga";
-import { CollectionConfig } from "mzinga/types";
+import { PaginatedDocs } from "mzinga/database";
+import { CollectionConfig, TypeWithID } from "mzinga/types";
 import { AccessUtils } from "../utils";
 import { CollectionUtils } from "../utils/CollectionUtils";
 import { MailUtils } from "../utils/MailUtils";
@@ -133,9 +134,58 @@ const Communications: CollectionConfig = {
       relationTo: [Slugs.Users],
       required: true,
       hasMany: true,
+      validate: (value, { data }) => {
+        if (!value && data.sendToAll) {
+          return true;
+        }
+        if (value) {
+          return true;
+        }
+        return "No to(s) or sendToAll have been selected";
+      },
       admin: {
         isSortable: true,
       },
+      hooks: {
+        beforeValidate: [
+          async ({ value, data }) => {
+            if (data.sendToAll) {
+              const promises = [] as Promise<
+                PaginatedDocs<Record<string, unknown> & TypeWithID>
+              >[];
+
+              const firstSetOfUsers = await payload.find({
+                collection: Slugs.Users,
+                limit: 100,
+              });
+              const pages = firstSetOfUsers.totalPages;
+              for (let i = 1; i < pages; i++) {
+                promises.push(
+                  payload.find({
+                    collection: Slugs.Users,
+                    limit: 100,
+                    page: i,
+                  }),
+                );
+              }
+              const allDocs = [firstSetOfUsers]
+                .concat(await Promise.all(promises))
+                .map((p) => p.docs)
+                .flat()
+                .map((d) => {
+                  return { relationTo: Slugs.Users, value: d.id };
+                });
+              value = allDocs;
+            }
+            return value;
+          },
+        ],
+      },
+    },
+    {
+      name: "sendToAll",
+      type: "checkbox",
+      label: "Send to all users?",
     },
     {
       name: "ccs",
