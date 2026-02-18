@@ -26,9 +26,11 @@ const csrfConfigs = Env.CSRF_CONFIGS || "";
 const utils = new ConfigUtils(collections, null, { UnauthorizedUploadField });
 const MONGODB_URI = Env.MONGODB_URI || "";
 const POSTGRES_URI = Env.POSTGRES_URI || "";
+const PAYLOAD_PUBLIC_SERVER_URL =
+  Env.PAYLOAD_PUBLIC_SERVER_URL || "http://localhost:3000";
 loader.config({
   paths: {
-    vs: `${Env.PAYLOAD_PUBLIC_SERVER_URL}/monaco-editor/min/vs`,
+    vs: `${PAYLOAD_PUBLIC_SERVER_URL}/monaco-editor/min/vs`,
   },
 });
 const isReadPreferenceSecondary = () => {
@@ -77,7 +79,7 @@ const config = {
       },
     },
   },
-  serverURL: Env.PAYLOAD_PUBLIC_SERVER_URL || "http://localhost:3000",
+  serverURL: PAYLOAD_PUBLIC_SERVER_URL,
   endpoints: [
     {
       path: "/admin/restart-instance",
@@ -90,7 +92,7 @@ const config = {
         }
         if (!user.roles?.includes("admin")) {
           MZingaLogger.Instance?.debug(
-            `User ${user.id} not an admin. Skipping`
+            `User ${user.id} not an admin. Skipping`,
           );
           return { statusCode: 401 };
         }
@@ -106,7 +108,7 @@ const config = {
           locale: "en",
         });
         MZingaLogger.Instance?.info(
-          `Restarting instance. Requested by user: ${user.id}`
+          `Restarting instance. Requested by user: ${user.id}`,
         );
         process.exit(1);
       },
@@ -208,7 +210,7 @@ const buildConfigAsync = async () => {
   try {
     if (!Env.IS_BUILD_PROCESS) {
       MZingaLogger.Instance?.debug(
-        `Fetching: "${serverURL}/configs/custom-collections"`
+        `Fetching: "${serverURL}/configs/custom-collections"`,
       );
     }
     const response = Env.IS_BUILD_PROCESS
@@ -220,9 +222,9 @@ const buildConfigAsync = async () => {
     MZingaLogger.Instance?.error(e);
   }
   config.plugins = await utils.GetEnabledPlugins(additionalCollections);
-  
+
   const builtConfig = await buildConfig(config);
-  
+
   // Enrich builtin and plugin collections with WebHooks
   builtConfig.collections = utils
     .FilterInvalidRelationships(builtConfig.collections)
@@ -232,7 +234,7 @@ const buildConfigAsync = async () => {
       hooks: webHooks.EnrichCollection(collection),
       fields: webHooks.EnrichFields(collection.slug, collection.fields),
     })) as SanitizedCollectionConfig[];
-  
+
   return builtConfig;
 };
 export default buildConfigAsync();

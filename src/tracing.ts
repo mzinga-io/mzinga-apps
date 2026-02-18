@@ -10,10 +10,7 @@ import {
   resourceFromAttributes,
 } from "@opentelemetry/resources";
 import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-base";
-import {
-  NodeTracerProvider,
-  SimpleSpanProcessor,
-} from "@opentelemetry/sdk-trace-node";
+import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
 import {
   ATTR_SERVICE_NAME,
   ATTR_SERVICE_VERSION,
@@ -36,12 +33,12 @@ function main() {
   }
   const pkg = require("../package.json");
   const mzingaPkg = require("mzinga/package.json");
-  const IDENTIFIER = [
-    process.env.TENANT || (Math.random() + 1).toString(36).substring(7),
-    process.env.ENV,
-  ].join("-");
+  const ENV = process.env.ENV || "local";
+  const TENANT =
+    process.env.TENANT || (Math.random() + 1).toString(36).substring(7);
+  const IDENTIFIER = [TENANT, ENV].join("-");
   const serviceName = [process.env.SERVICE_NAME || pkg.name, IDENTIFIER].join(
-    "-"
+    "-",
   );
   const OTEL_EXPORTER_URL =
     process.env.OTEL_EXPORTER_OTLP_ENDPOINT || "http://localhost:4318";
@@ -63,18 +60,17 @@ function main() {
       [ATTR_SERVICE_VERSION]: pkg.version,
       payload_version: mzingaPkg.version,
       [ATTR_SERVICE_NAMESPACE]: IDENTIFIER,
-      env: process.env.ENV,
-      tenant: process.env.TENANT,
-    })
+      env: ENV,
+      tenant: TENANT,
+    }),
   );
-
+  const spanProcessors = [new BatchSpanProcessor(exporter)];
+  if (process.env.OTEL_CONSOLE_EXPORTER) {
+    spanProcessors.push(new BatchSpanProcessor(new LokiExporter()));
+  }
   const tracerProvider = new NodeTracerProvider({
     resource,
-    spanProcessors: [
-      new BatchSpanProcessor(exporter),
-      process.env.OTEL_CONSOLE_EXPORTER &&
-        new SimpleSpanProcessor(new LokiExporter()),
-    ],
+    spanProcessors: spanProcessors,
   });
 
   registerInstrumentations({
