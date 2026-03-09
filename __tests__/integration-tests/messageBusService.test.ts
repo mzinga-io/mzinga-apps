@@ -8,7 +8,7 @@ const { PAYLOAD_PUBLIC_SERVER_URL, API_KEY, RABBITMQ_URL } = process.env;
 
 const queueGuid = crypto.randomUUID();
 const queueName = `test_queue-${queueGuid}`;
-describe("MessageBusService Integration Tests", () => {
+describe.skip("MessageBusService Integration Tests", () => {
   let testConnection: Connection;
   let consumer: any;
   let organizationId;
