@@ -9,7 +9,8 @@ export class MailUtils {
         JSON.stringify(message, null, 2),
       );
     }
-    const result = await payload.sendEmail(message);
+    const email = await payload.email;
+    const result = await email.transport.sendMail(message);
     if (process.env.DEBUG_EMAIL_SEND === "1") {
       MZingaLogger.Instance?.info(
         "[MailUtils:result] %s",
