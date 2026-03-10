@@ -123,7 +123,7 @@ describe("collections", () => {
           }: ${await envResponse.text()}`
         );
       });
-      it.skip("Should delete related projects, environments for the specific organization", async () => {
+      it("Should delete related projects, environments for the specific organization", async () => {
         const orgResponse = await fetch(
           `${PAYLOAD_PUBLIC_SERVER_URL}/api/organizations/${organizationId}`,
           {
