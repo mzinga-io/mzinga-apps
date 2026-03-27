@@ -3,6 +3,7 @@ import nodemailerSendgrid from "@newesissrl/nodemailer-sendgrid";
 import { ZitadelRoutes } from "@newesissrl/payload-zitadel-plugin/dist/routes";
 import assert from "assert";
 import express from "express";
+import promBundle from "express-prom-bundle";
 import fs from "fs/promises";
 import payload from "mzinga";
 import type { Collection } from "mzinga/dist/collections/config/types";
@@ -18,12 +19,27 @@ import { EnvUtils } from "./utils/EnvUtils";
 import { GraphQLUtils } from "./utils/GraphQLUtils";
 import { MZingaLogger } from "./utils/MZingaLogger";
 DBUtils.fixBooleanType();
-
 const cookieParser = require("cookie-parser");
 const customEntities = new CustomEntities(process.env.TENANT);
 const mongoURLRegex = new RegExp(/mongodb:\/\/([\S]*):(\d*)\//i);
 require("dotenv").config();
 const app = express();
+const metricsMiddleware = promBundle({
+  includeMethod: true,
+  includePath: true,
+  includeStatusCode: true,
+  includeUp: true,
+  customLabels: {
+    tenant: process.env.TENANT || "unknown",
+    project_type: "coredatalink",
+    version: payloadPkg.version,
+  },
+  promClient: {
+    collectDefaultMetrics: {},
+  },
+});
+
+app.use(metricsMiddleware);
 app.use(
   express.json({
     limit: process.env.JSON_LIMITS_SIZE || "20mb",
