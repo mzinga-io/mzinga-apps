@@ -17,3 +17,9 @@ storage:
       path: /tmp/tempo/wal # where to store the wal locally
     local:
       path: /tmp/tempo/blocks
+
+ingest:
+  enabled: true
+  kafka:
+    address: redpanda:9092
+    topic: tempo-ingest

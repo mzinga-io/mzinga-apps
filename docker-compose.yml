@@ -144,6 +144,7 @@ services:
     volumes:
       - ./examples/servicebus-subscriber:/app
       - /app/node_modules
+
   collector:
     container_name: collector
     image: otel/opentelemetry-collector-contrib:latest
@@ -206,6 +207,16 @@ services:
       - grafanadata:/var/lib/grafana
     ports:
       - "8080:3000"
+
+  redpanda:
+    image: redpandadata/redpanda:latest
+    ports:
+      - "9092:9092" # Kafka API for clients
+    command: >
+      redpanda start --overprovisioned
+      --mode=dev-container
+      --kafka-addr=PLAINTEXT://0.0.0.0:9092
+      --advertise-kafka-addr=PLAINTEXT://redpanda:9092
 volumes:
   mongodb_data:
     driver: local
