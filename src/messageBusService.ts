@@ -2,6 +2,13 @@ import type { Publisher } from "rabbitmq-client";
 import { Connection } from "rabbitmq-client";
 import { MZingaLogger } from "./utils/MZingaLogger";
 
+const {
+  TENANT,
+  ENV,
+  RABBITMQ_VHOST = "/",
+  RABBITMQ_ACQUIRE_TIMEOUT = "",
+  RABBITMQ_CONNECTION_TIMEOUT = "",
+} = process.env;
 declare type Event = {
   type: string;
   data: any;
@@ -29,19 +36,27 @@ class MessageBusService {
   }
   async connect(url: string): Promise<void> {
     try {
-      this.connection = new Connection(url);
+      this.connection = new Connection({
+        connectionName: [TENANT, ENV].join("-"),
+        url,
+        vhost: RABBITMQ_VHOST,
+        acquireTimeout: +(RABBITMQ_ACQUIRE_TIMEOUT || 20_000),
+        connectionTimeout: +(RABBITMQ_CONNECTION_TIMEOUT || 10_000),
+      });
       this.connection.on("error", (err) => {
         MZingaLogger.Instance?.error(`RabbitMQ connection error: ${err}`);
       });
 
       this.connection.on("connection", () => {
         MZingaLogger.Instance?.debug(
-          "RabbitMQ connection successfully established"
+          "RabbitMQ connection successfully established",
         );
       });
-      this.connection.exchangeDeclare(BusConfiguration.MZingaEvents);
-      this.connection.exchangeDeclare(BusConfiguration.MZingaEventsDurable);
-      this.connection.exchangeBind({
+      await this.connection.exchangeDeclare(BusConfiguration.MZingaEvents);
+      await this.connection.exchangeDeclare(
+        BusConfiguration.MZingaEventsDurable,
+      );
+      await this.connection.exchangeBind({
         source: BusConfiguration.MZingaEvents.exchange,
         destination: BusConfiguration.MZingaEventsDurable.exchange,
         routingKey: "#",
@@ -74,11 +89,11 @@ class MessageBusService {
           routingKey,
           durable: true,
         },
-        event
+        event,
       );
 
       MZingaLogger.Instance?.debug(
-        `Successfully published event to RabbitMQ: ${routingKey}`
+        `Successfully published event to RabbitMQ: ${routingKey}`,
       );
     } catch (error) {
       MZingaLogger.Instance?.error(`Failed to publish event: ${error}`);
