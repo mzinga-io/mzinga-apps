@@ -36,13 +36,17 @@ class MessageBusService {
   }
   async connect(url: string): Promise<void> {
     try {
-      this.connection = new Connection({
+      const connectionConfig = {
         connectionName: [TENANT, ENV].join("-"),
         url,
         vhost: RABBITMQ_VHOST,
         acquireTimeout: +(RABBITMQ_ACQUIRE_TIMEOUT || 20_000),
         connectionTimeout: +(RABBITMQ_CONNECTION_TIMEOUT || 10_000),
-      });
+      };
+      MZingaLogger.Instance?.debug(
+        `RabbitMQ connection config: ${JSON.stringify(connectionConfig)}`,
+      );
+      this.connection = new Connection(connectionConfig);
       this.connection.on("error", (err) => {
         MZingaLogger.Instance?.error(`RabbitMQ connection error: ${err}`);
       });
