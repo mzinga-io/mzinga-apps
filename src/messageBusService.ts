@@ -3,8 +3,8 @@ import { Connection } from "rabbitmq-client";
 import { MZingaLogger } from "./utils/MZingaLogger";
 
 const {
-  TENANT,
-  ENV,
+  TENANT = "unknown",
+  ENV = "local",
   RABBITMQ_VHOST = "/",
   RABBITMQ_ACQUIRE_TIMEOUT = "",
   RABBITMQ_CONNECTION_TIMEOUT = "",

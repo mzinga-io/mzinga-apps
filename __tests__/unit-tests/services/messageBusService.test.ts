@@ -3,8 +3,8 @@ import { Connection } from "rabbitmq-client";
 import {
   BusConfiguration,
   messageBusService,
-} from "../../src/messageBusService";
-import { MZingaLogger } from "../../src/utils/MZingaLogger";
+} from "../../../src/messageBusService";
+import { MZingaLogger } from "../../../src/utils/MZingaLogger";
 
 // Mock BusConfiguration
 // Mock rabbitmq-client
@@ -13,7 +13,7 @@ jest.mock("rabbitmq-client", () => ({
 }));
 
 // Mock MZingaLogger
-jest.mock("../../src/utils/MZingaLogger", () => ({
+jest.mock("../../../src/utils/MZingaLogger", () => ({
   MZingaLogger: {
     Instance: {
       error: jest.fn(),
@@ -22,7 +22,13 @@ jest.mock("../../src/utils/MZingaLogger", () => ({
     },
   },
 }));
-
+const {
+  TENANT = "unknown",
+  ENV = "local",
+  RABBITMQ_VHOST = "/",
+  RABBITMQ_ACQUIRE_TIMEOUT = "",
+  RABBITMQ_CONNECTION_TIMEOUT = "",
+} = process.env;
 const MockConnection = Connection as jest.MockedClass<typeof Connection>;
 const mockLogger = MZingaLogger.Instance as jest.Mocked<
   typeof MZingaLogger.Instance
@@ -63,13 +69,14 @@ describe("services", () => {
     });
     describe("Connection", () => {
       it("should successfully connect to RabbitMQ", async () => {
-        await messageBusService.connect("amqp://localhost:5672");
+        const url = "amqp://localhost:5672";
+        await messageBusService.connect(url);
         expect(MockConnection).toHaveBeenCalledWith({
-          acquireTimeout: 20000,
-          connectionName: "-",
-          connectionTimeout: 10000,
-          url: "amqp://localhost:5672",
-          vhost: "/",
+          acquireTimeout: +(RABBITMQ_ACQUIRE_TIMEOUT || 20_000),
+          connectionName: [TENANT, ENV].join("-"),
+          connectionTimeout: +(RABBITMQ_CONNECTION_TIMEOUT || 10_000),
+          url,
+          vhost: RABBITMQ_VHOST,
         });
         expect(mockConnection.on).toHaveBeenCalledWith(
           "error",
