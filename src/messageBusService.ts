@@ -1,14 +1,13 @@
 import type { Publisher } from "rabbitmq-client";
 import { Connection } from "rabbitmq-client";
 import { MZingaLogger } from "./utils/MZingaLogger";
-
 const {
   TENANT = "unknown",
   ENV = "local",
   RABBITMQ_VHOST = "/",
   RABBITMQ_ACQUIRE_TIMEOUT = "",
   RABBITMQ_CONNECTION_TIMEOUT = "",
-} = process.env;
+} = (process || {}).env || {};
 declare type Event = {
   type: string;
   data: any;
