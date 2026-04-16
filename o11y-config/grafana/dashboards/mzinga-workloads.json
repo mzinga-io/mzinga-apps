@@ -1,0 +1,3867 @@
+{
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "grafana",
+                    "uid": "-- Grafana --"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            },
+            {
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                },
+                "enable": true,
+                "expr": "sum(changes(nginx_ingress_controller_config_last_reload_successful_timestamp_seconds{instance!=\"unknown\",controller_class=~\"k8s.io/ingress-nginx\",namespace=~\"ingress-nginx\"}[30s])) by (controller_class)",
+                "hide": false,
+                "iconColor": "red",
+                "name": "Config Reloads",
+                "step": "30s",
+                "tagKeys": "controller_class",
+                "titleFormat": "Config Reloads"
+            }
+        ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "links": [],
+    "panels": [
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            },
+            "id": 37,
+            "panels": [],
+            "title": "Headlines",
+            "type": "row"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "percent"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 3,
+                "w": 6,
+                "x": 0,
+                "y": 1
+            },
+            "id": 38,
+            "interval": "1m",
+            "options": {
+                "colorMode": "none",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.2",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "(sum by (namespace)  ((\n    sum by (pod) (\n      node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{namespace=\"$tenant\"}\n    )\n  )\n* on (pod) group_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"})) /\n(sum by (namespace)  (\n(sum by (pod) (\nkube_pod_container_resource_requests{job=\"kube-state-metrics\", namespace=\"$tenant\", resource=\"cpu\"}\n) * on (pod) \ngroup_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"})))",
+                    "instant": false,
+                    "legendFormat": "__auto",
+                    "range": true,
+                    "refId": "B"
+                }
+            ],
+            "title": "CPU Utilisation (from requests)",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "percent"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 3,
+                "w": 6,
+                "x": 6,
+                "y": 1
+            },
+            "id": 39,
+            "interval": "1m",
+            "options": {
+                "colorMode": "none",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.2",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "(sum by (namespace)  ((\n    sum by (pod) (\n      node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{namespace=\"$tenant\"}\n    )\n  )\n* on (pod) group_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"})) / (sum by (namespace)  (\n(sum by (pod) (\nkube_pod_container_resource_limits{job=\"kube-state-metrics\", namespace=\"$tenant\", resource=\"cpu\"}\n) * on (pod) \ngroup_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"})))",
+                    "instant": false,
+                    "legendFormat": "__auto",
+                    "range": true,
+                    "refId": "B"
+                }
+            ],
+            "title": "CPU Utilisation (from limits)",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "percent"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 3,
+                "w": 6,
+                "x": 12,
+                "y": 1
+            },
+            "id": 40,
+            "interval": "1m",
+            "options": {
+                "colorMode": "none",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.2",
+            "targets": [
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "(sum by (namespace)  ((\n    sum by (pod) (\n      container_memory_working_set_bytes{job=\"kubelet\", metrics_path=\"/metrics/cadvisor\", namespace=\"$tenant\",container!=\"\", image!=\"\"}\n    )\n  )\n* on (pod) group_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"})) / (sum by (namespace)  (\n(sum by (pod) (\nkube_pod_container_resource_requests{job=\"kube-state-metrics\", namespace=\"$tenant\", resource=\"memory\"}\n) * on (pod) \ngroup_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"})))",
+                    "format": "time_series",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "refId": "A"
+                }
+            ],
+            "title": "Memory Utilisation (from requests)",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "percent"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 3,
+                "w": 6,
+                "x": 18,
+                "y": 1
+            },
+            "id": 41,
+            "interval": "1m",
+            "options": {
+                "colorMode": "none",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "horizontal",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.2",
+            "targets": [
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "(sum by (namespace)  ((\n    sum by (pod) (\n      container_memory_working_set_bytes{job=\"kubelet\", metrics_path=\"/metrics/cadvisor\", namespace=\"$tenant\",container!=\"\", image!=\"\"}\n    )\n  )\n* on (pod) group_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"})) / (sum by (namespace)  (\n(sum by (pod) (\nkube_pod_container_resource_limits{job=\"kube-state-metrics\", namespace=\"$tenant\", resource=\"memory\"}\n) * on (pod) \ngroup_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"})))",
+                    "format": "time_series",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "refId": "A"
+                }
+            ],
+            "title": "Memory Utilisation (from limits)",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 8,
+                "x": 0,
+                "y": 4
+            },
+            "id": 54,
+            "options": {
+                "colorMode": "none",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.2",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(increase(nginx_ingress_controller_requests{exported_namespace=\"$tenant\", status=~\"2.*|3.*\"}[$__range]))",
+                    "range": true,
+                    "refId": "A"
+                }
+            ],
+            "title": "Number of successful requests on: $tenant",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 8,
+                "x": 8,
+                "y": 4
+            },
+            "id": 55,
+            "options": {
+                "colorMode": "none",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.2",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(increase(nginx_ingress_controller_requests{exported_namespace=\"$tenant\", status=~\"4.*\"}[$__range]))",
+                    "range": true,
+                    "refId": "A"
+                }
+            ],
+            "title": "Number of 4xx requests on: $tenant",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 4,
+                "w": 8,
+                "x": 16,
+                "y": 4
+            },
+            "id": 56,
+            "options": {
+                "colorMode": "none",
+                "graphMode": "none",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.2",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(increase(nginx_ingress_controller_requests{exported_namespace=\"$tenant\", status=~\"5.*\"}[$__range]))",
+                    "range": true,
+                    "refId": "A"
+                }
+            ],
+            "title": "Number of 5xx requests on: $tenant",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "percent"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 24,
+                "x": 0,
+                "y": 8
+            },
+            "id": 57,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "12.4.2",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "(sum(increase(nginx_ingress_controller_requests{exported_namespace=\"$tenant\", status=~\"4.*\"}[$__range])) + sum(increase(nginx_ingress_controller_requests{exported_namespace=\"$tenant\", status=~\"5.*\"}[$__range]))) / sum(increase(nginx_ingress_controller_requests{exported_namespace=\"$tenant\", status=~\"2.*\"}[$__range])) ",
+                    "instant": false,
+                    "legendFormat": "__auto",
+                    "range": true,
+                    "refId": "A"
+                }
+            ],
+            "title": "Errors (4xx and 5xx) rate %",
+            "type": "stat"
+        },
+        {
+            "datasource": {
+                "type": "tempo",
+                "uid": "tempo"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "footer": {
+                            "reducers": []
+                        },
+                        "inspect": false
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 15
+            },
+            "id": 42,
+            "options": {
+                "cellHeight": "sm",
+                "showHeader": true
+            },
+            "pluginVersion": "12.4.2",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "tempo",
+                        "uid": "tempo"
+                    },
+                    "filters": [
+                        {
+                            "id": "89639b59",
+                            "operator": "=",
+                            "scope": "span"
+                        }
+                    ],
+                    "limit": 20,
+                    "query": "{.tenant=\"$tenant\" && .http.status_code>=400 && .http.status_code<500}",
+                    "queryType": "traceql",
+                    "refId": "A"
+                }
+            ],
+            "title": "Requests with 4xx status code on: $tenant",
+            "type": "table"
+        },
+        {
+            "datasource": {
+                "type": "tempo",
+                "uid": "tempo"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "footer": {
+                            "reducers": []
+                        },
+                        "inspect": false
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 15
+            },
+            "id": 52,
+            "options": {
+                "cellHeight": "sm",
+                "showHeader": true
+            },
+            "pluginVersion": "12.4.2",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "tempo",
+                        "uid": "tempo"
+                    },
+                    "filters": [
+                        {
+                            "id": "89639b59",
+                            "operator": "=",
+                            "scope": "span"
+                        }
+                    ],
+                    "limit": 20,
+                    "query": "{.tenant=\"$tenant\" && .http.status_code>=500 && .http.status_code<600}",
+                    "queryType": "traceql",
+                    "refId": "A"
+                }
+            ],
+            "title": "Requests with 5xx status code on: $tenant",
+            "type": "table"
+        },
+        {
+            "datasource": {
+                "type": "tempo",
+                "uid": "tempo"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "inspect": false
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 10,
+                "w": 24,
+                "x": 0,
+                "y": 23
+            },
+            "id": 53,
+            "options": {
+                "cellHeight": "sm",
+                "footer": {
+                    "countRows": false,
+                    "fields": "",
+                    "reducer": [
+                        "sum"
+                    ],
+                    "show": false
+                },
+                "showHeader": true
+            },
+            "pluginVersion": "10.1.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "tempo",
+                        "uid": "tempo"
+                    },
+                    "filters": [
+                        {
+                            "id": "89639b59",
+                            "operator": "=",
+                            "scope": "span"
+                        }
+                    ],
+                    "limit": 20,
+                    "query": "{.tenant=\"$tenant\" && .http.url!~\".*/probes.*\"}",
+                    "queryType": "traceql",
+                    "refId": "A"
+                }
+            ],
+            "title": "Requests information on: $tenant",
+            "type": "table"
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 33
+            },
+            "id": 43,
+            "panels": [],
+            "title": "CPU Usage",
+            "type": "row"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "cpu"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 24,
+                "x": 0,
+                "y": 34
+            },
+            "id": 5,
+            "interval": "1m",
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "10.1.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "(sum by (namespace)  ((\n    sum by (pod) (\n      node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{namespace=\"$tenant\"}\n    )\n  )\n* on (pod) group_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"})) ",
+                    "format": "time_series",
+                    "intervalFactor": 2,
+                    "legendFormat": "{{pod}}",
+                    "range": true,
+                    "refId": "A",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "scalar(kube_resourcequota{namespace=\"$tenant\", type=\"hard\",resource=\"requests.cpu\", pod=~\"mzinga-.*\"})",
+                    "format": "time_series",
+                    "intervalFactor": 2,
+                    "legendFormat": "quota - requests",
+                    "range": true,
+                    "refId": "B",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "scalar(kube_resourcequota{namespace=\"$tenant\", type=\"hard\",resource=\"limits.cpu\", pod=~\"mzinga-.*\"})",
+                    "format": "time_series",
+                    "intervalFactor": 2,
+                    "legendFormat": "quota - limits",
+                    "range": true,
+                    "refId": "C",
+                    "step": 10
+                }
+            ],
+            "title": "CPU Usage",
+            "type": "timeseries"
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 41
+            },
+            "id": 44,
+            "panels": [],
+            "title": "CPU Quota",
+            "type": "row"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "filterable": false,
+                        "inspect": false
+                    },
+                    "decimals": 2,
+                    "displayName": "",
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Time"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Time"
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #A"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "CPU Usage"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "short"
+                            },
+                            {
+                                "id": "decimals"
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #B"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "CPU Requests"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "short"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #C"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "CPU Requests %"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "percentunit"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #D"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "CPU Limits"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "short"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #E"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "CPU Limits %"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "percentunit"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "pod"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Pod"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "short"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "links",
+                                "value": [
+                                    {
+                                        "targetBlank": false,
+                                        "title": "Drill down",
+                                        "url": "/d/6581e46e4e5c7ba40a07646395ef7b23/k8s-resources-pod?var-datasource=prometheus&var-cluster=$cluster&var-namespace=$tenant&var-pod=${__value.raw}"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 24,
+                "x": 0,
+                "y": 42
+            },
+            "id": 6,
+            "interval": "1m",
+            "options": {
+                "cellHeight": "sm",
+                "footer": {
+                    "countRows": false,
+                    "fields": "",
+                    "reducer": [
+                        "sum"
+                    ],
+                    "show": false
+                },
+                "showHeader": true
+            },
+            "pluginVersion": "10.1.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "(\n    sum by (pod) (\n      node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{namespace=\"$tenant\"}\n    )\n  )\n* on (pod) group_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"}",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "A",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "(\n    sum by (pod) (\n      cluster:namespace:pod_cpu:active:kube_pod_container_resource_requests{namespace=\"$tenant\"}\n    )\n  )\n* on (pod) group_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"}",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "B",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "(\n    sum by (pod) (\n      node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{namespace=\"$tenant\"}\n    )\n  )\n* on (pod) group_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"} / \n(sum by (pod) (\ncluster:namespace:pod_cpu:active:kube_pod_container_resource_requests{namespace=\"$tenant\"}\n) * on (pod) \ngroup_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"})",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "C",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "(\n    sum by (pod) (\n      cluster:namespace:pod_cpu:active:kube_pod_container_resource_limits{namespace=\"$tenant\"}\n    )\n  )\n* on (pod) group_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"}",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "D",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "(\n    sum by (pod) (\n      node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{namespace=\"$tenant\"}\n    )\n  )\n* on (pod) group_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"} / \n(sum by (pod) (\ncluster:namespace:pod_cpu:active:kube_pod_container_resource_limits{namespace=\"$tenant\"}\n) * on (pod) \ngroup_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"})",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "E",
+                    "step": 10
+                }
+            ],
+            "title": "CPU Quota",
+            "transformations": [
+                {
+                    "id": "merge",
+                    "options": {
+                        "reducers": []
+                    }
+                }
+            ],
+            "type": "table"
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 49
+            },
+            "id": 45,
+            "panels": [],
+            "title": "Memory Usage",
+            "type": "row"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "bytes"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 24,
+                "x": 0,
+                "y": 50
+            },
+            "id": 7,
+            "interval": "1m",
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "10.1.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "(sum by (namespace)  ((\n    sum by (pod) (\n      container_memory_working_set_bytes{job=\"kubelet\", metrics_path=\"/metrics/cadvisor\", namespace=\"$tenant\", container!=\"\", image!=\"\"}\n    )\n  )\n* on (pod) group_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"})) ",
+                    "format": "time_series",
+                    "intervalFactor": 2,
+                    "legendFormat": "{{pod}}",
+                    "range": true,
+                    "refId": "A",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "scalar(kube_resourcequota{namespace=\"$tenant\", type=\"hard\",resource=\"requests.memory\", pod=~\"mzinga-.*\"})",
+                    "format": "time_series",
+                    "intervalFactor": 2,
+                    "legendFormat": "quota - requests",
+                    "range": true,
+                    "refId": "B",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "scalar(kube_resourcequota{namespace=\"$tenant\", type=\"hard\",resource=\"limits.memory\", pod=~\"mzinga-.*\"})",
+                    "format": "time_series",
+                    "intervalFactor": 2,
+                    "legendFormat": "quota - limits",
+                    "range": true,
+                    "refId": "C",
+                    "step": 10
+                }
+            ],
+            "title": "Memory Usage (w/o cache)",
+            "type": "timeseries"
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 57
+            },
+            "id": 46,
+            "panels": [],
+            "title": "Memory Quota",
+            "type": "row"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "inspect": false
+                    },
+                    "decimals": 2,
+                    "displayName": "",
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Time"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Time"
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #A"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Memory Usage"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "bytes"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #B"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Memory Requests"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "bytes"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #C"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Memory Requests %"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "percentunit"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #D"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Memory Limits"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "bytes"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #E"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Memory Limits %"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "percentunit"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #F"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Memory Usage (RSS)"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "bytes"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #G"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Memory Usage (Cache)"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "bytes"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #H"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Memory Usage (Swap)"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "bytes"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "pod"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Pod"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "short"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "links",
+                                "value": [
+                                    {
+                                        "targetBlank": false,
+                                        "title": "Drill down",
+                                        "url": "/d/6581e46e4e5c7ba40a07646395ef7b23/k8s-resources-pod?var-datasource=prometheus&var-cluster=$cluster&var-namespace=$tenant&var-pod=${__value.raw}"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 24,
+                "x": 0,
+                "y": 58
+            },
+            "id": 8,
+            "interval": "1m",
+            "options": {
+                "cellHeight": "sm",
+                "footer": {
+                    "countRows": false,
+                    "fields": "",
+                    "reducer": [
+                        "sum"
+                    ],
+                    "show": false
+                },
+                "showHeader": true
+            },
+            "pluginVersion": "10.1.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "(\n    sum by (pod) (\n      container_memory_working_set_bytes{job=\"kubelet\", metrics_path=\"/metrics/cadvisor\", namespace=\"$tenant\", container!=\"\", image!=\"\"}\n    )\n  )\n* on (pod) group_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"}",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "A",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "(\n    sum by (pod) (\n      cluster:namespace:pod_memory:active:kube_pod_container_resource_requests{namespace=\"$tenant\"}\n    )\n  )\n* on (pod) group_left (mzinga_label)\n  kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"}",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "B",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "\n        (\n          sum by (pod) (\n            container_memory_working_set_bytes{container!=\"\",image!=\"\",job=\"kubelet\",metrics_path=\"/metrics/cadvisor\",namespace=\"$tenant\"}\n          )\n        )\n      * on (pod) group_left (mzinga_label)\n        kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"}\n  \n/\n  \n        (\n          sum by (pod) (\n            cluster:namespace:pod_memory:active:kube_pod_container_resource_requests{namespace=\"$tenant\"}\n          )\n        )\n      * on (pod) group_left (mzinga_label)\n        kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"}\n    ",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "C",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "  \n        (\n          sum by (pod) (\n            cluster:namespace:pod_memory:active:kube_pod_container_resource_limits{namespace=\"$tenant\"}\n          )\n        )\n      * on (pod) group_left (mzinga_label)\n        kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"}",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "D",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "  \n        (\n          sum by (pod) (\n            container_memory_working_set_bytes{container!=\"\",image!=\"\",job=\"kubelet\",metrics_path=\"/metrics/cadvisor\",namespace=\"$tenant\"}\n          )\n        )\n      * on (pod) group_left (mzinga_label)\n        kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"}\n   \n/\n  \n        (\n          sum by (pod) (\n            cluster:namespace:pod_memory:active:kube_pod_container_resource_limits{namespace=\"$tenant\"}\n          )\n        )\n      * on (pod) group_left (mzinga_label)\n        kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"}",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "E",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "  \n        (\n          sum by (pod) (\n            container_memory_rss{container!=\"\",image!=\"\",job=\"kubelet\",metrics_path=\"/metrics/cadvisor\",namespace=\"$tenant\"}\n          )\n        )\n      * on (pod) group_left (mzinga_label)\n        kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"}",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "F",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "  \n        (\n          sum by (pod) (\n            container_memory_cache{container!=\"\",image!=\"\",job=\"kubelet\",metrics_path=\"/metrics/cadvisor\",namespace=\"$tenant\"}\n          )\n        )\n      * on (pod) group_left (mzinga_label)\n        kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"}",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "G",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "  \n        (\n          sum by (pod) (\n            container_memory_swap{container!=\"\",image!=\"\",job=\"kubelet\",metrics_path=\"/metrics/cadvisor\",namespace=\"$tenant\"}\n          )\n        )\n      * on (pod) group_left (mzinga_label)\n        kube_pod_labels{job=\"kube-state-metrics\",label_app=~\"mzinga*\"}",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "H",
+                    "step": 10
+                }
+            ],
+            "title": "Memory Quota",
+            "transformations": [
+                {
+                    "id": "merge",
+                    "options": {
+                        "reducers": []
+                    }
+                }
+            ],
+            "type": "table"
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 65
+            },
+            "id": 47,
+            "panels": [],
+            "title": "Network",
+            "type": "row"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "inspect": false
+                    },
+                    "decimals": 2,
+                    "displayName": "",
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Time"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Time"
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #A"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Current Receive Bandwidth"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "Bps"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #B"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Current Transmit Bandwidth"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "Bps"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #C"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Rate of Received Packets"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "pps"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #D"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Rate of Transmitted Packets"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "pps"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #E"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Rate of Received Packets Dropped"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "pps"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #F"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Rate of Transmitted Packets Dropped"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "pps"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "pod"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Pod"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "short"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "links",
+                                "value": [
+                                    {
+                                        "targetBlank": false,
+                                        "title": "Drill down to pods",
+                                        "url": "/d/6581e46e4e5c7ba40a07646395ef7b23/k8s-resources-pod?var-datasource=prometheus&var-cluster=$cluster&var-namespace=$tenant&var-pod=${__value.raw}"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 24,
+                "x": 0,
+                "y": 66
+            },
+            "id": 9,
+            "interval": "1m",
+            "options": {
+                "cellHeight": "sm",
+                "footer": {
+                    "countRows": false,
+                    "fields": "",
+                    "reducer": [
+                        "sum"
+                    ],
+                    "show": false
+                },
+                "showHeader": true
+            },
+            "pluginVersion": "10.1.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(irate(container_network_receive_bytes_total{job=\"kubelet\", metrics_path=\"/metrics/cadvisor\", namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval])) by (pod)",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "A",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(irate(container_network_transmit_bytes_total{job=\"kubelet\", metrics_path=\"/metrics/cadvisor\", namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval])) by (pod)",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "B",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(irate(container_network_receive_packets_total{job=\"kubelet\", metrics_path=\"/metrics/cadvisor\", namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval])) by (pod)",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "C",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(irate(container_network_transmit_packets_total{job=\"kubelet\", metrics_path=\"/metrics/cadvisor\", namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval])) by (pod)",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "D",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(irate(container_network_receive_packets_dropped_total{job=\"kubelet\", metrics_path=\"/metrics/cadvisor\", namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval])) by (pod)",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "E",
+                    "step": 10
+                },
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(irate(container_network_transmit_packets_dropped_total{job=\"kubelet\", metrics_path=\"/metrics/cadvisor\", namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval])) by (pod)",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 2,
+                    "legendFormat": "",
+                    "refId": "F",
+                    "step": 10
+                }
+            ],
+            "title": "Current Network Usage",
+            "transformations": [
+                {
+                    "id": "merge",
+                    "options": {
+                        "reducers": []
+                    }
+                }
+            ],
+            "type": "table"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "inspect": false
+                    },
+                    "decimals": 2,
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            }
+                        ]
+                    },
+                    "unit": "s"
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Last *"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Time"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "time: YYYY-MM-DD HH:mm:ss"
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Last *"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "TTL"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "s"
+                            },
+                            {
+                                "id": "thresholds",
+                                "value": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "rgba(245, 54, 54, 0.9)"
+                                        },
+                                        {
+                                            "color": "#EAB839",
+                                            "value": 0
+                                        },
+                                        {
+                                            "color": "green",
+                                            "value": 691200
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "mode": "basic",
+                                    "type": "color-background"
+                                }
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 10,
+                "w": 11,
+                "x": 0,
+                "y": 73
+            },
+            "id": 35,
+            "options": {
+                "cellHeight": "sm",
+                "footer": {
+                    "countRows": false,
+                    "fields": "",
+                    "reducer": [
+                        "sum"
+                    ],
+                    "show": false
+                },
+                "showHeader": true
+            },
+            "pluginVersion": "10.1.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "avg(nginx_ingress_controller_ssl_expire_time_seconds{host=~\".*$tenant.mzinga.io\"}) by (host) - time()",
+                    "format": "time_series",
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ host }}",
+                    "metric": "gke_letsencrypt_cert_expiration",
+                    "range": true,
+                    "refId": "A",
+                    "step": 1
+                }
+            ],
+            "title": "Ingress Certificate Expiry",
+            "transformations": [
+                {
+                    "id": "reduce",
+                    "options": {
+                        "includeTimeField": false,
+                        "reducers": [
+                            "lastNotNull"
+                        ]
+                    }
+                }
+            ],
+            "type": "table"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "inspect": false
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "ingress"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "Ingress"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "short"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #C"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "P50 Latency"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "dtdurations"
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #D"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "P90 Latency"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "dtdurations"
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #E"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "P99 Latency"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "dtdurations"
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #F"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "IN"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "Bps"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            },
+                            {
+                                "id": "thresholds",
+                                "value": {
+                                    "mode": "absolute",
+                                    "steps": [
+                                        {
+                                            "color": "rgba(245, 54, 54, 0.9)"
+                                        },
+                                        {
+                                            "color": "rgba(237, 129, 40, 0.89)"
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Time"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "short"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Value #G"
+                        },
+                        "properties": [
+                            {
+                                "id": "displayName",
+                                "value": "OUT"
+                            },
+                            {
+                                "id": "unit",
+                                "value": "Bps"
+                            },
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            },
+                            {
+                                "id": "custom.align"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 10,
+                "w": 13,
+                "x": 11,
+                "y": 73
+            },
+            "id": 36,
+            "options": {
+                "cellHeight": "sm",
+                "footer": {
+                    "countRows": false,
+                    "fields": "",
+                    "reducer": [
+                        "sum"
+                    ],
+                    "show": false
+                },
+                "showHeader": true
+            },
+            "pluginVersion": "10.1.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.50, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{exported_namespace=~\"$tenant\", host=~\".*mzinga.io\"}[2m])) by (le, ingress))",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ ingress }}",
+                    "refId": "C"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.90, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{exported_namespace=~\"$tenant\", host=~\".*mzinga.io\"}[2m])) by (le, ingress))",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ ingress }}",
+                    "refId": "D"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "histogram_quantile(0.99, sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{exported_namespace=~\"$tenant\", host=~\".*mzinga.io\"}[2m])) by (le, ingress))",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ destination_service }}",
+                    "refId": "E"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(irate(nginx_ingress_controller_request_size_sum{exported_namespace=~\"$tenant\", host=~\".*mzinga.io\"}[2m])) by (ingress)",
+                    "format": "table",
+                    "instant": true,
+                    "interval": "",
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ ingress }}",
+                    "refId": "F"
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(irate(nginx_ingress_controller_response_size_sum{exported_namespace=~\"$tenant\", host=~\".*mzinga.io\"}[2m])) by (ingress)",
+                    "format": "table",
+                    "instant": true,
+                    "intervalFactor": 1,
+                    "legendFormat": "{{ ingress }}",
+                    "refId": "G"
+                }
+            ],
+            "title": "Ingress Percentile Response Times and Transfer Rates",
+            "transformations": [
+                {
+                    "id": "merge",
+                    "options": {
+                        "reducers": []
+                    }
+                }
+            ],
+            "type": "table"
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 83
+            },
+            "id": 48,
+            "panels": [],
+            "title": "Bandwidth",
+            "type": "row"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 100,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 0,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "normal"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "min": 0,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "Bps"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 12,
+                "x": 0,
+                "y": 84
+            },
+            "id": 10,
+            "interval": "1m",
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "table",
+                    "placement": "right",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "10.1.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(irate(container_network_receive_bytes_total{namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval])) by (pod)",
+                    "format": "time_series",
+                    "intervalFactor": 2,
+                    "legendFormat": "{{pod}}",
+                    "range": true,
+                    "refId": "A",
+                    "step": 10
+                }
+            ],
+            "title": "Receive Bandwidth",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 100,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 0,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "normal"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "min": 0,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "Bps"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 12,
+                "x": 12,
+                "y": 84
+            },
+            "id": 11,
+            "interval": "1m",
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "table",
+                    "placement": "right",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "10.1.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(irate(container_network_transmit_bytes_total{namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval])) by (pod)",
+                    "format": "time_series",
+                    "intervalFactor": 2,
+                    "legendFormat": "{{pod}}",
+                    "range": true,
+                    "refId": "A",
+                    "step": 10
+                }
+            ],
+            "title": "Transmit Bandwidth",
+            "type": "timeseries"
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 91
+            },
+            "id": 49,
+            "panels": [],
+            "title": "Rate of Packets",
+            "type": "row"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 100,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 0,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "normal"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "min": 0,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "pps"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 12,
+                "x": 0,
+                "y": 92
+            },
+            "id": 12,
+            "interval": "1m",
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "table",
+                    "placement": "right",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "10.1.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(irate(container_network_receive_packets_total{namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval])) by (pod)",
+                    "format": "time_series",
+                    "intervalFactor": 2,
+                    "legendFormat": "{{pod}}",
+                    "range": true,
+                    "refId": "A",
+                    "step": 10
+                }
+            ],
+            "title": "Rate of Received Packets",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 100,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 0,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "normal"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "min": 0,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "pps"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 12,
+                "x": 12,
+                "y": 92
+            },
+            "id": 13,
+            "interval": "1m",
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "table",
+                    "placement": "right",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "10.1.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(irate(container_network_transmit_packets_total{namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval])) by (pod)",
+                    "format": "time_series",
+                    "intervalFactor": 2,
+                    "legendFormat": "{{pod}}",
+                    "range": true,
+                    "refId": "A",
+                    "step": 10
+                }
+            ],
+            "title": "Rate of Transmitted Packets",
+            "type": "timeseries"
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 99
+            },
+            "id": 50,
+            "panels": [],
+            "title": "Rate of Packets Dropped",
+            "type": "row"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 100,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 0,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "normal"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "min": 0,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "pps"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 12,
+                "x": 0,
+                "y": 100
+            },
+            "id": 14,
+            "interval": "1m",
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "table",
+                    "placement": "right",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "10.1.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(irate(container_network_receive_packets_dropped_total{namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval])) by (pod)",
+                    "format": "time_series",
+                    "intervalFactor": 2,
+                    "legendFormat": "{{pod}}",
+                    "range": true,
+                    "refId": "A",
+                    "step": 10
+                }
+            ],
+            "title": "Rate of Received Packets Dropped",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 100,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 0,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "normal"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "min": 0,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "pps"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 12,
+                "x": 12,
+                "y": 100
+            },
+            "id": 15,
+            "interval": "1m",
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "table",
+                    "placement": "right",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "10.1.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum(irate(container_network_transmit_packets_dropped_total{namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval])) by (pod)",
+                    "format": "time_series",
+                    "intervalFactor": 2,
+                    "legendFormat": "{{pod}}",
+                    "range": true,
+                    "refId": "A",
+                    "step": 10
+                }
+            ],
+            "title": "Rate of Transmitted Packets Dropped",
+            "type": "timeseries"
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 107
+            },
+            "id": 51,
+            "panels": [],
+            "title": "Storage IO",
+            "type": "row"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 100,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 0,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "normal"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "min": 0,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 12,
+                "x": 0,
+                "y": 108
+            },
+            "id": 16,
+            "interval": "1m",
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "table",
+                    "placement": "right",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "10.1.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "ceil(sum by(pod) (rate(container_fs_reads_total{container!=\"\", device=~\"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)\", namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval]) + rate(container_fs_writes_total{container!=\"\", device=~\"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)\", namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval])))",
+                    "format": "time_series",
+                    "intervalFactor": 2,
+                    "legendFormat": "{{pod}}",
+                    "range": true,
+                    "refId": "A",
+                    "step": 10
+                }
+            ],
+            "title": "IOPS(Reads+Writes)",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 100,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 0,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "normal"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "min": 0,
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "Bps"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 7,
+                "w": 12,
+                "x": 12,
+                "y": 108
+            },
+            "id": 17,
+            "interval": "1m",
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "table",
+                    "placement": "right",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "10.1.0",
+            "targets": [
+                {
+                    "datasource": {
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum by(pod) (rate(container_fs_reads_bytes_total{container!=\"\", device=~\"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)\", namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval]) + rate(container_fs_writes_bytes_total{container!=\"\", device=~\"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)\", namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval]))",
+                    "format": "time_series",
+                    "intervalFactor": 2,
+                    "legendFormat": "{{pod}}",
+                    "range": true,
+                    "refId": "A",
+                    "step": 10
+                }
+            ],
+            "title": "ThroughPut(Read+Write)",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 0,
+                "y": 115
+            },
+            "id": 31,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "right",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum by(pod) (rate(container_fs_reads_total{job=\"kubelet\", metrics_path=\"/metrics/cadvisor\", device=~\"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)\", container!=\"\", namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval]))",
+                    "instant": false,
+                    "legendFormat": "__auto",
+                    "range": true,
+                    "refId": "A"
+                }
+            ],
+            "title": "IOPS(Reads)",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 12,
+                "y": 115
+            },
+            "id": 32,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "right",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum by(pod) (rate(container_fs_reads_bytes_total{job=\"kubelet\", metrics_path=\"/metrics/cadvisor\", device=~\"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)\", container!=\"\", namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval]))",
+                    "instant": false,
+                    "legendFormat": "__auto",
+                    "range": true,
+                    "refId": "A"
+                }
+            ],
+            "title": "ThroughPut (Read)",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 0,
+                "y": 124
+            },
+            "id": 33,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "right",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum by(pod) (rate(container_fs_writes_total{job=\"kubelet\", metrics_path=\"/metrics/cadvisor\", device=~\"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)\", container!=\"\", namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval]))",
+                    "instant": false,
+                    "legendFormat": "__auto",
+                    "range": true,
+                    "refId": "A"
+                }
+            ],
+            "title": "IOPS(Writes)",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "prometheus"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 9,
+                "w": 12,
+                "x": 12,
+                "y": 124
+            },
+            "id": 34,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "right",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                    },
+                    "editorMode": "code",
+                    "expr": "sum by(pod) (rate(container_fs_writes_bytes_total{job=\"kubelet\", metrics_path=\"/metrics/cadvisor\", device=~\"(/dev/)?(mmcblk.p.+|nvme.+|rbd.+|sd.+|vd.+|xvd.+|dm-.+|md.+|dasd.+)\", container!=\"\", namespace=\"$tenant\", pod=~\"mzinga-.*\"}[$__rate_interval]))",
+                    "instant": false,
+                    "legendFormat": "__auto",
+                    "range": true,
+                    "refId": "A"
+                }
+            ],
+            "title": "ThroughPut (Write)",
+            "type": "timeseries"
+        }
+    ],
+    "preload": false,
+    "refresh": "10s",
+    "schemaVersion": 42,
+    "tags": [
+        "monitoring",
+        "workload"
+    ],
+    "templating": {
+        "list": [
+            {
+                "current": {
+                    "text": "newesiscorporate",
+                    "value": "newesiscorporate"
+                },
+                "datasource": {
+                    "type": "prometheus",
+                    "uid": "prometheus"
+                },
+                "definition": "query_result(kube_pod_labels{label_app=~\"mzinga.*\"})",
+                "includeAll": false,
+                "label": "Tenant",
+                "name": "tenant",
+                "options": [],
+                "query": {
+                    "query": "query_result(kube_pod_labels{label_app=~\"mzinga.*\"})",
+                    "refId": "PrometheusVariableQueryEditor-VariableQuery"
+                },
+                "refresh": 1,
+                "regex": "/.*namespace=\"([^\"]*).*/",
+                "regexApplyTo": "value",
+                "type": "query"
+            }
+        ]
+    },
+    "time": {
+        "from": "now-5m",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "utc",
+    "title": "MZinga / Workload Monitoring",
+    "uid": "mzinga_workloads",
+    "version": 1,
+    "weekStart": ""
+}

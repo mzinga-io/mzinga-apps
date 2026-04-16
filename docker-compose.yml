@@ -40,8 +40,7 @@ services:
       - PAYLOAD_PUBLIC_SERVER_URL=${PAYLOAD_PUBLIC_SERVER_URL:-http://localhost:3000}
       - PAYLOAD_PUBLIC_CONFIG_SERVER_URL=${PAYLOAD_PUBLIC_SERVER_URL:-http://localhost:3000}
       - PAYLOAD_PUBLIC_DISABLED_ENTITIES_SLUGS=$PAYLOAD_PUBLIC_DISABLED_ENTITIES_SLUGS
-      - OTEL_TRACERS_EXPORTER=${OTEL_TRACERS_EXPORTER:-http://jaeger:6831}
-      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://jaeger:4318}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://collector:4318}
       - OTEL_CONSOLE_EXPORTER=1
       - JSON_LIMITS_SIZE=${JSON_LIMITS_SIZE:-20mb}
       - REDIS_URI=${REDIS_URI:-redis://cache:6379}
@@ -145,23 +144,37 @@ services:
       - ./examples/servicebus-subscriber:/app
       - /app/node_modules
 
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    hostname: jaeger
+    ports:
+      - "6831:6831/udp" # UDP port for Jaeger agent
+      - "16686:16686" # Web UI
+      - "14268:14268" # HTTP port for spans
+      - "4317:4317"
+      - "4318:4318"
+    deploy:
+      replicas: ${JAEGER_REPLICAS:-1}
+
   collector:
     container_name: collector
     image: otel/opentelemetry-collector-contrib:latest
     volumes:
-      - ./config/otel-collector.yml:/etc/otelcol-contrib/otel-collector.yml
+      - ./o11y-config/otel-collector.yml:/etc/otelcol-contrib/otel-collector.yml
     command:
       - --config=/etc/otelcol-contrib/otel-collector.yml
     restart: always
     ports:
       - "4317:4317" # OTLP gRPC receiver
       - "4318:4318" # OTLP HTTP receiver
+    deploy:
+      replicas: ${GRAFANA_REPLICAS:-0}
 
   prometheus:
     container_name: prometheus
     image: prom/prometheus:latest
     volumes:
-      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./o11y-config/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheusdata:/prometheus
     command:
       - --config.file=/etc/prometheus/prometheus.yml
@@ -174,6 +187,8 @@ services:
       - "9090:9090"
     depends_on:
       - collector
+    deploy:
+      replicas: ${GRAFANA_REPLICAS:-0}
 
   loki:
     container_name: loki
@@ -185,28 +200,36 @@ services:
       - "3100:3100"
     depends_on:
       - collector
+    deploy:
+      replicas: ${GRAFANA_REPLICAS:-0}
 
   tempo:
     container_name: tempo
     restart: always
     image: grafana/tempo:latest
     volumes:
-      - ./config/tempo.yml:/etc/tempo.yml
+      - ./o11y-config/tempo.yml:/etc/tempo.yml
       - tempodata:/var/tempo
     command:
       - -config.file=/etc/tempo.yml
     ports:
       - "3200:3200" # tempo
+    deploy:
+      replicas: ${GRAFANA_REPLICAS:-0}
 
   grafana:
     container_name: grafana
     image: grafana/grafana
     restart: always
     volumes:
-      - ./config/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./o11y-config/grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./o11y-config/grafana/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml
+      - ./o11y-config/grafana/dashboards/:/etc/grafana/provisioning/dashboards/json
       - grafanadata:/var/lib/grafana
     ports:
       - "8080:3000"
+    deploy:
+      replicas: ${GRAFANA_REPLICAS:-0}
 
   redpanda:
     image: redpandadata/redpanda:latest
@@ -217,6 +240,8 @@ services:
       --mode=dev-container
       --kafka-addr=PLAINTEXT://0.0.0.0:9092
       --advertise-kafka-addr=PLAINTEXT://redpanda:9092
+    deploy:
+      replicas: ${GRAFANA_REPLICAS:-0}
 volumes:
   mongodb_data:
     driver: local
