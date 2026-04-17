@@ -40,7 +40,7 @@ services:
       - PAYLOAD_PUBLIC_SERVER_URL=${PAYLOAD_PUBLIC_SERVER_URL:-http://localhost:3000}
       - PAYLOAD_PUBLIC_CONFIG_SERVER_URL=${PAYLOAD_PUBLIC_SERVER_URL:-http://localhost:3000}
       - PAYLOAD_PUBLIC_DISABLED_ENTITIES_SLUGS=$PAYLOAD_PUBLIC_DISABLED_ENTITIES_SLUGS
-      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://collector:4318}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT:-http://jaeger:4318}
       - OTEL_CONSOLE_EXPORTER=1
       - JSON_LIMITS_SIZE=${JSON_LIMITS_SIZE:-20mb}
       - REDIS_URI=${REDIS_URI:-redis://cache:6379}
@@ -197,6 +197,7 @@ services:
     restart: always
     image: grafana/loki:latest
     volumes:
+      - ./o11y-config/loki-config.yml:/etc/loki/local-config.yaml
       - lokidata:/loki
     ports:
       - "3100:3100"
