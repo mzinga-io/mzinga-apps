@@ -37,3 +37,6 @@ scrape_configs:
   - job_name: "mzinga_local"
     static_configs:
       - targets: ["${MONGO_HOST}:${PORT}"]
+  - job_name: mongodb
+    static_configs:
+      - targets: ["mongo-exporter:9216"]

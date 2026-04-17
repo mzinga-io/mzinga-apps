@@ -19,7 +19,7 @@ services:
         condition: no
 
   mzinga:
-    image: newesissrl.azurecr.io/mzinga/payload/gh/backoffice:0.9.3
+    image: newesissrl.azurecr.io/mzinga/payload/gh/backoffice:0.9.5
     ports:
       - ${PORT:-3000}:${PORT:-3000}
     volumes:
@@ -33,7 +33,7 @@ services:
       - PAYLOAD_SECRET=${PAYLOAD_SECRET:-secret_key}
       - PORT=${PORT:-3000}
       - DISABLE_TRACING=${DISABLE_TRACING:-0}
-      - PAYLOAD_PUBLIC_ENABLE_ZITADEL_PLUGIN=0
+      - PAYLOAD_PUBLIC_ENABLE_ZITADEL_PLUGIN=false
       - RABBITMQ_URL=amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@messagebus:${RABBITMQ_PORT:-5672}/
       - TENANT=${TENANT:-local}
       - ENV=prod
@@ -44,6 +44,7 @@ services:
       - OTEL_CONSOLE_EXPORTER=1
       - JSON_LIMITS_SIZE=${JSON_LIMITS_SIZE:-20mb}
       - REDIS_URI=${REDIS_URI:-redis://cache:6379}
+      - PAYLOAD_PUBLIC_ENABLE_CACHE_PLUGIN=${PAYLOAD_PUBLIC_ENABLE_CACHE_PLUGIN:-true}
       - HOOKSURL_TEAMS_FIELD_DESCRIPTION_AFTERCHANGE=http://webhook-subscriber:4000/webhook
       - HOOKSURL_PLAYERS_AFTERCHANGE=rabbitmq
       - CORS_CONFIGS=*
@@ -249,6 +250,17 @@ services:
       --advertise-kafka-addr=PLAINTEXT://redpanda:9092
     deploy:
       replicas: ${GRAFANA_REPLICAS:-0}
+
+  mongo-exporter:
+    image: "percona/mongodb_exporter:0.40"
+    environment:
+      - MONGODB_URI=mongodb://${MONGO_ROOTUSER:-admin}:${MONGO_ROOTPASSWORD:-admin}@database:27017/app?authSource=admin&directConnection=true
+    command: ["--collect-all", "--compatible-mode", "--discovering-mode"]
+    ports:
+      - 9216:9216
+    deploy:
+      replicas: ${GRAFANA_REPLICAS:-0}
+
 volumes:
   mongodb_data:
     driver: local
