@@ -173,15 +173,17 @@ services:
   prometheus:
     container_name: prometheus
     image: prom/prometheus:latest
+    env_file:
+      - .env
     volumes:
-      - ./o11y-config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./o11y-config/prometheus.yml:/etc/prometheus/prometheus-env.yml
+      - ./o11y-config/replace-env.sh:/usr/local/bin/replace_env.sh
       - prometheusdata:/prometheus
-    command:
-      - --config.file=/etc/prometheus/prometheus.yml
-      - --web.enable-remote-write-receiver
-      - --web.enable-otlp-receiver
-      - --enable-feature=exemplar-storage
-      - --storage.tsdb.retention.time=15d
+    entrypoint: /bin/sh
+    command: >
+      -c "chmod +x /usr/local/bin/replace_env.sh &&
+            /usr/local/bin/replace_env.sh /etc/prometheus/prometheus-env.yml /etc/prometheus/prometheus.yml &&
+            /bin/prometheus --config.file=/etc/prometheus/prometheus.yml --web.enable-remote-write-receiver --web.enable-otlp-receiver --enable-feature=exemplar-storage --storage.tsdb.retention.time=5d"
     restart: always
     ports:
       - "9090:9090"
@@ -226,6 +228,10 @@ services:
       - ./o11y-config/grafana/dashboard.yaml:/etc/grafana/provisioning/dashboards/dashboard.yaml
       - ./o11y-config/grafana/dashboards/:/etc/grafana/provisioning/dashboards/json
       - grafanadata:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
     ports:
       - "8080:3000"
     deploy:

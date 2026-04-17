@@ -24,3 +24,16 @@ otlp:
 storage:
   tsdb:
     out_of_order_time_window: 30m
+global:
+  scrape_interval: 15s # By default, scrape targets every 15 seconds.
+  evaluation_interval: 15s # By default, scrape targets every 15 seconds.
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["prometheus:9090"]
+  - job_name: "mzinga_compose"
+    static_configs:
+      - targets: ["mzinga:${PORT}"]
+  - job_name: "mzinga_local"
+    static_configs:
+      - targets: ["${MONGO_HOST}:${PORT}"]
