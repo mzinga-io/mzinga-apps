@@ -252,7 +252,7 @@ services:
       replicas: ${GRAFANA_REPLICAS:-0}
 
   mongo-exporter:
-    image: "percona/mongodb_exporter:0.40"
+    image: "percona/mongodb_exporter:2.37"
     environment:
       - MONGODB_URI=mongodb://${MONGO_ROOTUSER:-admin}:${MONGO_ROOTPASSWORD:-admin}@database:27017/app?authSource=admin&directConnection=true
     command: ["--collect-all", "--compatible-mode", "--discovering-mode"]
