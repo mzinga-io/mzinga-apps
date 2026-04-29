@@ -1,3 +1,4 @@
 import DBIndexes from "./DBIndexes";
 import RestartRequests from "./Operations";
-export default { RestartRequests, DBIndexes };
+import WebHooks from "./WebHooks";
+export default { RestartRequests, DBIndexes, WebHooks };

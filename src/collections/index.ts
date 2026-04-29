@@ -32,6 +32,7 @@ const collections = [
   Owners.Assets,
   Admin.RestartRequests,
   Admin.DBIndexes,
+  Admin.WebHooks,
   ScheduledTasks.ScheduledTasks,
 ];
 export { collections };
