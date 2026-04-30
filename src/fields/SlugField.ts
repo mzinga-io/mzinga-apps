@@ -1,7 +1,7 @@
 import { Field, FieldHook } from "mzinga/types";
 import { SlugUtils } from "../utils/SlugUtils";
 
-const slugifyHook: FieldHook = ({ data, value, originalDoc }) => {
+export const slugifyHook: FieldHook = ({ data, value, originalDoc }) => {
   let currentValue = value;
   if (data) {
     currentValue = value === data.id || value === data._id ? "" : value;
@@ -10,7 +10,7 @@ const slugifyHook: FieldHook = ({ data, value, originalDoc }) => {
     currentValue = value === originalDoc._id ? "" : value;
   }
   return SlugUtils.Slugify(
-    currentValue || data.name || data.title || data.alt || data.id || data._id
+    currentValue || data.name || data.title || data.alt || data.id || data._id,
   );
 };
 export const SlugField = {
