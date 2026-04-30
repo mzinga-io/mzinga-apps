@@ -1,5 +1,9 @@
 import { CollectionConfig, FieldBase, FieldHook } from "mzinga/types";
 import { AuthorField, NameField } from "../../fields";
+import {
+  COLLECTION_LEVEL_HOOKS,
+  FIELD_LEVEL_HOOKS,
+} from "../../hooks/WebHooks";
 import { AccessUtils, SlugUtils } from "../../utils";
 import { Slugs } from "../Slugs";
 
@@ -72,28 +76,31 @@ const WebHooks: CollectionConfig = {
           name: "event",
           type: "select",
           hasMany: false,
+          options: [...COLLECTION_LEVEL_HOOKS, ...FIELD_LEVEL_HOOKS],
+        },
+        {
+          name: "type",
+          type: "select",
+          hasMany: false,
           options: [
-            "BEFOREOPERATION",
-            "BEFOREVALIDATE",
-            "BEFORECHANGE",
-            "AFTERCHANGE",
-            "AFTERREAD",
-            "BEFOREREAD",
-            "BEFOREDELETE",
-            "AFTERDELETE",
-            "AFTERERROR",
-            "BEFORELOGIN",
-            "AFTERLOGIN",
-            "AFTERLOGOUT",
-            "AFTERME",
-            "AFTERREFRESH",
-            "AFTERFORGOTPASSWORD",
+            {
+              label: "HTTP",
+              value: "http",
+            },
+            {
+              label: "RabbitMQ",
+              value: "rabbitmq",
+            },
           ],
         },
         {
           name: "url",
           type: "text",
-          required: true,
+          admin: {
+            condition: (_, siblingData) => {
+              return siblingData.type === "http";
+            },
+          },
         },
         {
           name: "fieldReference",

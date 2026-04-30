@@ -3,13 +3,13 @@ import { CollectionConfig, Field } from "mzinga/types";
 import { messageBusService } from "../messageBusService";
 import { EnvConfig } from "../types";
 import { MZingaLogger } from "../utils/MZingaLogger";
-const FIELD_LEVEL_HOOKS = [
+export const FIELD_LEVEL_HOOKS = [
   "beforeValidate",
   "beforeChange",
   "afterChange",
   "afterRead",
 ];
-const COLLECTION_LEVEL_HOOKS = [
+export const COLLECTION_LEVEL_HOOKS = [
   "beforeOperation",
   "beforeValidate",
   "beforeChange",
@@ -44,7 +44,7 @@ export class WebHooks {
   }
   EnrichField(
     collectionSlug: string,
-    field: Field
+    field: Field,
   ): Partial<FieldBase["hooks"]> {
     const fieldHooks = (field as FieldBase).hooks || {};
     const fieldName = (field as FieldBase).name || undefined;
@@ -54,13 +54,13 @@ export class WebHooks {
     return this.AddHooksFromList(
       FIELD_LEVEL_HOOKS,
       fieldHooks,
-      `HOOKSURL_${collectionSlug}_FIELD_${fieldName}`
+      `HOOKSURL_${collectionSlug}_FIELD_${fieldName}`,
     );
   }
   AddHooksFromList(
     allHooksList: string[],
     originalHooks: any,
-    hookEnvBaseKey: string
+    hookEnvBaseKey: string,
   ): any {
     for (const hookType of allHooksList) {
       const envUrlsKey = `${hookEnvBaseKey}_${hookType}`.toUpperCase();
@@ -81,7 +81,7 @@ export class WebHooks {
           ) {
             if (!messageBusService.isConnected()) {
               MZingaLogger.Instance?.info(
-                "RabbitMQ connection is not established. Skipping publishing event."
+                "RabbitMQ connection is not established. Skipping publishing event.",
               );
               return undefined;
             }
@@ -103,7 +103,7 @@ export class WebHooks {
               };
               try {
                 MZingaLogger.Instance?.debug(
-                  `[RABBITMQHOOK] ${envUrlsKey}: ${JSON.stringify(eventData)}`
+                  `[RABBITMQHOOK] ${envUrlsKey}: ${JSON.stringify(eventData)}`,
                 );
                 await messageBusService.publishEvent({
                   type: envUrlsKey,
@@ -112,7 +112,7 @@ export class WebHooks {
               } catch (error) {
                 MZingaLogger.Instance?.error(
                   `Failed to publish event to RabbitMQ:`,
-                  error
+                  error,
                 );
               }
             };
@@ -143,7 +143,7 @@ export class WebHooks {
               body: JSON.stringify(eventData),
             }).catch((e) => {
               MZingaLogger.Instance?.info(
-                `There was an error requesting: ${url} (key: ${envUrlsKey}) ${e.message}`
+                `There was an error requesting: ${url} (key: ${envUrlsKey}) ${e.message}`,
               );
             });
           };
@@ -154,12 +154,12 @@ export class WebHooks {
     return originalHooks;
   }
   EnrichCollection(
-    collectionConfig: CollectionConfig
+    collectionConfig: CollectionConfig,
   ): Partial<CollectionConfig["hooks"]> {
     const collectionHooks = this.AddHooksFromList(
       COLLECTION_LEVEL_HOOKS,
       collectionConfig.hooks || {},
-      `HOOKSURL_${collectionConfig.slug}`
+      `HOOKSURL_${collectionConfig.slug}`,
     );
     return collectionHooks;
   }
