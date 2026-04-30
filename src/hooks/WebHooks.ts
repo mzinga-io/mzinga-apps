@@ -27,7 +27,22 @@ export const COLLECTION_LEVEL_HOOKS = [
   "afterForgotPassword",
 ];
 export class WebHooks {
-  constructor(private readonly env: EnvConfig) {}
+  constructor(
+    private readonly env: EnvConfig,
+    private readonly allWebHooksDocs: any[] = [],
+  ) {
+    for (const webHookDoc of this.allWebHooksDocs) {
+      const collectionKey = webHookDoc.collectionSlug.toUpperCase();
+      for (const hook of webHookDoc.webhooks || []) {
+        env[
+          `HOOKSURL_${collectionKey}_${hook.fieldReference ? `FIELD_${hook.fieldReference.toUpperCase()}_` : ""}${hook.event.toUpperCase()}`
+        ] = hook.type === "http" ? hook.url : hook.type;
+      }
+    }
+  }
+  GetEnv(): EnvConfig {
+    return this.env;
+  }
   EnrichFields(collectionSlug: string, fields: Field[]): Field[] {
     return fields.map((field) => {
       const hooks =

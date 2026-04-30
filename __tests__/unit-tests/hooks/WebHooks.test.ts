@@ -48,6 +48,54 @@ describe("hooks", () => {
       );
       expect(hooks.beforeValidate).toBeDefined();
     });
+    it("hooks coming from DB should override hooks from env", () => {
+      const webHooks = new WebHooks(
+        {
+          HOOKSURL_STORIES_BEFOREVALIDATE: "http://example.com/webhook",
+        },
+        [
+          {
+            collectionSlug: "stories",
+            webhooks: [
+              {
+                event: "beforeValidate",
+                type: "rabbitmq",
+              },
+            ],
+          },
+        ],
+      );
+      expect(webHooks.GetEnv().HOOKSURL_STORIES_BEFOREVALIDATE).toBe(
+        "rabbitmq",
+      );
+    });
+    it("hooks coming from DB should be in env", () => {
+      const webHooks = new WebHooks(
+        {
+          HOOKSURL_STORIES_BEFOREVALIDATE: "http://example.com/webhook",
+        },
+        [
+          {
+            collectionSlug: "stories",
+            webhooks: [
+              {
+                event: "beforeChange",
+                type: "http",
+                url: "http://example.com/webhook2",
+                fieldReference: "title",
+              },
+            ],
+          },
+        ],
+      );
+      const webHooksEnv = webHooks.GetEnv();
+      expect(webHooksEnv.HOOKSURL_STORIES_BEFOREVALIDATE).toBe(
+        "http://example.com/webhook",
+      );
+      expect(webHooksEnv.HOOKSURL_STORIES_FIELD_TITLE_BEFORECHANGE).toBe(
+        "http://example.com/webhook2",
+      );
+    });
     describe("URL based hooks", () => {
       it("should manage multiple URLs (and exclude invalid values)", () => {
         const webHooks = new WebHooks({

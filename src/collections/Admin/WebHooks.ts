@@ -68,7 +68,7 @@ const WebHooks: CollectionConfig = {
     },
     AuthorField.Get(),
     {
-      name: "webhook",
+      name: "webhooks",
       type: "array",
       minRows: 1,
       fields: [

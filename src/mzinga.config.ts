@@ -60,8 +60,6 @@ if (POSTGRES_URI) {
   });
 }
 
-const webHooks = new WebHooks(Env);
-
 const config = {
   i18n: {
     resources: {
@@ -226,14 +224,32 @@ const buildConfigAsync = async () => {
   const builtConfig = await buildConfig(config);
 
   // Enrich builtin and plugin collections with WebHooks
-  builtConfig.collections = utils
+  const allCollections = utils
     .FilterInvalidRelationships(builtConfig.collections)
-    .filter(Boolean)
-    .map((collection) => ({
-      ...collection,
-      hooks: webHooks.EnrichCollection(collection),
-      fields: webHooks.EnrichFields(collection.slug, collection.fields),
-    })) as SanitizedCollectionConfig[];
+    .filter(Boolean);
+  const webhooksDocs = await payload.find({
+    collection: Slugs.AdminWebHooks,
+  });
+  const promises = [];
+  for (let i = 2; i <= webhooksDocs.totalPages; i++) {
+    promises.push(
+      payload.find({
+        collection: Slugs.AdminWebHooks,
+        page: i,
+      }),
+    );
+  }
+  const allWebHooksDocs = [
+    webhooksDocs,
+    ...(await Promise.all(promises)),
+  ].flatMap((res) => res.docs);
+
+  const webHooks = new WebHooks(Env, allWebHooksDocs);
+  builtConfig.collections = allCollections.map((collection) => ({
+    ...collection,
+    hooks: webHooks.EnrichCollection(collection),
+    fields: webHooks.EnrichFields(collection.slug, collection.fields),
+  })) as SanitizedCollectionConfig[];
 
   return builtConfig;
 };
