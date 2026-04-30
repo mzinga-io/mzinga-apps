@@ -6,13 +6,17 @@ import express from "express";
 import promBundle from "express-prom-bundle";
 import fs from "fs/promises";
 import payload from "mzinga";
-import type { Collection } from "mzinga/dist/collections/config/types";
+import type {
+  Collection,
+  SanitizedCollectionConfig,
+} from "mzinga/dist/collections/config/types";
 import payloadPkg from "mzinga/package.json";
 import { PayloadRequest } from "mzinga/types";
 import net from "net";
 import path from "path";
 import vm from "vm";
 import { CustomEntities } from "./customizations/CustomEntities";
+import { WebHooks } from "./hooks/WebHooks";
 import { messageBusService } from "./messageBusService";
 import { DBUtils } from "./utils/DBUtils";
 import { EnvUtils } from "./utils/EnvUtils";
@@ -128,12 +132,36 @@ const start = async () => {
     secret: process.env.PAYLOAD_SECRET || "",
     express: app,
     loggerOptions: MZingaLogger.LoggerOptions,
-    onInit: () => {
+    onInit: async () => {
       payload.logger.info(
         `MZinga@v${payloadPkg.version}(tenant=${process.env.TENANT}, env=${
           process.env.ENV
         }) Admin URL: ${payload.getAdminURL()}`,
       );
+      const webhooksDocs = await payload.find({
+        collection: "admin-webhooks",
+      });
+      const promises = [];
+      for (let i = 2; i <= webhooksDocs.totalPages; i++) {
+        promises.push(
+          payload.find({
+            collection: "admin-webhooks",
+            page: i,
+          }),
+        );
+      }
+      const allWebHooksDocs = [
+        webhooksDocs,
+        ...(await Promise.all(promises)),
+      ].flatMap((res) => res.docs);
+      const webHooks = new WebHooks(process.env, allWebHooksDocs);
+      payload.config.collections = payload.config.collections.map(
+        (collection) => ({
+          ...collection,
+          hooks: webHooks.EnrichCollection(collection),
+          fields: webHooks.EnrichFields(collection.slug, collection.fields),
+        }),
+      ) as SanitizedCollectionConfig[];
     },
   });
   DBUtils.createUpdatedAtDescIndexes(payload);
@@ -179,6 +207,7 @@ const start = async () => {
       await req.payload.find({
         collection: (collectionWithAuth as any).config.slug,
         limit: 1,
+        select: { _id: 1 },
       });
     } catch (e) {
       res

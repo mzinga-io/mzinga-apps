@@ -83,7 +83,7 @@ describe("MessageBusService Integration Tests", () => {
                 "HOOKSURL_ENVIRONMENTS_AFTERCHANGE",
               ]).toContain(messageTypeOrder);
               return 0; // ACK
-            }
+            },
           );
           resolve();
         });
@@ -101,7 +101,7 @@ describe("MessageBusService Integration Tests", () => {
           Authorization: `users API-Key ${API_KEY}`,
         },
         body: JSON.stringify(organization),
-      }
+      },
     );
     if (organizationResponse.status >= 299) {
       throw `There was an error: ${
@@ -119,7 +119,7 @@ describe("MessageBusService Integration Tests", () => {
           Authorization: `users API-Key ${API_KEY}`,
         },
         body: JSON.stringify(project),
-      }
+      },
     );
     if (projectResponse.status >= 299) {
       throw `There was an error: ${
@@ -137,7 +137,7 @@ describe("MessageBusService Integration Tests", () => {
           Authorization: `users API-Key ${API_KEY}`,
         },
         body: JSON.stringify(environment),
-      }
+      },
     );
     if (envResponse.status >= 299) {
       throw `There was an error: ${
@@ -155,12 +155,12 @@ describe("MessageBusService Integration Tests", () => {
         headers: {
           Authorization: `users API-Key ${API_KEY}`,
         },
-      }
+      },
     );
     console.log(
       `Delete for '${PAYLOAD_PUBLIC_SERVER_URL}/api/organizations/${organizationId}' returned ${
         orgResponse.status
-      }: ${await orgResponse.text()}`
+      }: ${await orgResponse.text()}`,
     );
     const prjResponse = await fetch(
       `${PAYLOAD_PUBLIC_SERVER_URL}/api/projects/${projectId}`,
@@ -169,12 +169,12 @@ describe("MessageBusService Integration Tests", () => {
         headers: {
           Authorization: `users API-Key ${API_KEY}`,
         },
-      }
+      },
     );
     console.log(
       `Delete for '${PAYLOAD_PUBLIC_SERVER_URL}/api/projects/${projectId}' returned ${
         prjResponse.status
-      }: ${await prjResponse.text()}`
+      }: ${await prjResponse.text()}`,
     );
     const envResponse = await fetch(
       `${PAYLOAD_PUBLIC_SERVER_URL}/api/environments/${environmentId}`,
@@ -183,12 +183,12 @@ describe("MessageBusService Integration Tests", () => {
         headers: {
           Authorization: `users API-Key ${API_KEY}`,
         },
-      }
+      },
     );
     console.log(
       `Delete for '${PAYLOAD_PUBLIC_SERVER_URL}/api/environments/${environmentId}' returned ${
         envResponse.status
-      }: ${await envResponse.text()}`
+      }: ${await envResponse.text()}`,
     );
     try {
       if (consumer) {

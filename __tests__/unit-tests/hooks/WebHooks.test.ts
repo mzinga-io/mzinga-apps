@@ -48,14 +48,14 @@ describe("hooks", () => {
       );
       expect(hooks.beforeValidate).toBeDefined();
     });
-    it("hooks coming from DB should override hooks from env", () => {
+    it("hooks coming from DB should enrich hooks from env", () => {
       const webHooks = new WebHooks(
         {
           HOOKSURL_STORIES_BEFOREVALIDATE: "http://example.com/webhook",
         },
         [
           {
-            collectionSlug: "stories",
+            collectionReference: "stories",
             webhooks: [
               {
                 event: "beforeValidate",
@@ -66,7 +66,7 @@ describe("hooks", () => {
         ],
       );
       expect(webHooks.GetEnv().HOOKSURL_STORIES_BEFOREVALIDATE).toBe(
-        "rabbitmq",
+        "http://example.com/webhook,rabbitmq",
       );
     });
     it("hooks coming from DB should be in env", () => {
@@ -76,7 +76,7 @@ describe("hooks", () => {
         },
         [
           {
-            collectionSlug: "stories",
+            collectionReference: "stories",
             webhooks: [
               {
                 event: "beforeChange",

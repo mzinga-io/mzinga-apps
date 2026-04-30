@@ -15,7 +15,6 @@ import UnauthorizedUploadField from "./components/fields/UnauthorizedUploadField
 import Icon from "./components/graphics/Icon";
 import Logo from "./components/graphics/Logo";
 import { ConfigLoader } from "./configs/ConfigLoader";
-import { WebHooks } from "./hooks/WebHooks";
 import { ConfigUtils } from "./utils/ConfigUtils";
 import { EnvUtils } from "./utils/EnvUtils";
 import { MZingaLogger } from "./utils/MZingaLogger";
@@ -220,36 +219,10 @@ const buildConfigAsync = async () => {
     MZingaLogger.Instance?.error(e);
   }
   config.plugins = await utils.GetEnabledPlugins(additionalCollections);
-
   const builtConfig = await buildConfig(config);
-
-  // Enrich builtin and plugin collections with WebHooks
-  const allCollections = utils
+  builtConfig.collections = utils
     .FilterInvalidRelationships(builtConfig.collections)
-    .filter(Boolean);
-  const webhooksDocs = await payload.find({
-    collection: Slugs.AdminWebHooks,
-  });
-  const promises = [];
-  for (let i = 2; i <= webhooksDocs.totalPages; i++) {
-    promises.push(
-      payload.find({
-        collection: Slugs.AdminWebHooks,
-        page: i,
-      }),
-    );
-  }
-  const allWebHooksDocs = [
-    webhooksDocs,
-    ...(await Promise.all(promises)),
-  ].flatMap((res) => res.docs);
-
-  const webHooks = new WebHooks(Env, allWebHooksDocs);
-  builtConfig.collections = allCollections.map((collection) => ({
-    ...collection,
-    hooks: webHooks.EnrichCollection(collection),
-    fields: webHooks.EnrichFields(collection.slug, collection.fields),
-  })) as SanitizedCollectionConfig[];
+    .filter(Boolean) as SanitizedCollectionConfig[];
 
   return builtConfig;
 };

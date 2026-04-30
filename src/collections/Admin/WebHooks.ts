@@ -1,8 +1,14 @@
-import { CollectionConfig, FieldBase, FieldHook } from "mzinga/types";
-import { AuthorField, NameField } from "../../fields";
+import type {
+  CollectionConfig,
+  FieldBase,
+  FieldHook,
+  SanitizedCollectionConfig,
+} from "mzinga/types";
+import { AuthorField } from "../../fields";
 import {
   COLLECTION_LEVEL_HOOKS,
   FIELD_LEVEL_HOOKS,
+  WebHooks as WebHooksUtils,
 } from "../../hooks/WebHooks";
 import { AccessUtils, SlugUtils } from "../../utils";
 import { Slugs } from "../Slugs";
@@ -26,9 +32,25 @@ const WebHooks: CollectionConfig = {
     ...access.GetIsAdminOnly(),
   },
   admin: {
-    useAsTitle: NameField.Name,
-    defaultColumns: [NameField.Name, "collectionReference"],
+    useAsTitle: "friendlyName",
+    defaultColumns: ["friendlyName", "collectionReference"],
     group: "Admin",
+  },
+  hooks: {
+    afterChange: [
+      ({ doc, req }) => {
+        const { payload } = req;
+        const webHooks = new WebHooksUtils(process.env, [doc]);
+        payload.config.collections = payload.config.collections.map(
+          (collection) => ({
+            ...collection,
+            hooks: webHooks.EnrichCollection(collection),
+            fields: webHooks.EnrichFields(collection.slug, collection.fields),
+          }),
+        ) as SanitizedCollectionConfig[];
+        return doc;
+      },
+    ],
   },
   fields: [
     {
