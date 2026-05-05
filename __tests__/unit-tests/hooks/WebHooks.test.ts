@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import type { FieldBase } from "mzinga/types";
+import { FieldBase } from "mzinga/types";
 import { Connection } from "rabbitmq-client";
 import AlertTypes from "../../../src/collections/AlertTypes";
 import { Slugs } from "../../../src/collections/Slugs";
 import Stories from "../../../src/collections/Stories";
-import { WebHooks } from "../../../src/hooks/WebHooks";
+import { COLLECTION_LEVEL_HOOKS, WebHooks } from "../../../src/hooks/WebHooks";
 import {
   BusConfiguration,
   messageBusService,
@@ -14,6 +14,10 @@ jest.mock("rabbitmq-client", () => ({
 }));
 const MockConnection = Connection as jest.MockedClass<typeof Connection>;
 describe("hooks", () => {
+  beforeEach(() => {
+    Stories.hooks = {};
+    AlertTypes.hooks = {};
+  });
   describe("WebHooks", () => {
     it("should enrich collection hooks based on env variable", () => {
       const webHooks = new WebHooks({
@@ -22,7 +26,7 @@ describe("hooks", () => {
       const hooks = webHooks.EnrichCollection(Stories);
       expect(hooks.beforeValidate).toBeDefined();
     });
-    it("should enrich fields hooks based on env variable", () => {
+    it("should enrich field's fields hooks based on env variable", () => {
       const webHooks = new WebHooks({
         HOOKSURL_STORIES_FIELD_TITLE_BEFOREVALIDATE:
           "http://example.com/webhook",
@@ -223,6 +227,24 @@ describe("hooks", () => {
           },
         );
       });
+    });
+    it("hooks from collection should persist after enrichment", () => {
+      const webHooks = new WebHooks({
+        HOOKSURL_COMMUNICATIONS_AFTERCHANGE: "rabbitmq",
+      });
+      const hooks = webHooks.AddHooksFromList(
+        COLLECTION_LEVEL_HOOKS,
+        {
+          afterChange: [
+            () => {
+              return "42";
+            },
+          ],
+        },
+        `HOOKSURL_COMMUNICATIONS`,
+      );
+      expect(hooks.afterChange.length).toBe(2);
+      expect(hooks.afterChange[0]()).toBe("42");
     });
   });
 });

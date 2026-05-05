@@ -190,7 +190,7 @@ export class WebHooks {
           };
         })
         .filter(Boolean);
-      originalHooks[hookType] = [].concat(hooks[hookType] || [], hooks);
+      originalHooks[hookType] = [].concat(originalHooks[hookType] || [], hooks);
     }
     return originalHooks;
   }
