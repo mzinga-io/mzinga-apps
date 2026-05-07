@@ -1,5 +1,7 @@
+import httpStatus from "http-status";
 import payload from "mzinga";
 import { PaginatedDocs } from "mzinga/database";
+import APIError from "mzinga/dist/errors/APIError";
 import { CollectionConfig, TypeWithID } from "mzinga/types";
 import { AccessUtils } from "../utils";
 import { CollectionUtils } from "../utils/CollectionUtils";
@@ -60,7 +62,10 @@ const Communications: CollectionConfig = {
           });
           const usersEmails = users.docs.map((u) => u.email);
           if (!usersEmails.length) {
-            throw new Error("No valid email addresses found for 'tos' users.");
+            throw new APIError(
+              "No valid email addresses found for 'tos' users.",
+              httpStatus.BAD_REQUEST,
+            );
           }
           let cc;
           if (ccs) {

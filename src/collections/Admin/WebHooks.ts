@@ -1,3 +1,5 @@
+import httpStatus from "http-status";
+import APIError from "mzinga/dist/errors/APIError";
 import type {
   CollectionConfig,
   FieldBase,
@@ -137,8 +139,9 @@ const WebHooks: CollectionConfig = {
                   collectionReference: string;
                 };
                 if (!collectionReference) {
-                  throw new Error(
+                  throw new APIError(
                     "Collection reference is required to validate field reference",
+                    httpStatus.BAD_REQUEST,
                   );
                 }
                 const { payload } = req;
@@ -146,8 +149,9 @@ const WebHooks: CollectionConfig = {
                   .find((c) => c.slug === collectionReference)
                   ?.fields.find((f) => (f as FieldBase).name === value);
                 if (!isValid) {
-                  throw new Error(
+                  throw new APIError(
                     `Field reference must be a valid field in the referenced collection: ${collectionReference}`,
+                    httpStatus.BAD_REQUEST,
                   );
                 }
                 return value;
