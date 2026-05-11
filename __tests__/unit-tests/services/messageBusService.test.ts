@@ -6,13 +6,10 @@ import {
 } from "../../../src/messageBusService";
 import { MZingaLogger } from "../../../src/utils/MZingaLogger";
 
-// Mock BusConfiguration
-// Mock rabbitmq-client
 jest.mock("rabbitmq-client", () => ({
   Connection: jest.fn(),
 }));
 
-// Mock MZingaLogger
 jest.mock("../../../src/utils/MZingaLogger", () => ({
   MZingaLogger: {
     Instance: {

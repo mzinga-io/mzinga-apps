@@ -15,7 +15,6 @@ import UnauthorizedUploadField from "./components/fields/UnauthorizedUploadField
 import Icon from "./components/graphics/Icon";
 import Logo from "./components/graphics/Logo";
 import { ConfigLoader } from "./configs/ConfigLoader";
-import { WebHooks } from "./hooks/WebHooks";
 import { ConfigUtils } from "./utils/ConfigUtils";
 import { EnvUtils } from "./utils/EnvUtils";
 import { MZingaLogger } from "./utils/MZingaLogger";
@@ -59,8 +58,6 @@ if (POSTGRES_URI) {
       : {}),
   });
 }
-
-const webHooks = new WebHooks(Env);
 
 const config = {
   i18n: {
@@ -222,18 +219,10 @@ const buildConfigAsync = async () => {
     MZingaLogger.Instance?.error(e);
   }
   config.plugins = await utils.GetEnabledPlugins(additionalCollections);
-
   const builtConfig = await buildConfig(config);
-
-  // Enrich builtin and plugin collections with WebHooks
   builtConfig.collections = utils
     .FilterInvalidRelationships(builtConfig.collections)
-    .filter(Boolean)
-    .map((collection) => ({
-      ...collection,
-      hooks: webHooks.EnrichCollection(collection),
-      fields: webHooks.EnrichFields(collection.slug, collection.fields),
-    })) as SanitizedCollectionConfig[];
+    .filter(Boolean) as SanitizedCollectionConfig[];
 
   return builtConfig;
 };

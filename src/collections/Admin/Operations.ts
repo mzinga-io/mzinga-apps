@@ -1,4 +1,4 @@
-import { CollectionConfig } from "mzinga/types";
+import type { CollectionConfig } from "mzinga/types";
 import { AccessUtils } from "../../utils";
 import { Slugs } from "../Slugs";
 

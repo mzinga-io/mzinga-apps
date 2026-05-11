@@ -1,4 +1,4 @@
-import { CollectionConfig } from "mzinga/types";
+import type { CollectionConfig } from "mzinga/types";
 import { AuthorField, NameField } from "../../fields";
 import { AccessUtils } from "../../utils";
 import { DBUtils } from "../../utils/DBUtils";
@@ -22,11 +22,11 @@ const AdminDBIndexes: CollectionConfig = {
         const { payload } = req;
         const dbCollection = DBUtils.getDbCollection(
           payload,
-          doc.collectionReference
+          doc.collectionReference,
         );
         const indexes = await dbCollection.listIndexes();
         const hasIndex = indexes.find(
-          (i) => JSON.stringify(i.key) === JSON.stringify(doc.definition)
+          (i) => JSON.stringify(i.key) === JSON.stringify(doc.definition),
         );
         if (hasIndex) {
           payload.db.connection.collections[
@@ -40,11 +40,11 @@ const AdminDBIndexes: CollectionConfig = {
         const { payload } = req;
         const dbCollection = DBUtils.getDbCollection(
           payload,
-          doc.collectionReference
+          doc.collectionReference,
         );
         const indexes = await dbCollection.listIndexes();
         const alreadyFoundIndex = indexes.find(
-          (i) => JSON.stringify(i.key) === JSON.stringify(doc.definition)
+          (i) => JSON.stringify(i.key) === JSON.stringify(doc.definition),
         );
         if (alreadyFoundIndex) {
           await payload.db.connection.collections[

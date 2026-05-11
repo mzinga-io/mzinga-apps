@@ -1,15 +1,14 @@
 import { FieldBase } from "mzinga/dist/fields/config/types";
 import { CollectionConfig, Field } from "mzinga/types";
 import { messageBusService } from "../messageBusService";
-import { EnvConfig } from "../types";
 import { MZingaLogger } from "../utils/MZingaLogger";
-const FIELD_LEVEL_HOOKS = [
+export const FIELD_LEVEL_HOOKS = [
   "beforeValidate",
   "beforeChange",
   "afterChange",
   "afterRead",
 ];
-const COLLECTION_LEVEL_HOOKS = [
+export const COLLECTION_LEVEL_HOOKS = [
   "beforeOperation",
   "beforeValidate",
   "beforeChange",
@@ -27,7 +26,37 @@ const COLLECTION_LEVEL_HOOKS = [
   "afterForgotPassword",
 ];
 export class WebHooks {
-  constructor(private readonly env: EnvConfig) {}
+  constructor(
+    private readonly env: any,
+    private readonly allWebHooksDocs: any[] = [],
+  ) {
+    for (const webHookDoc of this.allWebHooksDocs) {
+      const collectionKey = webHookDoc.collectionReference.toUpperCase();
+      for (const hook of webHookDoc.webhooks || []) {
+        const hookKey = `HOOKSURL_${collectionKey}_${hook.fieldReference ? `FIELD_${hook.fieldReference.toUpperCase()}_` : ""}${hook.event.toUpperCase()}`;
+        if (env[hookKey]) {
+          if (
+            !env[hookKey]
+              .split(",")
+              .find((url) => url === hook.url || url === hook.type)
+          ) {
+            env[hookKey] = [
+              env[hookKey],
+              hook.type === "http" ? hook.url : hook.type,
+            ].join(",");
+          }
+          continue;
+        }
+        env[hookKey] = [hook.type === "http" ? hook.url : hook.type].join(",");
+      }
+    }
+    MZingaLogger.Instance?.debug(
+      `Initialized WebHooks with the following environment variables: ${Object.keys(env).filter((key) => key.startsWith("HOOKSURL_"))}`,
+    );
+  }
+  GetEnv(): any {
+    return this.env;
+  }
   EnrichFields(collectionSlug: string, fields: Field[]): Field[] {
     return fields.map((field) => {
       const hooks =
@@ -44,7 +73,7 @@ export class WebHooks {
   }
   EnrichField(
     collectionSlug: string,
-    field: Field
+    field: Field,
   ): Partial<FieldBase["hooks"]> {
     const fieldHooks = (field as FieldBase).hooks || {};
     const fieldName = (field as FieldBase).name || undefined;
@@ -54,13 +83,13 @@ export class WebHooks {
     return this.AddHooksFromList(
       FIELD_LEVEL_HOOKS,
       fieldHooks,
-      `HOOKSURL_${collectionSlug}_FIELD_${fieldName}`
+      `HOOKSURL_${collectionSlug}_FIELD_${fieldName}`,
     );
   }
   AddHooksFromList(
     allHooksList: string[],
     originalHooks: any,
-    hookEnvBaseKey: string
+    hookEnvBaseKey: string,
   ): any {
     for (const hookType of allHooksList) {
       const envUrlsKey = `${hookEnvBaseKey}_${hookType}`.toUpperCase();
@@ -81,7 +110,7 @@ export class WebHooks {
           ) {
             if (!messageBusService.isConnected()) {
               MZingaLogger.Instance?.info(
-                "RabbitMQ connection is not established. Skipping publishing event."
+                "RabbitMQ connection is not established. Skipping publishing event.",
               );
               return undefined;
             }
@@ -103,7 +132,7 @@ export class WebHooks {
               };
               try {
                 MZingaLogger.Instance?.debug(
-                  `[RABBITMQHOOK] ${envUrlsKey}: ${JSON.stringify(eventData)}`
+                  `[RABBITMQHOOK] ${envUrlsKey}: ${JSON.stringify(eventData)}`,
                 );
                 await messageBusService.publishEvent({
                   type: envUrlsKey,
@@ -112,7 +141,7 @@ export class WebHooks {
               } catch (error) {
                 MZingaLogger.Instance?.error(
                   `Failed to publish event to RabbitMQ:`,
-                  error
+                  error,
                 );
               }
             };
@@ -141,25 +170,37 @@ export class WebHooks {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify(eventData),
-            }).catch((e) => {
-              MZingaLogger.Instance?.info(
-                `There was an error requesting: ${url} (key: ${envUrlsKey}) ${e.message}`
-              );
-            });
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  MZingaLogger.Instance?.info(
+                    `[URLHOOK] There was an error requesting: ${url} (key: ${envUrlsKey}) ${response.status}=${response.statusText}`,
+                  );
+                  return;
+                }
+                MZingaLogger.Instance?.debug(
+                  `[URLHOOK] ${url} (key: ${envUrlsKey}): ${JSON.stringify(eventData)}`,
+                );
+              })
+              .catch((e) => {
+                MZingaLogger.Instance?.info(
+                  `[URLHOOK] There was an error requesting: ${url} (key: ${envUrlsKey}) ${e.message}`,
+                );
+              });
           };
         })
         .filter(Boolean);
-      originalHooks[hookType] = [].concat(hooks[hookType] || [], hooks);
+      originalHooks[hookType] = [].concat(originalHooks[hookType] || [], hooks);
     }
     return originalHooks;
   }
   EnrichCollection(
-    collectionConfig: CollectionConfig
+    collectionConfig: CollectionConfig,
   ): Partial<CollectionConfig["hooks"]> {
     const collectionHooks = this.AddHooksFromList(
       COLLECTION_LEVEL_HOOKS,
       collectionConfig.hooks || {},
-      `HOOKSURL_${collectionConfig.slug}`
+      `HOOKSURL_${collectionConfig.slug}`,
     );
     return collectionHooks;
   }

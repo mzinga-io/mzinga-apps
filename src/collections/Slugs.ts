@@ -29,6 +29,7 @@ const Slugs = {
   },
   AdminOperations: "admin-operations",
   AdminDBIndexes: "admin-dbindexes",
+  AdminWebHooks: "admin-webhooks",
   ScheduledTasks: "scheduled-tasks",
   GetCollections() {
     return Env.PAYLOAD_PUBLIC_SLUGS_COLLECTIONS || "collections";
