@@ -31,6 +31,13 @@ const AdminOperations: CollectionConfig = {
         readOnly: true,
       },
     },
+    {
+      name: "additionalData",
+      type: "json",
+      admin: {
+        readOnly: true,
+      },
+    },
   ],
 };
 export default AdminOperations;
