@@ -1,17 +1,13 @@
 import httpStatus from "http-status";
 import APIError from "mzinga/dist/errors/APIError";
-import type {
-  CollectionConfig,
-  FieldBase,
-  FieldHook,
-  SanitizedCollectionConfig,
-} from "mzinga/types";
+import type { CollectionConfig, FieldBase, FieldHook } from "mzinga/types";
+import { select } from "mzinga/dist/fields/validations";
 import { AuthorField } from "../../fields";
 import {
   COLLECTION_LEVEL_HOOKS,
   FIELD_LEVEL_HOOKS,
-  WebHooks as WebHooksUtils,
 } from "../../hooks/WebHooks";
+import { webHooksSync } from "../../hooks/WebHooksSync";
 import { AccessUtils, SlugUtils } from "../../utils";
 import { Slugs } from "../Slugs";
 
@@ -39,17 +35,17 @@ const WebHooks: CollectionConfig = {
     group: "Admin",
   },
   hooks: {
+    // The change stream applies committed changes on every instance; this
+    // reload covers the saving instance when change streams are unavailable.
     afterChange: [
-      ({ doc, req }) => {
-        const { payload } = req;
-        const webHooks = new WebHooksUtils(process.env, [doc]);
-        payload.config.collections = payload.config.collections.map(
-          (collection) => ({
-            ...collection,
-            hooks: webHooks.EnrichCollection(collection),
-            fields: webHooks.EnrichFields(collection.slug, collection.fields),
-          }),
-        ) as SanitizedCollectionConfig[];
+      ({ doc }) => {
+        webHooksSync.RequestReload();
+        return doc;
+      },
+    ],
+    afterDelete: [
+      ({ doc }) => {
+        webHooksSync.RequestReload();
         return doc;
       },
     ],
@@ -100,12 +96,34 @@ const WebHooks: CollectionConfig = {
           name: "event",
           type: "select",
           hasMany: false,
-          options: [...COLLECTION_LEVEL_HOOKS, ...FIELD_LEVEL_HOOKS],
+          required: true,
+          options: COLLECTION_LEVEL_HOOKS.concat(
+            FIELD_LEVEL_HOOKS.filter(
+              (h) => !COLLECTION_LEVEL_HOOKS.includes(h),
+            ),
+          ),
+          validate: (value, options) => {
+            const result = select(value, options);
+            if (result !== true) {
+              return result;
+            }
+            const { siblingData } = options as {
+              siblingData?: { fieldReference?: string };
+            };
+            if (
+              siblingData?.fieldReference &&
+              !FIELD_LEVEL_HOOKS.includes(value as string)
+            ) {
+              return `With a field reference, the event must be a field hook: ${FIELD_LEVEL_HOOKS.join(", ")}`;
+            }
+            return true;
+          },
         },
         {
           name: "type",
           type: "select",
           hasMany: false,
+          required: true,
           options: [
             {
               label: "HTTP",
@@ -120,6 +138,26 @@ const WebHooks: CollectionConfig = {
         {
           name: "url",
           type: "text",
+          validate: (value, options) => {
+            const { siblingData } = options as {
+              siblingData?: { type?: string };
+            };
+            if (siblingData?.type !== "http") {
+              return true;
+            }
+            if (!value) {
+              return "URL is required for HTTP webhooks";
+            }
+            try {
+              const { protocol } = new URL(value as string);
+              if (protocol !== "http:" && protocol !== "https:") {
+                return "URL must start with http:// or https://";
+              }
+            } catch {
+              return "URL is not valid";
+            }
+            return true;
+          },
           admin: {
             condition: (_, siblingData) => {
               return siblingData.type === "http";

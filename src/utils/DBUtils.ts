@@ -3,6 +3,7 @@ import type { Payload } from "mzinga";
 export const DBUtils = {
   fixBooleanType: () => {
     //moved require here because otherwise client-side rendering will fail
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     require("mongoose").Schema.Types.Boolean.convertToFalse.add("");
   },
   createUpdatedAtDescIndexes: (payload: Payload) => {
@@ -11,7 +12,7 @@ export const DBUtils = {
         { updatedAt: -1 },
         {
           background: true,
-        }
+        },
       );
     }
   },

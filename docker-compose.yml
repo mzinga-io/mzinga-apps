@@ -19,7 +19,7 @@ services:
         condition: no
 
   mzinga:
-    image: newesissrl.azurecr.io/mzinga/payload/gh/backoffice:0.11.4
+    image: newesissrl.azurecr.io/mzinga/payload/gh/backoffice:0.12.6
     ports:
       - ${PORT:-3000}:${PORT:-3000}
     volumes:
@@ -56,7 +56,7 @@ services:
         max_attempts: 3
         window: 120s
   database:
-    image: percona/percona-server-mongodb:8.0.29-13
+    image: percona/percona-server-mongodb:8.0.38-16
     depends_on:
       - replica_key
     ports:
@@ -90,7 +90,7 @@ services:
       start_interval: 1s
       retries: 30
   messagebus:
-    image: rabbitmq:4.3.5-management-alpine
+    image: rabbitmq:4.4.1-management-alpine
     hostname: rabbitmq
     ports:
       - ${RABBITMQ_PORT:-5672}:5672
@@ -107,7 +107,7 @@ services:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-guest}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-guest}
   cache:
-    image: redis:8.10.0-alpine
+    image: redis:8.12.0-alpine
     ports:
       - ${REDIS_PORT:-6379}:6379
     deploy:
@@ -252,7 +252,7 @@ services:
       replicas: ${GRAFANA_REPLICAS:-0}
 
   mongo-exporter:
-    image: "percona/mongodb_exporter:2.37"
+    image: "percona/mongodb_exporter:0.55"
     environment:
       - MONGODB_URI=mongodb://${MONGO_ROOTUSER:-admin}:${MONGO_ROOTPASSWORD:-admin}@database:27017/app?authSource=admin&directConnection=true
     command: ["--collect-all", "--compatible-mode", "--discovering-mode"]

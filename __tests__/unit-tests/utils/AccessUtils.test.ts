@@ -22,17 +22,19 @@ describe("utils", () => {
       let invalidInput = {
         req: { user: undefined } as PayloadRequest,
       };
-      expect(accessUtils.GetIsAdminFieldLevelAccess(invalidInput))
-        .toBeUndefined;
-      expect(accessUtils.GetIsAdmin(invalidInput)).toBeUndefined;
+      expect(
+        accessUtils.GetIsAdminFieldLevelAccess(invalidInput)
+      ).toBeUndefined();
+      expect(accessUtils.GetIsAdmin(invalidInput)).toBeUndefined();
       invalidInput = {
         req: {
           user: { roles: undefined },
         } as PayloadRequest,
       };
-      expect(accessUtils.GetIsAdminFieldLevelAccess(invalidInput))
-        .toBeUndefined;
-      expect(accessUtils.GetIsAdmin(invalidInput)).toBeUndefined;
+      expect(
+        accessUtils.GetIsAdminFieldLevelAccess(invalidInput)
+      ).toBeUndefined();
+      expect(accessUtils.GetIsAdmin(invalidInput)).toBeUndefined();
     });
     it("GetIsAdmin|GetIsAdminFieldLevelAccess should return 'true' for 'admin' role", () => {
       expect(accessUtils.GetIsAdminFieldLevelAccess(args)).toBe(true);

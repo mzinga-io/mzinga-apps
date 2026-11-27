@@ -63,8 +63,10 @@ export class FSUtils {
       );
       return;
     }
-    fs.rmdirSync(baseDir.strData, {
+    // fs.rmdirSync no longer accepts { recursive } (removed in Node 25+).
+    fs.rmSync(baseDir.strData, {
       recursive: true,
+      force: true,
     });
     MZingaLogger.Instance?.debug(
       `[FSUtils.EmptyFolder]: Deleted all file(s) from ${baseDir.strData}`

@@ -2,31 +2,29 @@ import { initRedis } from "@aengz/payload-redis-cache";
 import nodemailerSendgrid from "@newesissrl/nodemailer-sendgrid";
 import { ZitadelRoutes } from "@newesissrl/payload-zitadel-plugin/dist/routes";
 import assert from "assert";
+import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
 import express from "express";
 import promBundle from "express-prom-bundle";
 import fs from "fs/promises";
 import payload from "mzinga";
-import type {
-  Collection,
-  SanitizedCollectionConfig,
-} from "mzinga/dist/collections/config/types";
+import type { Collection } from "mzinga/dist/collections/config/types";
 import payloadPkg from "mzinga/package.json";
 import { PayloadRequest } from "mzinga/types";
 import net from "net";
 import path from "path";
 import vm from "vm";
 import { CustomEntities } from "./customizations/CustomEntities";
-import { WebHooks } from "./hooks/WebHooks";
+import { webHooksSync } from "./hooks/WebHooksSync";
 import { messageBusService } from "./messageBusService";
 import { DBUtils } from "./utils/DBUtils";
 import { EnvUtils } from "./utils/EnvUtils";
 import { GraphQLUtils } from "./utils/GraphQLUtils";
 import { MZingaLogger } from "./utils/MZingaLogger";
 DBUtils.fixBooleanType();
-const cookieParser = require("cookie-parser");
 const customEntities = new CustomEntities(process.env.TENANT);
 const mongoURLRegex = new RegExp(/mongodb:\/\/([\S]*):(\d*)\//i);
-require("dotenv").config();
+dotenv.config();
 const app = express();
 const metricsMiddleware = promBundle({
   includeMethod: true,
@@ -82,7 +80,9 @@ app.get("/configs/custom-collections", async (_, res) => {
   const results = [];
   try {
     results.push(await customEntities.GetAll());
-  } catch (e) {}
+  } catch {
+    // No custom entities available: return an empty list.
+  }
   const json = results
     .flat()
     .map((r) => {
@@ -138,30 +138,13 @@ const start = async () => {
           process.env.ENV
         }) Admin URL: ${payload.getAdminURL()}`,
       );
-      const webhooksDocs = await payload.find({
-        collection: "admin-webhooks",
-      });
-      const promises = [];
-      for (let i = 2; i <= webhooksDocs.totalPages; i++) {
-        promises.push(
-          payload.find({
-            collection: "admin-webhooks",
-            page: i,
-          }),
+      try {
+        await webHooksSync.Start(payload);
+      } catch (error) {
+        MZingaLogger.Instance?.error(
+          `[WEBHOOKS] Could not load webhook subscriptions: ${error}`,
         );
       }
-      const allWebHooksDocs = [
-        webhooksDocs,
-        ...(await Promise.all(promises)),
-      ].flatMap((res) => res.docs);
-      const webHooks = new WebHooks(process.env, allWebHooksDocs);
-      payload.config.collections = payload.config.collections.map(
-        (collection) => ({
-          ...collection,
-          hooks: webHooks.EnrichCollection(collection),
-          fields: webHooks.EnrichFields(collection.slug, collection.fields),
-        }),
-      ) as SanitizedCollectionConfig[];
     },
   });
   DBUtils.createUpdatedAtDescIndexes(payload);
@@ -209,7 +192,7 @@ const start = async () => {
         limit: 1,
         select: { _id: 1 },
       });
-    } catch (e) {
+    } catch {
       res
         .status(500)
         .send(`Cannot find "${(collectionWithAuth as any).config.slug}"`);
@@ -233,7 +216,8 @@ const start = async () => {
       return;
     }
     values.shift();
-    let [host, port] = values;
+    const [rawHost, port] = values;
+    let host = rawHost;
     if (host.indexOf("@") > -1) {
       host = host.split("@")[1];
     }
@@ -256,6 +240,7 @@ const start = async () => {
 };
 start();
 process.on("SIGINT", async function () {
+  await webHooksSync.Stop();
   await messageBusService.close();
   process.exit();
 });

@@ -50,6 +50,7 @@ describe("services", () => {
       };
 
       mockConnection = {
+        ready: true,
         on: mockOn,
         createPublisher: jest.fn().mockReturnValue(mockPublisher),
         close: mockClose,
@@ -88,7 +89,21 @@ describe("services", () => {
             BusConfiguration.MZingaEventsDurable,
             BusConfiguration.MZingaEvents,
           ],
+          exchangeBindings: [
+            {
+              source: BusConfiguration.MZingaEvents.exchange,
+              destination: BusConfiguration.MZingaEventsDurable.exchange,
+              routingKey: "#",
+            },
+          ],
         });
+        expect(messageBusService.isConnected()).toBe(true);
+      });
+
+      it("should report not connected while the connection is down", async () => {
+        await messageBusService.connect("amqp://localhost:5672");
+        mockConnection.ready = false;
+        expect(messageBusService.isConnected()).toBe(false);
       });
 
       it("should handle connection errors", async () => {

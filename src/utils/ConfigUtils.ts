@@ -71,10 +71,23 @@ export class ConfigUtils {
     customComponents?: CustomComponents,
   ) {
     this.config = new ConfigLoader(additionalConfig).Load();
-    this.webHooks = new WebHooks(this.config.Env);
+    this.webHooks = new WebHooks(this.config.Env, undefined, {
+      supportsCollectionAfterError: ConfigUtils.SupportsCollectionAfterError(),
+    });
     this.collections = collections;
     this.customComponents = customComponents;
     ConfigUtils.instance = this;
+  }
+  /** True when the installed core accepts hooks.afterError on collections (not the case up to 1.0.5). */
+  static SupportsCollectionAfterError(): boolean {
+    const { error } = collectionSchema.validate({
+      slug: "webhooks-feature-check",
+      fields: [],
+      hooks: { afterError: () => undefined },
+    });
+    return !error?.details?.some(
+      (detail) => detail.path.join(".") === "hooks.afterError",
+    );
   }
   GetCookiePrefix(): string {
     return SlugUtils.Slugify(this.config.Env?.TENANT || "mzinga");
@@ -112,7 +125,7 @@ export class ConfigUtils {
           ({ data, field, value }) => {
             const currentData = [].concat(data[field.name]);
             const result = [];
-            for (let node of currentData) {
+            for (const node of currentData) {
               result.push({
                 html: TextUtils.Serialize(node.children),
                 internalLinks: TextUtils.GetInternalLinks(node.children),
@@ -163,10 +176,10 @@ export class ConfigUtils {
       delete (field as FieldWithSafeAccess).readValueFromField;
     }
 
-    if (field.hasOwnProperty("fields")) {
+    if (Object.prototype.hasOwnProperty.call(field, "fields")) {
       (field as any).fields.map((field) => this.TransformToField(field));
     }
-    if (field.hasOwnProperty("tabs")) {
+    if (Object.prototype.hasOwnProperty.call(field, "tabs")) {
       (field as any).tabs = (field as any).tabs.map((tab) => {
         const result = {
           ...tab,
@@ -183,7 +196,7 @@ export class ConfigUtils {
         return result;
       });
     }
-    if (field.hasOwnProperty("group")) {
+    if (Object.prototype.hasOwnProperty.call(field, "group")) {
       (field as any).group = (field as any).group.map((group) => {
         const result = {
           ...group,
@@ -501,10 +514,40 @@ export class ConfigUtils {
       );
       return {
         ...c,
-        fields: this.webHooks.EnrichFields(c.slug, filteredFields),
-        hooks: this.webHooks.EnrichCollection(c),
+        fields: filteredFields,
       };
     });
+  }
+  /** Attaches the webhook dispatchers to every collection of the built config (built-in, custom entities and plugins). */
+  AttachWebHooks(collections: CollectionConfig[]) {
+    for (const collection of collections) {
+      this.webHooks.AttachToCollection(collection);
+    }
+    return collections;
+  }
+  /** Lists every configured collection, custom entities included, as a webhook target. */
+  AddWebHooksCollectionOptions(config: Config | SanitizedConfig) {
+    const webHooksCollection = config.collections?.find(
+      (c) => c.slug === Slugs.AdminWebHooks,
+    );
+    const collectionReference = webHooksCollection?.fields.find(
+      (f) => (f as FieldBase).name === "collectionReference",
+    ) as { options?: { label: string; value: string }[] } | undefined;
+    if (!collectionReference?.options) {
+      return;
+    }
+    const known = new Set(collectionReference.options.map((o) => o.value));
+    for (const collection of config.collections) {
+      if (known.has(collection.slug)) {
+        continue;
+      }
+      const plural = collection.labels?.plural;
+      collectionReference.options.push({
+        label: typeof plural === "string" ? plural : collection.slug,
+        value: collection.slug,
+      });
+      known.add(collection.slug);
+    }
   }
   FilterFields(collectionSlug: string, fields: Field[]): Field[] {
     const disableFieldsByCollection = (
@@ -625,15 +668,17 @@ export class ConfigUtils {
                 const { to } = email;
                 try {
                   const emailPromise = await payload.sendEmail(email);
-                  console.log(`Email sent to ${to}`);
+                  MZingaLogger.Instance?.info(`Email sent to ${to}`);
                   return emailPromise;
                 } catch (err) {
                   if (err?.response?.body?.errors) {
                     err.response.body.errors.forEach((error) =>
-                      console.log("%s: %s", error.field, error.message),
+                      MZingaLogger.Instance?.error(
+                        `${error.field}: ${error.message}`,
+                      ),
                     );
                   } else {
-                    console.log(err);
+                    MZingaLogger.Instance?.error(err);
                   }
                 }
               }),

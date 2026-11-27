@@ -77,7 +77,6 @@ describe("collections", () => {
       expect(result).toBe(thumbUrl);
     });
     it("photo_url.hooks.beforeChange should return media.url for the found data.photo", async () => {
-      const expectedResult = "http://my-thumb-url.com";
       const result = await (photoUrlField as any).hooks.beforeChange[0]({
         data: {
           photo: "https://my-photo.com",

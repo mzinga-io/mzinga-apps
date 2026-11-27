@@ -18,6 +18,8 @@ import { ConfigLoader } from "./configs/ConfigLoader";
 import { ConfigUtils } from "./utils/ConfigUtils";
 import { EnvUtils } from "./utils/EnvUtils";
 import { MZingaLogger } from "./utils/MZingaLogger";
+// Kept as require: this file is also bundled in the admin UI, where "path" is replaced.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const path = require("path");
 const { Env, Meta } = new ConfigLoader().Load();
 const corsConfigs = Env.CORS_CONFIGS || "";
@@ -218,11 +220,14 @@ const buildConfigAsync = async () => {
   } catch (e) {
     MZingaLogger.Instance?.error(e);
   }
+  utils.AddWebHooksCollectionOptions(config);
   config.plugins = await utils.GetEnabledPlugins(additionalCollections);
   const builtConfig = await buildConfig(config);
   builtConfig.collections = utils
     .FilterInvalidRelationships(builtConfig.collections)
     .filter(Boolean) as SanitizedCollectionConfig[];
+  // After buildConfig, so plugin collections and custom entities are included.
+  utils.AttachWebHooks(builtConfig.collections);
 
   return builtConfig;
 };

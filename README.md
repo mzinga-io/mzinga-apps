@@ -221,24 +221,40 @@ Use this method for quick tests where you do not need to keep your data.
 
 In the MZinga domain, the term **webhook notification** refers to both traditional HTTP webhooks (HTTP POST requests to external URLs) and events published to RabbitMQ. This is a broader definition than in most software projects, where "webhook" typically means only HTTP callbacks. In MZinga, both mechanisms are configured and triggered in the same way, allowing you to integrate with external systems using either HTTP or RabbitMQ.
 
-### How to Send a Webhook Notification (HTTP or RabbitMQ)
+You can configure webhook notifications in two ways. Both can be used at the same time.
 
-1. **Choose the collection and field you want to monitor.**
-2. **Set an environment variable in your `.env` file using the following format:**
+### Option 1: In the admin UI (no restart)
+
+1. Open **Admin > Admin Webhooks** and create an entry.
+2. Choose the collection (custom entities are listed too). Then add one or more rows, each with:
+   - **event**: the hook type, for example `afterChange`;
+   - **type**: `HTTP` or `RabbitMQ`;
+   - **url**: the endpoint to call (HTTP only; must start with `http://` or `https://`);
+   - **fieldReference** (optional): a top-level field name, to use a field-level hook. Only field-level events are allowed with a field reference.
+
+Changes apply to every running instance (backoffice and API) without a restart:
+
+- With MongoDB as a replica set, instances follow a change stream on the `admin-webhooks` collection and apply changes within about a second.
+- Each instance also checks for changes every `WEBHOOKS_SYNC_INTERVAL_MS` milliseconds (default `30000`; `0` disables the check). This is the fallback when change streams are not available.
+
+### Option 2: With environment variables (restart needed)
+
+1. **Set an environment variable using the following format:**
 
    ```bash
-   HOOKSURL_<COLLECTION_SLUG>_FIELD_<FIELD_NAME>_<HOOK_TYPE>=<WEBHOOK_URL_OR_RABBITMQ>
+   HOOKSURL_<COLLECTION_SLUG>_<HOOK_TYPE>=<TARGETS>
+   HOOKSURL_<COLLECTION_SLUG>_FIELD_<FIELD_NAME>_<HOOK_TYPE>=<TARGETS>
    ```
 
-   - `<COLLECTION_SLUG>`: The slug of your collection (e.g., `SCHEDULED-TASKS`).
-   - `<FIELD_NAME>`: The name of the field (e.g., `LASTEXECUTION`).
-   - `<HOOK_TYPE>`: The event type (e.g., `AFTERCHANGE`, `BEFORECHANGE`).
-   - `<WEBHOOK_URL_OR_RABBITMQ>`: The HTTP endpoint to notify, or `RABBITMQ` to publish to RabbitMQ.
+   - `<COLLECTION_SLUG>`: the collection slug in upper case, exactly as the slug is written (e.g. `STORIES`, `SCHEDULED-TASKS`).
+   - `<FIELD_NAME>`: a top-level field name in upper case (e.g. `LASTEXECUTION`).
+   - `<HOOK_TYPE>`: the event type (e.g. `AFTERCHANGE`, `BEFORECHANGE`).
+   - `<TARGETS>`: a comma-separated list of HTTP endpoints and/or `rabbitmq` (any letter case).
 
    **Example for RabbitMQ:**
 
    ```bash
-   HOOKSURL_SCHEDULEDTASKS_FIELD_LASTEXECUTION_AFTERCHANGE=RABBITMQ
+   HOOKSURL_SCHEDULED-TASKS_FIELD_LASTEXECUTION_AFTERCHANGE=rabbitmq
    ```
 
    **Example for HTTP webhook:**
@@ -247,23 +263,30 @@ In the MZinga domain, the term **webhook notification** refers to both tradition
    HOOKSURL_STORIES_FIELD_TITLE_AFTERCHANGE=https://your-webhook-endpoint.com/notify
    ```
 
-3. **If using RabbitMQ, ensure you have set the `RABBITMQ_URL` variable:**
+2. **If using RabbitMQ, set the `RABBITMQ_URL` variable.** Without it, `rabbitmq` targets are skipped.
 
    ```bash
    RABBITMQ_URL=amqp://guest:guest@localhost:5672/
    ```
 
-4. **Restart your app** after changing environment variables to apply the new webhook configuration.
+3. **Restart your app** after changing environment variables.
+
+Environment variable subscriptions and UI subscriptions are combined. When both point to the same target for the same event, the notification is sent only once.
 
 ### How It Works
 
-- When the specified event occurs (e.g., the `lastExecution` field is updated), MZinga will automatically send a notification to the configured HTTP endpoint or publish an event to RabbitMQ.
+- When the specified event occurs (e.g., the `lastExecution` field is updated), MZinga sends a notification to the configured HTTP endpoint or publishes an event to RabbitMQ.
 - The payload includes details about the event, such as the data, document, operation type, and more.
+- RabbitMQ events are published to the `mzinga_events` topic exchange, with the `HOOKSURL_...` key as routing key. They are also routed to the durable `mzinga_events_durable` exchange.
+- If RabbitMQ is unreachable, the event is skipped and logged, and the write still succeeds. Publishing resumes when the connection is back.
+- HTTP notifications are sent once, without retries. Guaranteed delivery is planned.
 
 ### Supported Hook Types
 
 - `BEFOREVALIDATE`, `BEFORECHANGE`, `AFTERCHANGE`, `AFTERREAD` (field-level)
 - `BEFOREOPERATION`, `BEFOREVALIDATE`, `BEFORECHANGE`, `AFTERCHANGE`, `BEFOREREAD`, `AFTERREAD`, `BEFOREDELETE`, `AFTERDELETE`, `AFTERERROR`, `BEFORELOGIN`, `AFTERLOGIN`, `AFTERLOGOUT`, `AFTERME`, `AFTERREFRESH`, `AFTERFORGOTPASSWORD` (collection-level)
+- `AFTERERROR` needs a Mzinga core version that accepts `afterError` hooks on collections; core 1.0.5 and earlier reject it, and the subscription is then ignored. It fires for errors returned by the REST API (not GraphQL), and its payload contains the error name and message.
+- Read hooks (`BEFOREREAD`, `AFTERREAD`) fire on every read, so use them sparingly.
 
 ---
 

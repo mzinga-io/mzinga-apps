@@ -1,5 +1,5 @@
 import { config } from "dotenv";
-const crypto = require("node:crypto");
+import crypto from "node:crypto";
 
 config();
 const { PAYLOAD_PUBLIC_SERVER_URL, API_KEY } = process.env;

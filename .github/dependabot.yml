@@ -9,6 +9,10 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    ignore:
+      # mzinga core (Payload v2) requires Express 4: its middleware assigns req.query, read-only in Express 5.
+      - dependency-name: "express"
+        update-types: ["version-update:semver-major"]
     groups:
       minors:
         update-types:
@@ -18,7 +22,10 @@ updates:
         update-types:
           - "major"
   - package-ecosystem: "github-actions"
-    directory: "/.github"
+    # "/" covers .github/workflows; composite actions need their own directory.
+    directories:
+      - "/"
+      - "/.github/actions/*"
     schedule:
       interval: "daily"
     groups:
@@ -30,7 +37,9 @@ updates:
         update-types:
           - "major"
   - package-ecosystem: "docker"
-    directory: "/"
+    directories:
+      - "/"
+      - "/examples/*"
     schedule:
       interval: "daily"
     groups:
@@ -45,6 +54,11 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    ignore:
+      # Private ACR image published by this repo's own pipeline: Dependabot has no credentials
+      # for it and the whole docker-compose update job fails on it.
+      - dependency-name: "newesissrl.azurecr.io/mzinga/payload/gh/backoffice"
+      - dependency-name: "mzinga/payload/gh/backoffice"
     groups:
       minors:
         update-types:

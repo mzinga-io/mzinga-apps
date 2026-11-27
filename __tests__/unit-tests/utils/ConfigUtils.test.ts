@@ -315,5 +315,38 @@ describe("utils", () => {
       expect(filteredCollectionWithRelationships).not.toBeNull();
       expect(filteredCollectionWithRelationships?.fields).toHaveLength(0);
     });
+    it("AddWebHooksCollectionOptions should list custom entities as webhook targets", () => {
+      const webHooksCollection = {
+        slug: Slugs.AdminWebHooks,
+        fields: [
+          {
+            name: "collectionReference",
+            type: "select",
+            options: [{ label: "Stories", value: Slugs.Stories }],
+          },
+        ],
+      } as CollectionConfig;
+      const config = {
+        collections: [
+          webHooksCollection,
+          Stories,
+          { slug: "players", labels: { plural: "Players" }, fields: [] },
+          { slug: "teams", fields: [] },
+        ],
+      } as unknown as Config;
+      const configUtils = new ConfigUtils(collections, { Env: {} });
+      configUtils.AddWebHooksCollectionOptions(config);
+      configUtils.AddWebHooksCollectionOptions(config);
+      const options = (
+        webHooksCollection.fields[0] as { options: { label: string; value: string }[] }
+      ).options;
+      expect(options.map((o) => o.value)).toEqual([
+        Slugs.Stories,
+        Slugs.AdminWebHooks,
+        "players",
+        "teams",
+      ]);
+      expect(options.find((o) => o.value === "players")?.label).toBe("Players");
+    });
   });
 });
