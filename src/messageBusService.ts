@@ -10,7 +10,7 @@ const {
 } = (process || {}).env || {};
 declare type Event = {
   type: string;
-  data: any;
+  data: unknown;
 };
 
 const BusConfiguration = {
@@ -26,12 +26,18 @@ const BusConfiguration = {
     internal: true,
   },
 };
+const EventsBinding = {
+  source: BusConfiguration.MZingaEvents.exchange,
+  destination: BusConfiguration.MZingaEventsDurable.exchange,
+  routingKey: "#",
+};
 class MessageBusService {
   private connection: Connection | null = null;
   private publisher: Publisher = null;
 
-  isConnected(): Boolean {
-    return !!this.connection;
+  /** True only when the connection is established and the publisher exists. */
+  isConnected(): boolean {
+    return Boolean(this.connection?.ready && this.publisher);
   }
   async connect(url: string): Promise<void> {
     try {
@@ -59,17 +65,15 @@ class MessageBusService {
       await this.connection.exchangeDeclare(
         BusConfiguration.MZingaEventsDurable,
       );
-      await this.connection.exchangeBind({
-        source: BusConfiguration.MZingaEvents.exchange,
-        destination: BusConfiguration.MZingaEventsDurable.exchange,
-        routingKey: "#",
-      });
+      await this.connection.exchangeBind(EventsBinding);
 
+      // Exchanges and the binding are declared again after every reconnect.
       this.publisher = this.connection.createPublisher({
         exchanges: [
           BusConfiguration.MZingaEventsDurable,
           BusConfiguration.MZingaEvents,
         ],
+        exchangeBindings: [EventsBinding],
       });
 
       MZingaLogger.Instance?.debug("RabbitMQ setup completed");

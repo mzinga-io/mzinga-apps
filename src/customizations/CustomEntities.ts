@@ -5,7 +5,7 @@ import { LoadResult, SafeAccess } from "../types";
 import { FSUtils } from "../utils/FSUtils";
 
 const traverseDataObject = (inputData) => {
-  let result = [];
+  const result = [];
   const keys = Object.keys(inputData);
 
   keys.forEach((key) => {
@@ -36,7 +36,7 @@ const traverseDataObject = (inputData) => {
     if (
       typeof value === "object" &&
       value.toString() !== "[object Object]" &&
-      value.hasOwnProperty("length")
+      Object.prototype.hasOwnProperty.call(value, "length")
     ) {
       if (!value.length) {
         return;
@@ -122,14 +122,14 @@ export class CustomEntities {
               result: false,
               cause: e.message,
             };
-          })
+          }),
         )
-        .filter(Boolean)
+        .filter(Boolean),
     );
   }
 }
 const transformToSafeAccess = (
-  access: Partial<CollectionConfig["access"]>
+  access: Partial<CollectionConfig["access"]>,
 ): SafeAccess => {
   return access
     ? {
@@ -143,11 +143,11 @@ const transformToSafeAccess = (
 };
 const getResult = async function (
   baseDir: string,
-  manipulateFn: Function
+  manipulateFn: Function,
 ): Promise<LoadResult> {
   const files = fs.readdirSync(baseDir);
   const validFiles = files.filter(
-    (f) => f.endsWith(".json") || f.endsWith(".js")
+    (f) => f.endsWith(".json") || f.endsWith(".js"),
   );
   return {
     result: true,
@@ -162,9 +162,9 @@ const getResult = async function (
         } catch (e) {
           return Promise.reject(e);
         }
-        let fields = data.fields || (manipulateFn ? manipulateFn(data) : []);
-        let labels = data.labels || undefined;
-        let admin = data.admin || undefined;
+        const fields = data.fields || (manipulateFn ? manipulateFn(data) : []);
+        const labels = data.labels || undefined;
+        const admin = data.admin || undefined;
         return {
           slug: data.slug || path.parse(f).name,
           safeAccess: transformToSafeAccess(data.safeAccess),
@@ -185,7 +185,7 @@ const getResult = async function (
           upload: data.upload,
           fields: fields.map(transformToJSON),
         };
-      })
+      }),
     ),
   };
 };

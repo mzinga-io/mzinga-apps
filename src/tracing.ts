@@ -21,17 +21,27 @@ const ATTR_SERVICE_NAMESPACE = "service.namespace";
 import { diag, DiagConsoleLogger, DiagLogLevel } from "@opentelemetry/api";
 import { registerInstrumentations } from "@opentelemetry/instrumentation";
 import { containerDetector } from "@opentelemetry/resource-detector-container";
+import dotenv from "dotenv";
+import { isMainThread } from "worker_threads";
 import { LokiExporter } from "./lokiExporter";
-require("dotenv").config();
+dotenv.config();
 const DISABLE_TRACING = (process.env.DISABLE_TRACING || "0") == "1";
 function main() {
+  // Worker threads (e.g. the pino transport) inherit --require ./dist/tracing.js:
+  // only the main thread starts the SDK.
+  if (!isMainThread) {
+    return;
+  }
   const OTEL_LOG_LEVEL = process.env.OTEL_LOG_LEVEL || DiagLogLevel.INFO;
   diag.setLogger(new DiagConsoleLogger(), OTEL_LOG_LEVEL as DiagLogLevel);
   if (DISABLE_TRACING) {
     diag.info("Tracing is DISABLED");
     return;
   }
+  // Loaded only when tracing is enabled; ../package.json is outside rootDir.
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const pkg = require("../package.json");
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mzingaPkg = require("mzinga/package.json");
   const ENV = process.env.ENV || "local";
   const TENANT =
@@ -123,8 +133,8 @@ function main() {
     //sdk
     tracerProvider
       .shutdown()
-      .then(() => console.log("Tracing terminated"))
-      .catch((error) => console.log("Error terminating tracing", error))
+      .then(() => diag.info("Tracing terminated"))
+      .catch((error) => diag.error("Error terminating tracing", error))
       .finally(() => process.exit(0));
   });
 }

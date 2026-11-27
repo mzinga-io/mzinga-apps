@@ -60,9 +60,10 @@ export const TextUtils = {
           case "h3":
           case "h4":
           case "h5":
-          case "h6":
+          case "h6": {
             const hType = node.type.match(/h[\d]/);
             return `<${hType}>${childrenText}</${hType}>`;
+          }
           case "quote":
             return `<blockquote>${childrenText}</blockquote>`;
           case "ul":
@@ -78,7 +79,6 @@ export const TextUtils = {
               return `<a data-doc-id="${node.doc?.value?.id}"${
                 node.newTab ? ' target="_blank" rel="noopener noreferrer"' : ""
               }>${childrenText}</a>`;
-              ``;
             }
             return `<a href="${node.url}"${
               node.newTab ? ' target="_blank" rel="noopener noreferrer"' : ""

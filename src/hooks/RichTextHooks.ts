@@ -4,7 +4,7 @@ export class RichTextHooks {
   beforeChange: [({ data }: { data: any }) => Promise<any>];
   constructor(
     private readonly richTextProperty: string,
-    private readonly richTextChildProperty: string
+    private readonly richTextChildProperty: string,
   ) {
     this.beforeChange = [
       async ({ data }) => {
@@ -16,7 +16,7 @@ export class RichTextHooks {
           part.serialized = {
             html: TextUtils.Serialize(part[this.richTextChildProperty]),
             internalLinks: TextUtils.GetInternalLinks(
-              part[this.richTextChildProperty]
+              part[this.richTextChildProperty],
             ),
           };
         }

@@ -28,9 +28,12 @@ const CustomEntities: CollectionConfig = {
         const utils = new ConfigUtils(payload.config.collections);
         data.jsonDefinition.json.slug =
           data.slug || SlugUtils.Slugify(data.name);
-        let transformedCollection = utils.TransformCollection(payload.config, {
-          ...data.jsonDefinition.json,
-        });
+        const transformedCollection = utils.TransformCollection(
+          payload.config,
+          {
+            ...data.jsonDefinition.json,
+          },
+        );
         const { warning } = await collectionSchema.validateAsync(
           transformedCollection,
           {
@@ -38,7 +41,7 @@ const CustomEntities: CollectionConfig = {
             allowUnknown: false,
             stripUnknown: false,
             warnings: true,
-          }
+          },
         );
         if (warning) {
           throw warning.message;
@@ -55,8 +58,8 @@ const CustomEntities: CollectionConfig = {
           `module.exports = ${JSON.stringify(
             doc.jsonDefinition.json,
             null,
-            2
-          )};`
+            2,
+          )};`,
         );
       },
     ],

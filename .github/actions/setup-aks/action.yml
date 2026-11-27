@@ -1,3 +1,5 @@
+name: "Setup AKS tools"
+description: "Installs the Azure CLI, kubectl and kubelogin on the self-hosted runner."
 runs:
   using: "composite"
   steps:
@@ -16,8 +18,11 @@ runs:
         KUBECTL_VER="$(curl -Ls https://dl.k8s.io/release/stable.txt)"
         curl -L "https://dl.k8s.io/release/${KUBECTL_VER}/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl
         chmod +x /usr/local/bin/kubectl
-        curl -LO https://github.com/Azure/kubelogin/releases/download/v0.0.25/kubelogin-linux-amd64.zip
-        unzip kubelogin-linux-amd64.zip
+        KUBELOGIN_VER="v0.2.22"
+        curl -LO "https://github.com/Azure/kubelogin/releases/download/${KUBELOGIN_VER}/kubelogin-linux-amd64.zip"
+        curl -LO "https://github.com/Azure/kubelogin/releases/download/${KUBELOGIN_VER}/kubelogin-linux-amd64.zip.sha256"
+        sha256sum -c kubelogin-linux-amd64.zip.sha256
+        unzip -o kubelogin-linux-amd64.zip
         sudo mv bin/linux_amd64/kubelogin /usr/local/bin/
         sudo chmod +x /usr/local/bin/kubelogin
         kubelogin --version

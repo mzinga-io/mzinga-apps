@@ -14,6 +14,8 @@ permissions:
 
 env:
   DOCKER_BUILDKIT: 1
+  # GitVersion 7 telemetry opt-out
+  DO_NOT_TRACK: "1"
   TEST_NAMESPACE: mzinga-e2e-tests
   PAYLOAD_PUBLIC_SERVER_URL: https://admin-mzinga-e2e.mzinga.io
   ACR_NAME: newesissrl
@@ -35,21 +37,21 @@ jobs:
           else
             echo "image_suffix=" >> $GITHUB_OUTPUT
           fi
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '11.0.x'
       
-      - uses: gittools/actions/gitversion/setup@v1
+      - uses: gittools/actions/gitversion/setup@v5.0.0
         with:
-          versionSpec: '5.x'
+          versionSpec: '7.0.x'
           
       - id: gitversion
-        uses: gittools/actions/gitversion/execute@v1
+        uses: gittools/actions/gitversion/execute@v5.0.0
 
       - run: echo "${{ steps.gitversion.outputs.fullSemVer }}" > version.txt
 
@@ -57,11 +59,10 @@ jobs:
     needs: set-version
     runs-on: [self-hosted]
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: '22'
+          node-version: '26'
 
       - run: npm version --no-git-tag-version --new-version ${{ needs.set-version.outputs.version }}
 
@@ -79,11 +80,10 @@ jobs:
     needs: set-version
     runs-on: [self-hosted]
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: '22'
+          node-version: '26'
 
       - run: npm version --no-git-tag-version --new-version ${{ needs.set-version.outputs.version }}
 
@@ -102,11 +102,11 @@ jobs:
     needs: [build-api, build-backoffice, set-version]
     runs-on: [self-hosted]
     steps:
-      - uses: actions/checkout@v4 
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-aks
           
       - name: Azure Login
-        uses: azure/login@v1.5.0
+        uses: azure/login@v3
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -135,11 +135,10 @@ jobs:
       PAYLOAD_PUBLIC_SERVER_URL: https://admin-mzinga-e2e.mzinga.io
       RABBITMQ_URL: ${{ secrets.RABBITMQ_URL }}
     steps:
-      - uses: actions/checkout@v4
-      
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: '22'
+          node-version: '26'
 
       - name: Install dependencies
         run: npm install
@@ -148,13 +147,13 @@ jobs:
         run: npm run coverage
 
       - name: Upload test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: junit-results
           path: junit.xml
 
       - name: Upload code coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: code-coverage
           path: coverage/cobertura-coverage.xml
@@ -169,10 +168,10 @@ jobs:
       API_IMAGE: mzinga/payload/gh/api
       BO_IMAGE: mzinga/payload/gh/backoffice
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-aks
       - name: Azure Login
-        uses: azure/login@v1.5.0
+        uses: azure/login@v3
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
@@ -224,7 +223,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           fetch-tags: true
